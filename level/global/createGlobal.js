@@ -12,6 +12,6 @@ export const addGlobalLevel = async () => {
     window.level["help"] = { ...modules.help }
 
     await Promise.all([
-        await addToObject(window.level.help)
+        addToObject(window.level.help)
     ])
 }
