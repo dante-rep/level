@@ -1,3 +1,16 @@
 :root {
-    --test: red;
+    /* body */
+    --bodyBack: rgb(220, 220, 220);
+    --bodyTransition: 500ms ease-in-out;
+    /* nav container */
+    --navWidth: 100%;
+    --navHeight: 60px;
+    /* bottomBar container */
+    --bottomBarWidth: 100%;
+    --bottomBarHeight: 45px;
+    /* menu container */
+    --menuWidth: 260px;
+    --menuHeight: calc(100% - (var(--navHeight) + var(--bottomBarHeight)));
+    /* config container */
+    --configWidth: 300px;
 }

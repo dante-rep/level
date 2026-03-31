@@ -1,11 +1,51 @@
-*{
+* {
     margin: 0px;
     padding: 0px;
     box-sizing: border-box;
 }
 
 body {
+    display: flex;
     width: 100vw;
     height: 100vh;
-    border: 1px solid red;
+    background: var(--bodyBack);
+    overflow: hidden;
+
+    .componentContainer {
+
+        .backLayer {
+        }
+
+        .componentBox {
+        }
+    }
+    
+    .navContainer {
+        top: calc(var(--navHeight) * -1);
+        width: var(--navWidth);
+        height: var(--navHeight);
+        border: 1px solid red;
+    }
+
+    .bottomBarContainer {
+        bottom: calc(var(--bottomBarHeight) * -1);
+        width: var(--bottomBarWidth);
+        height: var(--bottomBarHeight);
+        border: 1px solid red;
+    }
+
+    .menuContainer {
+        top: var(--navHeight);
+        left: -100%;
+        width: var(--menuWidth);
+        height: var(--menuHeight);
+        border: 1px solid red;
+    }
+
+    .configContainer {
+        right: -100%;
+        width: var(--configWidth);
+        height: 100%;
+        border: 1px solid red;
+    }
 }

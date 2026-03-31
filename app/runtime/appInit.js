@@ -1,6 +1,6 @@
 import { addGlobalLevel } from "./../../level/global/createGlobal.js"
 
-const addStyles = (url) => {
+const addStyles = (url) =>
     new Promise(resolve => {
         const newLink = document.createElement("link")
         newLink.rel = "stylesheet"
@@ -8,7 +8,6 @@ const addStyles = (url) => {
         document.head.appendChild(newLink)
         newLink.onload = resolve
     })
-}
 
 const initModules = async (modules) => {
     await Promise.all(Object.values(modules).map(mod => mod.init()))
@@ -24,7 +23,7 @@ const init = async () => {
         "mainContainers": `${app}/styles/mainContainers.css`
     }
     const demoModules = {
-        "mainContainers": `${app}interface/demo/loads/mainContainers.js`
+        "mainContainers": `${app}interface/loads/mainContainers.js`
     }
 
     /* iniciar animacion de carga */
