@@ -1,6 +1,6 @@
 import { addGlobalLevel } from "./../../level/global/createGlobal.js"
 
-const addStyles = (url) =>
+const addStyles = (url) => {
     new Promise(resolve => {
         const newLink = document.createElement("link")
         newLink.rel = "stylesheet"
@@ -8,35 +8,47 @@ const addStyles = (url) =>
         document.head.appendChild(newLink)
         newLink.onload = resolve
     })
+}
 
-const initModules = async (modules) => {
+const initInterface = async (modules) => {
     await Promise.all(Object.values(modules).map(mod => mod.init()))
 }
 
+const loadStyles = async (styles) => {
+    await Promise.all(Object.values(styles).map(style => addStyles(style)))
+}
+
+const loadModules = async (modules) => {
+    return await window.level.help.import.all(modules)
+}
+
 const init = async () => {
-    await addGlobalLevel()
-    const help = window.level.help
-    const app = "./../../app/"
-    const appStyles = {
-        "conf": `${app}styles/conf.css`,
-        "mainClasses": `${app}styles/mainClasses.css`,
-        "mainContainers": `${app}/styles/mainContainers.css`
+    const path = "./../../app/"
+    const animation = {
+        "module": `${path}interface/loads/appLoadAnimation copy.js` 
     }
-    const demoModules = {
-        "mainContainers": `${app}interface/loads/mainContainers.js`
+    const app = {
+        "styles": {
+            "conf": `${path}styles/conf.css`,
+            "mainClasses": `${path}styles/mainClasses.css`,
+            "mainContainers": `${path}/styles/mainContainers.css`
+        },
+        "modules": {
+            "mainContainers": `${path}interface/loads/mainContainers.js`
+        }
     }
 
-    /* iniciar animacion de carga */
+    await addGlobalLevel()
+    await loadModules(animation)
+    animation.module.init()
 
     await Promise.all([
-        ...Object.values(appStyles).map(style => addStyles(style)),
-        help.import.all(demoModules)
+        loadStyles(app.styles),
+        loadModules(app.modules)
     ])
 
-    /* parar animacion */
-
-    /* inicializar modulos 1º containers, 2º el resto de modulos en paralelo */
-    initModules(demoModules)
-}
+    await new Promise(resolve => setTimeout(resolve, 1000))
+/*     initInterface(app.modules)
+ */}
 
 await init()

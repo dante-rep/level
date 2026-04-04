@@ -15,6 +15,7 @@ const panelsContainers = (help, box) => {
 }
 
 export const init = () => {
+    console.log("containers")
     const help = window.level.help
     addComponentContainer(help, document.body)
     addBarsContainers(help, document.body)
