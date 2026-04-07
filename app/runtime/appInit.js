@@ -23,9 +23,9 @@ const loadModules = async (modules) => {
 }
 
 const init = async () => {
-    const path = "./../../app/"
-    const animation = {
-        "module": `${path}interface/loads/appLoadAnimation.js` 
+    const path = "./../../../app/"
+    const landing = {
+        "module": `${path}interface/loads/appLoad-landing.js`
     }
     const app = {
         "styles": {
@@ -38,15 +38,19 @@ const init = async () => {
         }
     }
 
-    await addGlobalLevel()
-    await loadModules(animation)
-    animation.module.init()
-
     await Promise.all([
-        loadStyles(app.styles),
-        loadModules(app.modules)
+        addGlobalLevel(),
+        loadStyles(app.styles)
     ])
 
+    await loadModules(landing)
+    landing.module.init()
+
+    /*     await Promise.all([
+            loadStyles(app.styles),
+            loadModules(app.modules)
+        ])
+     */
     await new Promise(resolve => setTimeout(resolve, 1000))
 /*     initInterface(app.modules)
  */}
