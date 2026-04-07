@@ -19,13 +19,13 @@ const loadStyles = async (styles) => {
 }
 
 const loadModules = async (modules) => {
-    return await window.level.help.import.all(modules)
+    return await window.level.help.import.object(modules)
 }
 
 const init = async () => {
     const path = "./../../app/"
     const animation = {
-        "module": `${path}interface/loads/appLoadAnimation copy.js` 
+        "module": `${path}interface/loads/appLoadAnimation.js` 
     }
     const app = {
         "styles": {

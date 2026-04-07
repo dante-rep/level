@@ -4,3 +4,6 @@
 /* positions */
 .absolute {position: absolute;}
 .relative {position: relative;}
+
+/* flex */
+.center {display: flex; align-items: center; justify-content: center;}
