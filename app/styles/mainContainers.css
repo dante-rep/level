@@ -12,7 +12,11 @@ body {
     height: 100vh;
     background: var(--bodyBack);
     overflow: hidden;
-
+/*     font-family: "CodePredators";
+    font-size: 60px;
+    color: rgba(255, 255, 255, 0.151);
+    text-shadow: 0 0 0px rgb(0, 0, 0);
+ */
     .landingContainer {
         border: 1px solid rgb(0, 225, 255);
 

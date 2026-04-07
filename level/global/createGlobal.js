@@ -10,8 +10,6 @@ const addToObject = async (obj) => {
 export const addGlobalLevel = async () => {
     window.level = {}
     window.level["help"] = { ...modules.help }
-
-    await Promise.all([
-        addToObject(window.level.help)
-    ])
+    await Promise.all([addToObject(window.level.help)])
+    window.level["route"] = window.location.pathname.split("/")[1] === "level" ? "/level" : ""
 }
