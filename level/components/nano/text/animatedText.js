@@ -7,9 +7,9 @@ export default class AnimatedText extends HTMLElement {
         font_color: "initial",
         font_style: "initial",
 
-        char_margin: "5px",
-        char_padding: "10px",
-        char_empty: "30px"
+        char_margin: "0px",
+        char_padding: "0px",
+        char_empty: "0px"
     }
 
     constructor() {
@@ -18,7 +18,8 @@ export default class AnimatedText extends HTMLElement {
         this.dom = this.attachShadow({ mode: "open" })
         this.data = { 'text': "some text" }
         this.fonts = null /* [{}] */
-        this.css = null /* {} */
+        this.css = {}
+        this.deps = {}
     }
 
     /* private nethods */
@@ -44,17 +45,17 @@ export default class AnimatedText extends HTMLElement {
             border: 1px solid blue;
 
             .charBox {
-                font-family: "${this.#CSS.font_family}";
-                font-size: ${this.#CSS.font_size};
-                color: ${this.#CSS.font_color};
-                font-style: ${this.#CSS.font_style};
-                padding: ${this.#CSS.char_padding};
-                margin: ${this.#CSS.char_margin};
+                font-family: "${this.css.font_family}";
+                font-size: ${this.css.font_size};
+                color: ${this.css.font_color};
+                font-style: ${this.css.font_style};
+                padding: ${this.css.char_padding};
+                margin: ${this.css.char_margin};
                 border: 1px solid grey;
             }
 
             .emptyBox {
-                width: ${this.#CSS.char_empty};
+                width: ${this.css.char_empty};
             }
         }
 
@@ -65,7 +66,12 @@ export default class AnimatedText extends HTMLElement {
     }
 
     #configure() {
-        
+        this.css = this.deps.base.resolveCSS(this.css, this.#CSS, this)
+    }
+
+    async #testReady() {
+        console.log(this.deps)
+        return true
     }
 
     #addText() {
@@ -101,14 +107,16 @@ export default class AnimatedText extends HTMLElement {
 
     /* public methods */
     async load() {
+        await this.#testReady()
+        this.#configure()
         this.#addStyle()
         this.#addFonts()
-        this.#drawComponent()
-        this.#addText()
     }
 
     async init() {
         await this.load()
+        this.#drawComponent()
+        this.#addText()
     }
 }
 customElements.define(tag, AnimatedText)
