@@ -3,8 +3,11 @@ const drawLanding = async (help) => {
     const titlesBox = help.dom.add(landingContainer, "div", "titlesBox")
 
 
-    const componentMod = await help.import.object({ "module": "./../../components/nano/text/animatedText.js" })
-    const deps = { 'base': './../classes/class_base.js' }
+    const componentMod = await help.import.object({ "module": "/frameWork/components/nano/text/animatedText.js" })
+    const deps = { 
+        'dom': '/frameWork/dependencies/helpers/dom.js', 
+        'base': '/frameWork/dependencies/classes/class_base.js' 
+    }
     await help.import.object(deps)
 
     const titleTop = help.dom.add(titlesBox, componentMod.module.tag)
@@ -16,10 +19,11 @@ const drawLanding = async (help) => {
         font_color: "initial",
         char_margin: "5px",
         char_padding: "10px",
-        char_empty: "30px"
+        char_empty: "30px",
+        char_border: "2px dashed grey"
     }
 
-    Object.entries(deps).forEach(([key, value]) => titleTop.deps[key] = value.default)
+    Object.entries(deps).forEach(([key, value]) => titleTop.deps[key] = value.default ?? value)
     titleTop.init()
 
     const titleBottom = help.dom.add(titlesBox, componentMod.module.tag)

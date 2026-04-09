@@ -9,7 +9,8 @@ export default class AnimatedText extends HTMLElement {
 
         char_margin: "0px",
         char_padding: "0px",
-        char_empty: "0px"
+        char_empty: "0px",
+        char_border: "initial"
     }
 
     constructor() {
@@ -51,7 +52,8 @@ export default class AnimatedText extends HTMLElement {
                 font-style: ${this.css.font_style};
                 padding: ${this.css.char_padding};
                 margin: ${this.css.char_margin};
-                border: 1px solid grey;
+                border: ${this.css.char_border};
+                vertical-align: top;
             }
 
             .emptyBox {

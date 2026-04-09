@@ -1,4 +1,4 @@
-import { addGlobalLevel } from "./../../level/global/createGlobal.js"
+import { addGlobalLevel } from "../../framework/global/createGlobal.js"
 
 const addStyles = (url) => {
     new Promise(resolve => {
