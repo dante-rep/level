@@ -3,10 +3,13 @@ const drawLanding = async (help) => {
     const titlesBox = help.dom.add(landingContainer, "div", "titlesBox")
 
 
-    const componentMod = await help.import.object({ "module": "/frameWork/components/nano/text/animatedText.js" })
-    const deps = { 
-        'dom': '/frameWork/dependencies/helpers/dom.js', 
-        'base': '/frameWork/dependencies/classes/class_base.js' 
+    const componentMod = await help.import.object({ 
+        "module": "/frameWork/components/nano/text/animatedText.js"
+     })
+    const deps = {
+        'dom': '/frameWork/dependencies/helpers/dom.js',
+        'base': '/frameWork/dependencies/classes/class_base.js',
+        'fonts': '/frameWork/dependencies/classes/class_fonts.js'
     }
     await help.import.object(deps)
 
@@ -14,14 +17,17 @@ const drawLanding = async (help) => {
 
     titleTop.fonts = [{ 'name': 'predators', 'src': `${window.level.route}/app/src/fonts/CodePredators-Regular.otf` }]
     titleTop.css = {
-        font_size: "80px",
-        font_family: "predators",
-        font_color: "initial",
-        char_margin: "5px",
-        char_padding: "10px",
+        charBox_border: "1px solid grey",
+        charBox_radius: "6px",
+        charBox_margin: "5px",
+        charBox_padding: "10px",
+        char_top: "-20px",
         char_empty: "30px",
-        char_border: "2px dashed grey"
+        char_fontSize: "80px",
+        char_fontFamily: "predators",
+        char_fontColor: "initial",
     }
+    titleTop.data.text = "level"
 
     Object.entries(deps).forEach(([key, value]) => titleTop.deps[key] = value.default ?? value)
     titleTop.init()

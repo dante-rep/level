@@ -1,16 +1,21 @@
 export const tag = "nano-animated-text"
 export default class AnimatedText extends HTMLElement {
     /* private props */
+    #DEPS = ["base", "dom"]
     #CSS = {
-        font_size: "initial",
-        font_family: "initial",
-        font_color: "initial",
-        font_style: "initial",
-
-        char_margin: "0px",
-        char_padding: "0px",
+        charBox_border: "initial",
+        charBox_radius: "0px",
+        charBox_margin: "0px",
+        charBox_padding: "0px",
+        char_top: "0px",
         char_empty: "0px",
-        char_border: "initial"
+        char_fontSize: "initial",
+        char_fontFamily: "initial",
+        char_fontColor: "initial",
+        char_fontStyle: "initial"
+    }
+    #LOGIC = {
+        orientation: ["horizontal", "vertical"]
     }
 
     constructor() {
@@ -20,19 +25,17 @@ export default class AnimatedText extends HTMLElement {
         this.data = { 'text': "some text" }
         this.fonts = null /* [{}] */
         this.css = {}
+        this.logic = {}
         this.deps = {}
     }
 
     /* private nethods */
     #drawComponent() {
-        this.dom.innerHTML += `
-        <div class="mainBox autoAdjust"></div>
-        `
+        this.mainBox = this.deps.dom.add(this.dom, "div", "mainBox autoAdjust")
     }
 
     #addStyle() {
-        const style = document.createElement("style")
-        this.dom.appendChild(style)
+        const style = this.deps.dom.add(this.dom, "style")
         style.textContent += `
         :host {
             display: flex;
@@ -46,65 +49,59 @@ export default class AnimatedText extends HTMLElement {
             border: 1px solid blue;
 
             .charBox {
-                font-family: "${this.css.font_family}";
-                font-size: ${this.css.font_size};
-                color: ${this.css.font_color};
-                font-style: ${this.css.font_style};
-                padding: ${this.css.char_padding};
-                margin: ${this.css.char_margin};
-                border: ${this.css.char_border};
-                vertical-align: top;
+                border: ${this.css.charBox_border};
+                border-radius: ${this.css.charBox_radius};
+                margin: ${this.css.charBox_margin};
+                padding: ${this.css.charBox_padding};
+
+                .char {
+                    position: relative;
+                    top: ${this.css.char_top};
+                    font-family: ${this.css.char_fontFamily};
+                    font-size: ${this.css.char_fontSize};
+                    color: ${this.css.char_fontColor};
+                    font-style: ${this.css.char_fontStyle};
+                }
             }
 
             .emptyBox {
                 width: ${this.css.char_empty};
+                aspect-ratio: 1/1;
             }
         }
 
         .max {width: 100%; height: 100%;}
         .center {display: flex; justify-content: center; align-items: center;}
         .autoAdjust {width: fit-content; height: fit-content;}
+        .vertical {flex-direction: column;}
         `
     }
 
     #configure() {
         this.css = this.deps.base.resolveCSS(this.css, this.#CSS, this)
+        this.logic = this.deps.base.resolveLOGIC(this.logic, this.#LOGIC, this)
+    }
+
+
+    #applyLogic() {
+        this.logic.orientation === "vertical" && this.mainBox.classList.add("vertical")
     }
 
     async #testReady() {
-        console.log(this.deps)
-        return true
+
     }
 
     #addText() {
         const dataText = Array.from(this.data.text)
-        const mainBox = this.dom.querySelector(".mainBox")
-        dataText.forEach(char => {
-            const charBox = document.createElement("span")
-            charBox.className = char === " " ? "emptyBox" : "charBox autoAdjust center"
-            mainBox.appendChild(charBox)
-            charBox.textContent = char
+        dataText.forEach(item => {
+            const charBox = this.deps.dom.add(this.mainBox, "div", item === " " ? "emptyBox" : "charBox autoAdjust center")
+            const char = this.deps.dom.add(charBox, "span", "char")
+            char.textContent = item
         })
     }
 
-    #addFonts() {
-        if (!document.head.querySelector(".dynamicStyle_fonts")) {
-            const dynamicStyle_fonts = document.head.appendChild(document.createElement("style"))
-            dynamicStyle_fonts.className = "dynamicStyle_fonts"
-        }
-        const fontStyle = document.head.querySelector(".dynamicStyle_fonts")
-        this.fonts.forEach(font => {
-            const previousNAME = fontStyle.textContent.includes(font.name)
-            const previousSRC = fontStyle.textContent.includes(font.src)
-            const ext = font.src.split(".").pop()
-            const format = ext === "otf" ? "opentype" : ext
-            if (!previousNAME && !previousSRC) fontStyle.textContent += `
-                @font-face {
-                    font-family: "${font.name}";
-                    src: url("${font.src}") format(${format});
-                }
-            `
-        })
+    #addFonts(fonts) {
+        this.deps.fonts.addFonts(fonts)
     }
 
     /* public methods */
@@ -112,12 +109,13 @@ export default class AnimatedText extends HTMLElement {
         await this.#testReady()
         this.#configure()
         this.#addStyle()
-        this.#addFonts()
+        this.#addFonts(this.fonts)
     }
 
     async init() {
         await this.load()
         this.#drawComponent()
+        this.#applyLogic()
         this.#addText()
     }
 }

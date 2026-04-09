@@ -1,4 +1,4 @@
-import * as modules from "/framework/conf/paths.js"
+import * as modules from "/frameWork/conf/paths.js"
 
 const addToObject = async (obj) => {
     const imports = Object.entries(obj).map(async ([name, url]) => {
