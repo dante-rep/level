@@ -12,30 +12,32 @@ body {
     height: 100vh;
     background: var(--bodyBack);
     overflow: hidden;
-/*     font-family: "CodePredators";
-    font-size: 60px;
-    color: rgba(255, 255, 255, 0.151);
-    text-shadow: 0 0 0px rgb(0, 0, 0);
- */
-    .landingContainer {
-        border: 1px solid rgb(0, 225, 255);
 
-        .titlesBox {
-            width: fit-content;
-            height: fit-content;
-            border: 1px solid red;
+    .landingContainer {
+
+        .titlesSection {
+            width: 50%;
+            height: 100%;
+            border: 1px dashed grey;
+
+            .titlesBox {
+                width: fit-content;
+                height: fit-content;
+
+                .bottomTitle {
+                    left: 6px;
+                }
+            }
         }
     }
 
     .componentContainer {
 
-        .backLayer {
-        }
+        .backLayer {}
 
-        .componentBox {
-        }
+        .componentBox {}
     }
-    
+
     .navContainer {
         top: calc(var(--navHeight) * -1);
         width: var(--navWidth);

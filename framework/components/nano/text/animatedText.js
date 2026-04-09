@@ -1,8 +1,9 @@
 export const tag = "nano-animated-text"
 export default class AnimatedText extends HTMLElement {
     /* private props */
-    #DEPS = ["base", "dom"]
+    #DEPS = ["base", "fonts", "dom"]
     #CSS = {
+        charBox_back: "transparent",
         charBox_border: "initial",
         charBox_radius: "0px",
         charBox_margin: "0px",
@@ -12,7 +13,8 @@ export default class AnimatedText extends HTMLElement {
         char_fontSize: "initial",
         char_fontFamily: "initial",
         char_fontColor: "initial",
-        char_fontStyle: "initial"
+        char_fontStyle: "initial",
+        char_fontWeight: "initial"
     }
     #LOGIC = {
         orientation: ["horizontal", "vertical"]
@@ -27,6 +29,7 @@ export default class AnimatedText extends HTMLElement {
         this.css = {}
         this.logic = {}
         this.deps = {}
+        this.state = false
     }
 
     /* private nethods */
@@ -41,14 +44,13 @@ export default class AnimatedText extends HTMLElement {
             display: flex;
             width: 100%;
             height: 100%;
-            border: 1px solid green;    
         }
 
         .mainBox {
             display: flex;
-            border: 1px solid blue;
 
             .charBox {
+                background: ${this.css.charBox_back};
                 border: ${this.css.charBox_border};
                 border-radius: ${this.css.charBox_radius};
                 margin: ${this.css.charBox_margin};
@@ -61,6 +63,7 @@ export default class AnimatedText extends HTMLElement {
                     font-size: ${this.css.char_fontSize};
                     color: ${this.css.char_fontColor};
                     font-style: ${this.css.char_fontStyle};
+                    font-weight: ${this.css.char_fontWeight};
                 }
             }
 
@@ -87,10 +90,6 @@ export default class AnimatedText extends HTMLElement {
         this.logic.orientation === "vertical" && this.mainBox.classList.add("vertical")
     }
 
-    async #testReady() {
-
-    }
-
     #addText() {
         const dataText = Array.from(this.data.text)
         dataText.forEach(item => {
@@ -104,19 +103,28 @@ export default class AnimatedText extends HTMLElement {
         this.deps.fonts.addFonts(fonts)
     }
 
-    /* public methods */
-    async load() {
-        await this.#testReady()
-        this.#configure()
-        this.#addStyle()
-        this.#addFonts(this.fonts)
+    #checkConf() {
+        let ready = true
+        this.#DEPS.forEach(dep => !Object.keys(this.deps).includes(dep) && (ready = false))
+        this.state = ready
     }
 
+    /* public methods */
+    load() {
+        this.#checkConf()
+    }
+
+
     async init() {
-        await this.load()
-        this.#drawComponent()
-        this.#applyLogic()
-        this.#addText()
+        this.load()
+        if (this.state) {
+            this.#configure()
+            this.#addStyle()
+            this.#addFonts(this.fonts)
+            this.#drawComponent()
+            this.#applyLogic()
+            this.#addText()
+        }
     }
 }
 customElements.define(tag, AnimatedText)
