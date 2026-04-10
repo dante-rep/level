@@ -18,7 +18,11 @@ const addCube = async (help, boxes) => {
 
     const cubeComponent = help.dom.add(boxes.animationSection, componentMod.module.tag)
     const css = {
+        box_perspective: "900px",
         box_size: "300px",
+        box_back: "rgba(0, 0, 0, 0)",
+        box_border: "2px solid rgb(32, 32, 32)",
+        box_shadow: "inset 0 0 50px rgb(32, 32, 32)"
     }
     cubeComponent.css = css
     Object.entries(deps).forEach(([key, value]) => cubeComponent.deps[key] = value.default ?? value)

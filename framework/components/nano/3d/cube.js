@@ -4,6 +4,11 @@ export default class cube3D extends HTMLElement {
     #DEPS = ["base", "dom"]
     #CSS = {
         box_size: "100px",
+        box_perspective: "400px",
+        box_border: "none",
+        box_radius: "0px",
+        box_back: "grey",
+        box_shadow: "none"
     }
 
     constructor() {
@@ -30,11 +35,6 @@ export default class cube3D extends HTMLElement {
             <li class="max center absolute front">front</li>
             <li class="max center absolute back">back</li>
         </ul>
-
-        <div class="inputsBox">
-            <input id="X" type="range" min=0 max=360>
-            <input id="Y" type="range" min=0 max=360>            
-        </div>
         `
     }
 
@@ -53,46 +53,33 @@ export default class cube3D extends HTMLElement {
 
             --pos_start: calc(${this.css.box_size} * -0.5);
             --pos_end: calc(${this.css.box_size} * 0.5);
-            --rotateY: 45deg;
+            --rotateY: 0deg;
             --rotateX: 0deg;
         }
 
         .mainBox {
-            perspective: 1000px;
-            border: 1px solid green;
+            perspective: ${this.css.box_perspective};
 
             .cube {
                 transform-style: preserve-3d;
                 transform-origin: 50% 50% var(--pos_start);
                 transform: rotateY(var(--rotateY)) rotateX(var(--rotateX));
-                border: 1px solid red;
-                transition: 1000ms;
 
                 li {
-                    background: rgba(0, 0, 0, 0.1);
+                    border: ${this.css.box_border};
+                    border-radius: ${this.css.box_radius};
+                    box-shadow: ${this.css.box_shadow};
+                    background: ${this.css.box_back};
                     font-size: 100px;
-                    color: rgba(255, 255, 255, 0.6);
+                    color: rgb(255, 255, 255);
+                    filter: blur(0.2px);
                 }
 
-                .left {
-                    transform: translateZ(var(--pos_start)) translateX(var(--pos_start)) rotateY(-90deg);
-                }
-
-                .right {
-                    transform: translateZ(var(--pos_start)) translateX(var(--pos_end)) rotateY(90deg);
-                }
-
-                .top {
-                    transform: translateY(var(--pos_start)) translateZ(var(--pos_start)) rotateX(90deg) ;
-                }
-
-                .bottom {
-                    transform: translateY(var(--pos_end)) translateZ(var(--pos_start)) rotateY(180deg) rotateX(-90deg);
-                }
-
-                .back {
-                    transform: translateZ(-${this.css.box_size}) rotateY(180deg);
-                }
+                .left {transform: translateZ(var(--pos_start)) translateX(var(--pos_start)) rotateY(-90deg);}
+                .right {transform: translateZ(var(--pos_start)) translateX(var(--pos_end)) rotateY(90deg);}
+                .top {transform: translateY(var(--pos_start)) translateZ(var(--pos_start)) rotateX(90deg) ;}
+                .bottom {transform: translateY(var(--pos_end)) translateZ(var(--pos_start)) rotateY(180deg) rotateX(-90deg);}
+                .back {transform: translateZ(-${this.css.box_size}) rotateY(180deg);}
             }
 
             .inputsBox {
@@ -126,15 +113,9 @@ export default class cube3D extends HTMLElement {
     }
 
     #addEvents() {
-        const x = this.dom.querySelector("#X")
-        const y = this.dom.querySelector("#Y")
-        console.log(x)
-
-        x.addEventListener("input", (e) => {
-            this.dom.host.style.setProperty("--rotateX", e.target.value + "deg")
-        })
-        y.addEventListener("input", (e) => {
-            this.dom.host.style.setProperty("--rotateY", e.target.value + "deg")
+        window.addEventListener("mousemove", (e) => {
+            this.dom.host.style.setProperty("--rotateY", Math.round((e.clientX / window.innerWidth) * 360) + "deg")
+            this.dom.host.style.setProperty("--rotateX", Math.round((e.clientY / window.innerHeight) * 360) + "deg")
         })
     }
 

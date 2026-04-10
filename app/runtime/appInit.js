@@ -23,26 +23,23 @@ const loadModules = async (modules) => {
 }
 
 const init = async () => {
-    const path = "./../../../app/"
+    await addGlobalLevel()
+
     const landing = {
-        "module": `${path}interface/loads/appLoad-landing.js`
+        "module": `${window.level.route}/app/interface/loads/appLoad-landing.js`
     }
     const app = {
         "styles": {
-            "conf": `${path}styles/conf.css`,
-            "mainClasses": `${path}styles/mainClasses.css`,
-            "mainContainers": `${path}/styles/mainContainers.css`
+            "conf": `${window.level.route}/app/styles/conf.css`,
+            "mainClasses": `${window.level.route}/app/styles/mainClasses.css`,
+            "mainContainers": `${window.level.route}/app//styles/mainContainers.css`
         },
         "modules": {
-            "mainContainers": `${path}interface/loads/mainContainers.js`
+            "mainContainers": `${window.level.route}/app/interface/loads/mainContainers.js`
         }
     }
 
-    await Promise.all([
-        addGlobalLevel(),
-        loadStyles(app.styles)
-    ])
-
+    loadStyles(app.styles)
     await loadModules(landing)
     landing.module.init()
 
