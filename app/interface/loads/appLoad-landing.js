@@ -2,7 +2,27 @@ const drawLanding = (help) => {
     const landingContainer = help.dom.add(document.body, "div", "landingContainer max")
     const titlesSection = help.dom.add(landingContainer, "section", "titlesSection center")
     const titlesBox = help.dom.add(titlesSection, "div", "titlesBox")
-    return {'landingContainer': landingContainer, 'titlesBox': titlesBox}
+    const animationSection = help.dom.add(landingContainer, "section", "animationSection center")
+    return { 'landingContainer': landingContainer, 'titlesBox': titlesBox, 'animationSection': animationSection }
+}
+
+const addCube = async (help, boxes) => {
+    const componentMod = await help.import.object({
+        "module": "/frameWork/components/nano/3d/cube.js"
+    })
+    const deps = {
+        'dom': '/frameWork/dependencies/helpers/dom.js',
+        'base': '/frameWork/dependencies/classes/class_base.js'
+    }
+    await help.import.object(deps)
+
+    const cubeComponent = help.dom.add(boxes.animationSection, componentMod.module.tag)
+    const css = {
+        box_size: "300px",
+    }
+    cubeComponent.css = css
+    Object.entries(deps).forEach(([key, value]) => cubeComponent.deps[key] = value.default ?? value)
+    cubeComponent.init()
 }
 
 const addTextComponents = async (help, boxes) => {
@@ -51,6 +71,7 @@ export const init = async () => {
     console.log("appLoading - landing")
     const help = window.level.help
     const boxes = drawLanding(help)
+    await addCube(help, boxes)
     await addTextComponents(help, boxes)
 }
 

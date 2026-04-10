@@ -14,6 +14,7 @@ body {
     overflow: hidden;
 
     .landingContainer {
+        display: flex;
 
         .titlesSection {
             width: 50%;
@@ -28,6 +29,12 @@ body {
                     left: 6px;
                 }
             }
+        }
+
+        .animationSection {
+            width: 50%;
+            height: 100%;
+            border: 1px solid red;
         }
     }
 
