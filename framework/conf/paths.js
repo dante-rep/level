@@ -1,5 +1,5 @@
 export const help = {
-    "dom": "/frameWork/dependencies/helpers/dom.js",
-    "css": "/frameWork/dependencies/helpers/css.js",
-    "import": "/frameWork/dependencies/helpers/imports.js"
+    "dom": "/framework/dependencies/helpers/dom.js",
+    "css": "/framework/dependencies/helpers/css.js",
+    "import": "/framework/dependencies/helpers/imports.js"
 }

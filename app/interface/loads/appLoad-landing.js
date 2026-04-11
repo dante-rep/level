@@ -8,11 +8,11 @@ const drawLanding = (help) => {
 
 const addCube = async (help, boxes) => {
     const componentMod = await help.import.object({
-        "module": "/frameWork/components/nano/3d/cube.js"
+        "module": "/framework/components/nano/3d/cube.js"
     })
     const deps = {
-        'dom': '/frameWork/dependencies/helpers/dom.js',
-        'base': '/frameWork/dependencies/classes/class_base.js'
+        'dom': '/framework/dependencies/helpers/dom.js',
+        'base': '/framework/dependencies/classes/class_base.js'
     }
     await help.import.object(deps)
 
@@ -31,12 +31,12 @@ const addCube = async (help, boxes) => {
 
 const addTextComponents = async (help, boxes) => {
     const componentMod = await help.import.object({
-        "module": "/frameWork/components/nano/text/animatedText.js"
+        "module": "/framework/components/nano/text/animatedText.js"
     })
     const deps = {
-        'dom': '/frameWork/dependencies/helpers/dom.js',
-        'base': '/frameWork/dependencies/classes/class_base.js',
-        'fonts': '/frameWork/dependencies/classes/class_fonts.js'
+        'dom': '/framework/dependencies/helpers/dom.js',
+        'base': '/framework/dependencies/classes/class_base.js',
+        'fonts': '/framework/dependencies/classes/class_fonts.js'
     }
     await help.import.object(deps)
 
