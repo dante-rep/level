@@ -2,6 +2,9 @@
     /* body */
     --bodyBack: rgb(220, 220, 220);
     --bodyTransition: 500ms ease-in-out;
+    /* landing */
+    --landingOpacity: 0;
+    --landingTransition: 1s;
     /* nav container */
     --navWidth: 100%;
     --navHeight: 60px;

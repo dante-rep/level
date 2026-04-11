@@ -7,3 +7,8 @@
 
 /* flex */
 .center {display: flex; align-items: center; justify-content: center;}
+.column {display: flex; flex-direction: column;}
+
+/* visibility */
+.visible  {opacity: 1;}
+.invisible {opacity: 0;}

@@ -15,8 +15,11 @@ body {
 
     .landingContainer {
         display: flex;
+        transition: var(--landingTransition);
 
         .titlesSection {
+            align-items: center;
+            justify-content: center;
             width: 50%;
             height: 100%;
             border: 1px dashed grey;
@@ -24,10 +27,19 @@ body {
             .titlesBox {
                 width: fit-content;
                 height: fit-content;
+                margin-bottom: 120px;
 
-                .bottomTitle {
-                    left: 6px;
+                .topTitle {
+                    left: -6px;
+                    /* fix font margin */
+                    margin-bottom: 12px;
                 }
+            }
+
+            input {
+                font-size: 22px;
+                padding: 0 40px;
+                cursor: pointer;
             }
         }
 

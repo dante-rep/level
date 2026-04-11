@@ -1,14 +1,27 @@
-const drawLanding = (help) => {
-    const landingContainer = help.dom.add(document.body, "div", "landingContainer max")
-    const titlesSection = help.dom.add(landingContainer, "section", "titlesSection center")
-    const titlesBox = help.dom.add(titlesSection, "div", "titlesBox")
-    const animationSection = help.dom.add(landingContainer, "section", "animationSection center")
-    return { 'landingContainer': landingContainer, 'titlesBox': titlesBox, 'animationSection': animationSection }
+const drawLanding = async (help) => {
+    const landingContainer = help.dom.add(document.body, "div", "landingContainer invisible max")
+    landingContainer.innerHTML = `
+        <section class="titlesSection column">
+            <div class="titlesBox column"></div>
+            <input id="access" type="button" class="button" value="Access">
+        </section>
+        <section class="animationSection center"></section>
+    `
+
+    const titlesBox = landingContainer.querySelector(".titlesBox")
+    const animationSection = landingContainer.querySelector(".animationSection")
+    const [, cube] = await Promise.all([addTextComponents(help, titlesBox), addCube(help, animationSection)])
+    console.log(cube)
+    landingContainer.classList.replace("invisible", "visible")
+    return {
+        'access': landingContainer.querySelector("#access"),
+        'cube': cube
+    }
 }
 
-const addCube = async (help, boxes) => {
+const addCube = async (help, box) => {
     const componentMod = await help.import.object({
-        "module": "/framework/components/nano/3d/cube.js"
+        "module": "/framework/components/nano/geometry/cube.js"
     })
     const deps = {
         'dom': '/framework/dependencies/helpers/dom.js',
@@ -16,7 +29,7 @@ const addCube = async (help, boxes) => {
     }
     await help.import.object(deps)
 
-    const cubeComponent = help.dom.add(boxes.animationSection, componentMod.module.tag)
+    const cubeComponent = help.dom.add(box, componentMod.module.tag)
     const css = {
         box_perspective: "900px",
         box_size: "300px",
@@ -27,9 +40,10 @@ const addCube = async (help, boxes) => {
     cubeComponent.css = css
     Object.entries(deps).forEach(([key, value]) => cubeComponent.deps[key] = value.default ?? value)
     cubeComponent.init()
+    return cubeComponent
 }
 
-const addTextComponents = async (help, boxes) => {
+const addTextComponents = async (help, box) => {
     const componentMod = await help.import.object({
         "module": "/framework/components/nano/text/animatedText.js"
     })
@@ -41,7 +55,7 @@ const addTextComponents = async (help, boxes) => {
     await help.import.object(deps)
 
     /* top title */
-    const titleTop = help.dom.add(boxes.titlesBox, componentMod.module.tag)
+    const titleTop = help.dom.add(box, componentMod.module.tag, "topTitle relative")
     titleTop.fonts = [{ 'name': 'garden', 'src': `${window.level.route}/app/src/fonts/Neuropol.otf` }]
     titleTop.css = {
         charBox_back: "rgb(46, 46, 46)",
@@ -58,7 +72,7 @@ const addTextComponents = async (help, boxes) => {
     titleTop.init()
 
     /* bottom title */
-    const titleBottom = help.dom.add(boxes.titlesBox, componentMod.module.tag, "bottomTitle relative")
+    const titleBottom = help.dom.add(box, componentMod.module.tag, "bottomTitle")
     titleBottom.fonts = [{ 'name': 'other', 'src': `${window.level.route}/app/src/fonts/RonduitCapitals-Light.woff` }]
     titleBottom.css = {
         char_empty: "30px",
@@ -71,14 +85,24 @@ const addTextComponents = async (help, boxes) => {
     titleBottom.init()
 }
 
+const addEvents = (items) => {
+    console.log(items)
+    items.access.addEventListener("click", () => {
+        exit()
+    })
+    document.addEventListener("appLoad", (e) => {
+        console.log(e.target.value)
+    })
+}
+
 export const init = async () => {
     console.log("appLoading - landing")
     const help = window.level.help
-    const boxes = drawLanding(help)
-    await addCube(help, boxes)
-    await addTextComponents(help, boxes)
+    const items = await drawLanding(help)
+    addEvents(items)
 }
 
-export const exit = async () => {
-
+const exit = async () => {
+    const help = window.level.help
+    console.log("access")
 }

@@ -1,4 +1,5 @@
 import { addGlobalLevel } from "../../framework/global/createGlobal.js"
+import conf from "../conf/app.js"
 
 const addStyles = (url) => {
     new Promise(resolve => {
@@ -40,8 +41,10 @@ const init = async () => {
     }
 
     loadStyles(app.styles)
-    await loadModules(landing)
-    landing.module.init()
+    if (conf.developerMode) {
+        await loadModules(landing)
+        landing.module.init()
+    }
 
     /*     await Promise.all([
             loadStyles(app.styles),
