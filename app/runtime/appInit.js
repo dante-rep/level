@@ -43,7 +43,12 @@ const init = async () => {
     loadStyles(app.styles)
     if (conf.developerMode) {
         await loadModules(landing)
-        landing.module.init()
+        await landing.module.init()
+    }
+
+    for (let time = 0; time <= 5; time++) {
+        document.dispatchEvent(new CustomEvent("appLoad", {detail: {'loaded': time}}))
+        await new Promise(resolve => setTimeout(resolve, 1000))
     }
 
     /*     await Promise.all([
