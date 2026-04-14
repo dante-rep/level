@@ -40,14 +40,13 @@ body {
                 .barBox {
                     width: 100%;
                     height: 0px;
-                    overflow: hidden;
                     transition: 500ms;
                 }
 
                 .barBox_expand {
                     margin-top: 50px;
                     width: 100%;
-                    height: 44px;
+                    height: 34px;
                 }
             }
 

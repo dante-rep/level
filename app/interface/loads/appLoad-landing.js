@@ -120,22 +120,24 @@ const addProgressBar = async (help, box) => {
     const css = {
         box_border: "1px solid grey",
         box_radius: "8px",
-        box_padding: "6px",
-        info_width: "80px",
-        info_height: "100%",
+        box_padding: "4px",
+
         info_border: "1px solid grey",
         info_radius: "4px",
-        itemBar_width: "18px",
-        itemBar_height: "20px",
-        itemBar_borderOff: "1px solid grey",
-        itemBar_radius: "4px",
+        item_width: "100%",
+        item_height: "100%",
+        
+        item_radius: "4px",
+        item_borderOff: "1px solid grey",
     }
+    const data = {items: 15, infoLenght: 3}
 
     const barComponent = help.dom.add(box, componentMod.module.tag)
     await help.import.object(deps)
     Object.entries(deps).forEach(([key, value]) => barComponent.deps[key] = value.default)
     Object.entries(helpers).forEach(([key, value]) => barComponent.deps[key] = value)
     barComponent.css = css
+    barComponent.data = data
 
     barComponent.init()
 }

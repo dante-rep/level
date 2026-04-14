@@ -10,21 +10,19 @@ export default class InfoBar extends HTMLElement {
         box_back: "none",
         box_padding: "none",
 
-        info_width: "40px",
-        info_height: "100%",
         info_border: "none",
         info_radius: "none",
         info_back: "none",
 
-        itemBar_width: "10px",
-        itemBar_height: "100%",
-        itemBar_border: "none",
-        itemBar_radius: "none",
-        itemBar_back: "none",
-        itemBar_off: "none",
-        itemBar_on: "red",
-        itemBar_borderOff: "none",
-        itemBar_borderOn: "none"
+        item_width: "80%",
+        item_height: "100%",
+        item_border: "none",
+        item_radius: "none",
+        item_back: "none",
+        item_off: "none",
+        item_on: "red",
+        item_borderOff: "none",
+        item_borderOn: "none"
     }
 
     constructor() {
@@ -37,12 +35,25 @@ export default class InfoBar extends HTMLElement {
         this.logic = {}
         this.deps = {}
         this.state = false
-        this.data = { 'items': 20 }
+        this.data = {
+            'items': 30,
+            'infoLenght': 2
+        }
     }
 
     /* private nethods */
     #drawComponent() {
-        this.mainBox = this.deps.dom.add(this.dom, "ul", "mainBox max")
+        this.mainBox = this.deps.dom.add(this.dom, "div", "mainBox max relative")
+        this.mainBox.innerHTML = `
+        <ul class="refLayer absolute max"></ul>
+        <ul class="visualLayer absolute max"></ul>
+        <div class="infoLayer absolute max"><div class="infoBox absolute transition"></div></div>
+        `
+        return {
+            ref: this.dom.querySelector(".refLayer"),
+            visual: this.dom.querySelector(".visualLayer"),
+            info: this.dom.querySelector(".infoLayer")
+        }
     }
 
     #addStyle() {
@@ -62,72 +73,53 @@ export default class InfoBar extends HTMLElement {
         }
 
         .mainBox {
-            position: relative;
-            display: flex;
-            align-items: center;
             background: var(--box_back);
             border: var(--box_border);
             border-radius: var(--box_radius);
-            padding: var(--box_padding);
 
-            * {transition: 300ms;}
+            .refLayer,
+            .visualLayer {
+                display: flex;
+                padding: var(--box_padding);
 
-            .infoBox {
-                width: var(--info_width);
-                height: var(--info_height);
-                border: var(--info_border);
-                border-radius: var(--info_radius);
-                background: var(--info_back);
-                backdrop-filter: blur(2px);
+                .refBox, 
+                .visualBox {width: calc((100% - 2 * var(--box_padding)) / ${this.data.items});}
+
+                .visualBox {
+                    border-radius: var(--item_radius);
+                    height: calc(100% - 2 * var(--box_padding));
+                    background: var(--item_back);
+                    border: 1px solid red;
+                }
             }
 
-            .itemBox {
-                width: calc((100% - var(--info_width)) / 20);
-                height: 100%;
-                border: 1px solid grey;
-            }
-
+            .refLayer {justify-content: space-between;}
         }
+
+        .infoLayer .infoBox {
+            top: var(--box_padding);
+            left: var(--box_padding);
+            width: calc(((100% - 2 * var(--box_padding)) / ${this.data.items}) * ${this.data.infoLenght});
+            height: calc(100% - 2 * var(--box_padding));
+            border: var(--info_border);
+            border-radius: var(--info_radius);
+            background: var(--info_back);
+            backdrop-filter: blur(4px);
+        }
+
 
         .relative {position: relative;}
         .absolute {position: absolute;}
         .max {width: 100%; height: 100%;}
         .center {display: flex; justify-content: center; align-items: center;}
-        .itemOff {border: var(--itemBar_borderOff); background: var(--itemBar_off);}
-        .itemOn {border: var(--itemBar_borderOn); background: var(--itemBar_on);}
+        .itemOff {border: var(--item_borderOff); background: var(--item_off);}
+        .itemOn {border: var(--item_borderOn); background: var(--item_on);}
+        .transition {transition: 300ms ease;}
         `
     }
 
     #configure() {
         this.css = this.deps.base.resolveCSS(this.css, this.#CSS, this)
-    }
-
-    #drawBars() {
-        const infoBox = this.deps.dom.add(this.mainBox, "li", "infoBox")
-        for (let i = 0; i < this.data.items; i++) {
-            const bar = this.deps.dom.add(this.mainBox, "li", "itemBox")
-        }
-    }
-
-    async #moveto(index) {
-        const infoBox = this.dom.querySelector(".infoBox")
-        const itemBoxes = Array.from(this.dom.querySelectorAll(".itemBox"))
-        const itemWidth = itemBoxes[0].offsetWidth
-
-        
-        for (let i = 0; i < index; i++) {
-            const initialInfoLeft = window.getComputedStyle(infoBox).transform
-            console.log(initialInfoLeft)
-
-            const itemTranslate = `${itemWidth * (i + 1)}px`
-            infoBox.style.transform = `translateX(${itemTranslate})`
-/*             itemBoxes[i].style.transform = `translateX(${-initialInfoLeft})`
- */            await new Promise(resolve => setTimeout(resolve, 1500))
-        }
-    }
-
-    #addFonts(fonts) {
-        this.deps.fonts.addFonts(fonts)
     }
 
     #checkConf() {
@@ -136,11 +128,42 @@ export default class InfoBar extends HTMLElement {
         this.state = ready
     }
 
+    #drawBar(box, className, number) {
+        for (let i = 0; i < number; i++) { const item = this.deps.dom.add(box, "li", className) }
+        return Array.from(box.querySelectorAll("li"))
+    }
+
+    #getRefPosition() {
+        const refBoxes = Array.from(this.dom.querySelectorAll(".refBox"))
+        return refBoxes.map(item => item.offsetLeft)
+    }
+
+    #correctPosition(refs, visualBoxes) {
+        const indexPos = refs.length - visualBoxes.length
+        visualBoxes.forEach((box, index) => { box.style.left = `${refs[index + indexPos]}px` })
+    }
+
+    #addFonts(fonts) {
+        this.deps.fonts.addFonts(fonts)
+    }
+
+    async moveto(index, refs, visual) {
+        const infoBox = this.dom.querySelector(".infoBox")
+        for (let i = 0; i < index; i++) {
+            if (visual[i]) {
+                /* move info */
+                infoBox.style.left = `${refs[i + 1]}px`
+                /* move itemBox */
+                visual[i].style.left = `${refs[i]}px`
+                await new Promise(resolve => setTimeout(resolve, 200))
+            }
+        }
+    }
+
     /* public methods */
     load() {
         this.#checkConf()
     }
-
 
     async init() {
         this.load()
@@ -148,11 +171,13 @@ export default class InfoBar extends HTMLElement {
             this.#configure()
             this.#addStyle()
 /*             this.#addFonts(this.fonts)
- */            this.#drawComponent()
-            this.#drawBars()
+ */            const boxes = this.#drawComponent()
+            const refsBoxes = this.#drawBar(boxes.ref, "refBox", this.data.items)
+            const refPos = this.#getRefPosition(refsBoxes)
+            const visualBoxes = this.#drawBar(boxes.visual, "visualBox absolute itemOff transition", this.data.items - this.data.infoLenght)
+            this.#correctPosition(refPos, visualBoxes)
             await new Promise(resolve => setTimeout(resolve, 2000))
-
-            this.#moveto(1)
+            this.moveto(21, refPos, visualBoxes)
         }
     }
 }
