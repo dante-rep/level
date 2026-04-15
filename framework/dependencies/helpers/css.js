@@ -3,3 +3,7 @@ export const getProp = (prop, dom = null) => {
     const validProp = prop.includes("--") ? prop : `--${prop}`
     return getComputedStyle(validDom).getPropertyValue(validProp)
 }
+
+export const getElementProp = (element, prop) => {
+    return getComputedStyle(element).getPropertyValue(prop)
+}

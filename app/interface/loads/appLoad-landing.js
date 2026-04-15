@@ -1,17 +1,17 @@
 const drawLanding = async (help) => {
     document.body.innerHTML += `
-        <div class="darkBar topDarkBar absolute transition500"></div>
-        <div class="landingContainer invisible max">
+        <div class="darkBar topDarkBar absolute transition3s"></div>
+        <div class="landingContainer invisible max transition08s">
             <section class="titlesSection column">
                 <div class="titlesContainer columnCenter">
                     <div class="titlesBox column"></div>
-                    <div class="barBox invisible transition500"></div>
+                    <div class="barBox invisible transition05s"></div>
                 </div> 
                 <input id="access" type="button" class="button hidden" value="Access">
             </section>
             <section class="animationSection center"></section>
         </div>
-        <div class="darkBar bottomDarkBar absolute transition500"></div>
+        <div class="darkBar bottomDarkBar absolute transition3s"></div>
     `
 
     const [titles, loadBar, cube] = await Promise.all([
@@ -172,9 +172,9 @@ const animateIn = async (help, boxes) => {
     /*  */
     boxes.landingContainer.classList.replace("invisible", "visible")
     await help.timers.awaitTransition(boxes.landingContainer)
-    console.log(boxes)
     boxes.appBar.classList.remove("invisible")
     boxes.appBar.classList.add("barBox_down", "visible")
+    help.events.send("algo", {value: 1})
 }
 
 const addEvents = (boxes) => {

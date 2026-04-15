@@ -1,20 +1,29 @@
 :root {
+    /* transitions */
+    --transition3s: 3s;
+    --transition08s: 800ms;
+    --transition05s: 500ms;
+
     /* body */
     --bodyBack: rgb(220, 220, 220);
-    --transition500: 4500ms ease-in-out;
+
     /* landing */
     --darkBarHeight: 70px;
     --landingOpacity: 0;
     --landingTransition: 1s;
+
     /* nav container */
     --navWidth: 100%;
     --navHeight: 60px;
+
     /* bottomBar container */
     --bottomBarWidth: 100%;
     --bottomBarHeight: 45px;
+
     /* menu container */
     --menuWidth: 260px;
     --menuHeight: calc(100% - (var(--navHeight) + var(--bottomBarHeight)));
+
     /* config container */
     --configWidth: 300px;
 }

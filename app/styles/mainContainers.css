@@ -24,7 +24,6 @@ body {
 
     .landingContainer {
         display: flex;
-        transition: var(--landingTransition);
 
         .titlesSection {
             align-items: center;
