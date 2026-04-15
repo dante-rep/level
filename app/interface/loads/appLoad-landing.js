@@ -1,25 +1,39 @@
 const drawLanding = async (help) => {
-    const landingContainer = help.dom.add(document.body, "div", "landingContainer invisible max")
-    landingContainer.innerHTML = `
-        <section class="titlesSection column">
-            <div class="titlesContainer columnCenter">
-                <div class="titlesBox column"></div>
-                <div id="barBox" class="barBox"></div>
-            </div> 
-            <input id="access" type="button" class="button hidden" value="Access">
-        </section>
-        <section class="animationSection center"></section>
+    document.body.innerHTML += `
+        <div class="darkBar topDarkBar absolute transition500"></div>
+        <div class="landingContainer invisible max">
+            <section class="titlesSection column">
+                <div class="titlesContainer columnCenter">
+                    <div class="titlesBox column"></div>
+                    <div class="barBox invisible transition500"></div>
+                </div> 
+                <input id="access" type="button" class="button hidden" value="Access">
+            </section>
+            <section class="animationSection center"></section>
+        </div>
+        <div class="darkBar bottomDarkBar absolute transition500"></div>
     `
 
-    const [, cube] = await Promise.all([
-        addTextComponents(help, landingContainer.querySelector(".titlesBox")),
-        addProgressBar(help, landingContainer.querySelector(".barBox")),
-        addCube(help, landingContainer.querySelector(".animationSection"))])
+    const [titles, loadBar, cube] = await Promise.all([
+        addTextComponents(help, document.querySelector(".titlesBox")),
+        addProgressBar(help, document.querySelector(".barBox")),
+        addCube(help, document.querySelector(".animationSection"))
+    ])
     return {
-        'landingContainer': landingContainer,
-        'bar': landingContainer.querySelector("#barBox"),
-        'access': landingContainer.querySelector("#access"),
-        'cube': cube
+        'landingContainer': document.querySelector(".landingContainer"),
+        'bars': {
+            top: document.querySelector(".topDarkBar"),
+            bottom: document.querySelector(".bottomDarkBar")
+        },
+        'titlesBox': document.querySelector(".titlesBox"),
+        'appBar': document.querySelector(".barBox"),
+        'access': document.querySelector("#access"),
+        'components': {
+            titleLevel: titles[0],
+            titleFrame: titles[1],
+            loadBar: loadBar,
+            cube: cube
+        }
     }
 }
 
@@ -103,6 +117,8 @@ const addTextComponents = async (help, box) => {
     box.prepend(titleTop)
     titleTop.init()
     titleBottom.init()
+
+    return [titleTop, titleBottom]
 }
 
 const addProgressBar = async (help, box) => {
@@ -119,18 +135,23 @@ const addProgressBar = async (help, box) => {
     }
     const css = {
         box_border: "1px solid grey",
-        box_radius: "8px",
+        box_radius: "4px",
         box_padding: "4px",
 
-        info_border: "1px solid grey",
-        info_radius: "4px",
-        item_width: "100%",
-        item_height: "100%",
-        
+        info_fontFamily: "qqq",
+/*         info_border: "1px solid grey",
+ */        info_radius: "2px",
+
+        item_width: "calc(100% - 4px)",
+        item_height: "12px",
         item_radius: "4px",
+        item_borderOn: "1px solid grey",
         item_borderOff: "1px solid grey",
+        item_backOn: "rgba(46, 46, 46, 0.9)",
+
+        transition: "300ms ease-out"
     }
-    const data = {items: 15, infoLenght: 3}
+    const data = {items: 20, infoLenght: 3}
 
     const barComponent = help.dom.add(box, componentMod.module.tag)
     await help.import.object(deps)
@@ -138,15 +159,22 @@ const addProgressBar = async (help, box) => {
     Object.entries(helpers).forEach(([key, value]) => barComponent.deps[key] = value)
     barComponent.css = css
     barComponent.data = data
+    barComponent.fonts = [{ 'name': 'qqq', 'src': `${window.level.route}/app/src/fonts/ds-digi.ttf` }]
 
     barComponent.init()
 }
 
 const animateIn = async (help, boxes) => {
+    /* aimacion darkBar */
+    boxes.bars.top.style.top = "0px"
+    boxes.bars.bottom.style.bottom = "0px"
+    await help.timers.awaitTransition(boxes.bars.top)
+    /*  */
     boxes.landingContainer.classList.replace("invisible", "visible")
     await help.timers.awaitTransition(boxes.landingContainer)
-
-    boxes.bar.classList.add("barBox_expand")
+    console.log(boxes)
+    boxes.appBar.classList.remove("invisible")
+    boxes.appBar.classList.add("barBox_down", "visible")
 }
 
 const addEvents = (boxes) => {

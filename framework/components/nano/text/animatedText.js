@@ -99,8 +99,8 @@ export default class AnimatedText extends HTMLElement {
         })
     }
 
-    #addFonts(fonts) {
-        this.deps.fonts.addFonts(fonts)
+    #addFonts() {
+        this.deps.fonts.addFonts(this.fonts)
     }
 
     #checkConf() {
@@ -120,7 +120,7 @@ export default class AnimatedText extends HTMLElement {
         if (this.state) {
             this.#configure()
             this.#addStyle()
-            this.#addFonts(this.fonts)
+            this.#addFonts()
             this.#drawComponent()
             this.#applyLogic()
             this.#addText()

@@ -1,8 +1,9 @@
 :root {
     /* body */
     --bodyBack: rgb(220, 220, 220);
-    --bodyTransition: 500ms ease-in-out;
+    --transition500: 4500ms ease-in-out;
     /* landing */
+    --darkBarHeight: 70px;
     --landingOpacity: 0;
     --landingTransition: 1s;
     /* nav container */

@@ -2,7 +2,7 @@ import { addGlobalLevel } from "../../framework/global/createGlobal.js"
 import conf from "../conf/app.js"
 
 const addStyles = (url) => {
-    new Promise(resolve => {
+    return new Promise(resolve => {
         const newLink = document.createElement("link")
         newLink.rel = "stylesheet"
         newLink.href = url

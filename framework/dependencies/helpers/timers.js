@@ -4,7 +4,10 @@ export const getTransition = (element) => {
     if (value.endsWith("s")) return parseFloat(value) * 1000
 }
 
+
+
 export const awaitTransition = async (element) => {
     const time = getTransition(element)
+    console.log(time, element)
     await new Promise(resolve => setTimeout(resolve, time))
 }

@@ -17,3 +17,6 @@
 
 /* display */
 .hidden {display: none;}
+
+/* transitions */
+.transition500 {transition: var(--transition500);}
