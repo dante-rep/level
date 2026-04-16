@@ -15,8 +15,8 @@ body {
 
     .darkBar {
         width: 100%;
-        height: 70px;
-        border: 1px solid red;
+        height: var(--darkBarHeight);
+        background: var(--landingColor1);
     }
 
     .topDarkBar {top: calc(var(--darkBarHeight) * -1);}

@@ -14,3 +14,7 @@ export const awaitTransition = async (element) => {
     const time = getTransition(element)
     await new Promise(resolve => setTimeout(resolve, time))
 }
+
+export const sleep = async (time) => {
+    await new Promise(resolve => setTimeout(resolve, time))
+}

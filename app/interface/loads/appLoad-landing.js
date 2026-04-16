@@ -1,6 +1,6 @@
 const drawLanding = async (help) => {
     document.body.innerHTML += `
-        <div class="darkBar topDarkBar absolute transition3s"></div>
+        <div class="darkBar topDarkBar absolute transition1s"></div>
         <div class="landingContainer invisible max transition08s">
             <section class="titlesSection column">
                 <div class="titlesContainer columnCenter">
@@ -11,7 +11,7 @@ const drawLanding = async (help) => {
             </section>
             <section class="animationSection center"></section>
         </div>
-        <div class="darkBar bottomDarkBar absolute transition3s"></div>
+        <div class="darkBar bottomDarkBar absolute transition1s"></div>
     `
 
     const [titles, loadBar, cube] = await Promise.all([
@@ -19,6 +19,7 @@ const drawLanding = async (help) => {
         addProgressBar(help, document.querySelector(".barBox")),
         addCube(help, document.querySelector(".animationSection"))
     ])
+
     return {
         'landingContainer': document.querySelector(".landingContainer"),
         'bars': {
@@ -102,7 +103,7 @@ const addTextComponents = async (help, box) => {
         char_empty: "30px",
         char_fontSize: "32px",
         char_fontFamily: "other",
-        char_fontColor: "rgb(46, 46, 46)"
+        char_fontColor: help.css.getVar("landingColor1"),
     }
 
     const titleBottom = help.dom.add(box, componentMod.module.tag, "bottomTitle")
@@ -147,11 +148,11 @@ const addProgressBar = async (help, box) => {
         item_radius: "4px",
         item_borderOn: "1px solid grey",
         item_borderOff: "1px solid grey",
-        item_backOn: "rgba(46, 46, 46, 0.9)",
+        item_backOn: help.css.getVar("landingColor1"),
 
         transition: "300ms ease-out"
     }
-    const data = {items: 20, infoLenght: 3}
+    const data = {items: 20, infoLenght: 4}
 
     const barComponent = help.dom.add(box, componentMod.module.tag)
     await help.import.object(deps)

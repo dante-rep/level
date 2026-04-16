@@ -37,6 +37,7 @@ export default class InfoBar extends HTMLElement {
         this.logic = {}
         this.deps = {}
         this.state = false
+        this.lastState = 0
         this.data = {
             'items': 30,
             'infoLenght': 2,
@@ -49,7 +50,11 @@ export default class InfoBar extends HTMLElement {
         this.mainBox.innerHTML = `
         <ul class="refLayer absolute max"></ul>
         <ul class="visualLayer absolute max"></ul>
-        <div class="infoLayer absolute max"><span class="infoBox absolute center transition">[ 0 ]</span></div>
+        <div class="infoLayer absolute max">
+            <div class="infoBox absolute center transition">
+                <span class="percentage center">[ 0 ]</span>
+            </div>
+        </div>
         `
         return {
             ref: this.dom.querySelector(".refLayer"),
@@ -108,18 +113,22 @@ export default class InfoBar extends HTMLElement {
             align-items: center;
 
             .infoBox {
-                left: -2px;
+                left: 0px;
                 width: calc(((100% - 2 * var(--box_padding)) / ${this.data.items}) * ${this.data.infoLenght});
                 height: var(--info_height);
                 border: var(--info_border);
                 border-radius: var(--info_radius);
                 background: var(--info_back);
                 backdrop-filter: blur(4px);
-                font-family: var(--info_fontFamily);
-                font-size: 22px;
-/*                 font-weight: bolder;
- */                color: grey;
-                letter-spacing: 2px;
+
+                .percentage {
+                    font-family: var(--info_fontFamily);
+                    font-size: 18px;
+/*                  font-weight: bolder;
+*/               
+                    color: grey;
+                    letter-spacing: 2px;
+                }
             }
         }
     
@@ -166,36 +175,38 @@ export default class InfoBar extends HTMLElement {
         this.deps.fonts.addFonts(this.fonts)
     }
 
-    async moveto(index, refs, visual) {
-        const delay = 200
-        const percentSteps = 20
+    async moveTo(index) {
+        const delay = 20
+        const percSteps = 5
         const infoBox = this.dom.querySelector(".infoBox")
-        const percentPoints = []
-        for (let i = 0; i < visual.length; i++) { percentPoints.push(Math.round((i / (visual.length - 1)) * 100)) }
-        const stepsPerBlock = delay / percentSteps
-        const totalSteps = percentPoints.length * stepsPerBlock
-        let counter = Number(infoBox.textContent) || 0
+        const percentageBox = this.dom.querySelector(".percentage")
+        const refPos = this.#getRefPosition()
+        const visual = Array.from(this.dom.querySelectorAll(".visualBox"))
+        const visualBarWidth = this.mainBox.offsetWidth - infoBox.offsetWidth
+        /* % en distancia */
+        const distancia = visualBarWidth * (index / 100)
+        const boxesToMove = refPos.filter((ref, index) => ref < distancia && visual[index] && visual[index].querySelector(".itemBar").classList.contains("itemOff"))
 
+        for (let i = 0; i < refPos.length; i++) {
+            if (refPos[i] >= distancia) return
 
-        for (let i = 0; i < index; i++) {
-            if (visual[i]) {
+            if (visual[i] && visual[i].querySelector(".itemBar").classList.contains("itemOff")) {
                 /* move info */
-                visual[i] === visual.at(-1)
-                    ? infoBox.style.left = `calc(${refs[i + 1]}px + var(--box_padding))`
-                    : infoBox.style.left = `${refs[i + 1]}px`
-                /* move itemBox */
-                visual[i].style.left = `${refs[i]}px`
-                visual[i].querySelector(".itemBar").classList.replace("itemOff", "itemOn")
-                /* counter */
-                for (let step = 0; step <= delay / 20; step++) {
-                    const currentStep = (i * stepsPerBlock) + step
-                    counter = Number(((currentStep / totalSteps) * 100).toFixed(0))
-                    const text = counter === 100 ? "Done" : "[ " + counter + " ]"
-                    infoBox.textContent !== counter && (infoBox.textContent = text)
-                    await new Promise(resolve => setTimeout(resolve, delay / 20))
+                infoBox.style.left = `${refPos[i + 1]}px`;
+                /* move item */
+                visual[i].style.left = `${refPos[i]}px`;
+                visual[i].querySelector(".itemBar").classList.replace("itemOff", "itemOn");
+                /* update % */
+                for (let x = 1; x <= percSteps; x++) {
+                    const t = x / percSteps
+                    const currentPx = refPos[i] + (refPos[i + 1] - refPos[i]) * t
+                    const percent = (i === visual.length - 1 && x === percSteps) ? 100 : ((currentPx / visualBarWidth) * 100).toFixed(1)
+                    percentageBox.textContent = `[ ${percent} ]`
+                    await new Promise(r => setTimeout(r, delay))
                 }
             }
         }
+        this.lastState = index
     }
 
     /* public methods */
@@ -209,17 +220,26 @@ export default class InfoBar extends HTMLElement {
             this.#configure()
             this.#addStyle()
             this.#addFonts(this.fonts)
+            await new Promise(requestAnimationFrame)
+            await new Promise(requestAnimationFrame)
+
             const boxes = this.#drawComponent()
 
             const refsBoxes = this.#drawBar(boxes.ref, "refBox", this.data.items)
+            await new Promise(requestAnimationFrame)
+            await new Promise(requestAnimationFrame)
+
             const refPos = this.#getRefPosition(refsBoxes)
             const visualBoxes = this.#drawBar(boxes.visual, "visualBox absolute center transition", this.data.items - this.data.infoLenght)
 /*             await new Promise(requestAnimationFrame)
  */            this.#correctPosition(refPos, visualBoxes)
+
             this.#drawItems(visualBoxes)
 
             await new Promise(resolve => setTimeout(resolve, 3000))
-            this.moveto(11, refPos, visualBoxes)
+            await this.moveTo(50)
+            console.log("d")
+            await this.moveTo(100)
         }
     }
 }

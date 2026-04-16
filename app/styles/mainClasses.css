@@ -20,5 +20,6 @@
 
 /* transitions */
 .transition3s {transition: var(--transition3s) ease-in-out;}
+.transition1s {transition: var(--transition1s) ease-in-out;}
 .transition08s {transition: var(--transition08s) ease-in-out;}
 .transition05s {transition: var(--transition05s) ease-in-out;}

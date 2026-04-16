@@ -7,7 +7,11 @@ const addStyles = (url) => {
         newLink.rel = "stylesheet"
         newLink.href = url
         document.head.appendChild(newLink)
-        newLink.onload = resolve
+        newLink.onload = async () => { /* puto css */
+            await new Promise(requestAnimationFrame)
+            await new Promise(requestAnimationFrame)
+            resolve()
+        }
     })
 }
 
@@ -40,19 +44,18 @@ const init = async () => {
         }
     }
 
-    loadStyles(app.styles)
+    await loadStyles(app.styles)
     if (conf.developerMode) {
         await loadModules(landing)
         await landing.module.init()
     }
 
     for (let time = 0; time <= 5; time++) {
-        document.dispatchEvent(new CustomEvent("appLoad", {detail: {'loaded': time}}))
+        document.dispatchEvent(new CustomEvent("appLoad", { detail: { 'loaded': time } }))
         await new Promise(resolve => setTimeout(resolve, 1000))
     }
 
     /*     await Promise.all([
-            loadStyles(app.styles),
             loadModules(app.modules)
         ])
      */

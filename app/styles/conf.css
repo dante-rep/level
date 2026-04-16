@@ -1,6 +1,7 @@
 :root {
     /* transitions */
     --transition3s: 3s;
+    --transition1s: 1s;
     --transition08s: 800ms;
     --transition05s: 500ms;
 
@@ -8,9 +9,9 @@
     --bodyBack: rgb(220, 220, 220);
 
     /* landing */
-    --darkBarHeight: 70px;
+    --landingColor1: rgb(46, 46, 46);
+    --darkBarHeight: 24px;
     --landingOpacity: 0;
-    --landingTransition: 1s;
 
     /* nav container */
     --navWidth: 100%;
