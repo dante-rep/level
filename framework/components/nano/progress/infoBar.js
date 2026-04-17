@@ -24,7 +24,7 @@ export default class InfoBar extends HTMLElement {
         item_borderOff: "none",
         item_borderOn: "none",
 
-        transition: "300ms ease-in-out"
+        transition: "200ms ease-in-out"
     }
 
     constructor() {
@@ -36,12 +36,12 @@ export default class InfoBar extends HTMLElement {
         this.css = {}
         this.logic = {}
         this.deps = {}
-        this.state = false
-        this.lastState = 0
         this.data = {
             'items': 30,
             'infoLenght': 2,
         }
+        this.state = null
+        this.value = 0
     }
 
     /* private nethods */
@@ -52,7 +52,7 @@ export default class InfoBar extends HTMLElement {
         <ul class="visualLayer absolute max"></ul>
         <div class="infoLayer absolute max">
             <div class="infoBox absolute center transition">
-                <span class="percentage center">[ 0 ]</span>
+                <span class="infoText center">[ 0 ]</span>
             </div>
         </div>
         `
@@ -121,7 +121,7 @@ export default class InfoBar extends HTMLElement {
                 background: var(--info_back);
                 backdrop-filter: blur(4px);
 
-                .percentage {
+                .infoText {
                     font-family: var(--info_fontFamily);
                     font-size: 18px;
 /*                  font-weight: bolder;
@@ -175,20 +175,12 @@ export default class InfoBar extends HTMLElement {
         this.deps.fonts.addFonts(this.fonts)
     }
 
-    async moveTo(index) {
-        const delay = 20
-        const percSteps = 5
-        const infoBox = this.dom.querySelector(".infoBox")
-        const percentageBox = this.dom.querySelector(".percentage")
-        const refPos = this.#getRefPosition()
-        const visual = Array.from(this.dom.querySelectorAll(".visualBox"))
+    async #moveTo(value, infoBox, refPos, delay, visual) {
         const visualBarWidth = this.mainBox.offsetWidth - infoBox.offsetWidth
-        /* % en distancia */
-        const distancia = visualBarWidth * (index / 100)
-        const boxesToMove = refPos.filter((ref, index) => ref < distancia && visual[index] && visual[index].querySelector(".itemBar").classList.contains("itemOff"))
+        const distance = visualBarWidth * (value / 100)
 
         for (let i = 0; i < refPos.length; i++) {
-            if (refPos[i] >= distancia) return
+            if (refPos[i] >= distance) return
 
             if (visual[i] && visual[i].querySelector(".itemBar").classList.contains("itemOff")) {
                 /* move info */
@@ -196,17 +188,50 @@ export default class InfoBar extends HTMLElement {
                 /* move item */
                 visual[i].style.left = `${refPos[i]}px`;
                 visual[i].querySelector(".itemBar").classList.replace("itemOff", "itemOn");
-                /* update % */
-                for (let x = 1; x <= percSteps; x++) {
-                    const t = x / percSteps
-                    const currentPx = refPos[i] + (refPos[i + 1] - refPos[i]) * t
-                    const percent = (i === visual.length - 1 && x === percSteps) ? 100 : ((currentPx / visualBarWidth) * 100).toFixed(1)
-                    percentageBox.textContent = `[ ${percent} ]`
-                    await new Promise(r => setTimeout(r, delay))
-                }
             }
+            await this.deps.timers.sleep(delay)
         }
-        this.lastState = index
+    }
+
+    async #updateValue(value, infoBox, refPos, visuals, delay) {
+        const percentageBox = this.dom.querySelector(".percentage")
+        const infoText = infoBox.querySelector(".infoText")
+        const roundSteps = 5
+        const blocks = visuals.length
+        const totalSteps = roundSteps * blocks
+        const actualSteps = Math.floor((value * totalSteps) / 100)
+        const stepValue = 100 / totalSteps
+
+        console.log("total:", totalSteps, "blocks", blocks, "step", stepValue, "actualSteps", actualSteps)
+
+        console.log(this.value)
+        for (let x = 1; x <= actualSteps; x++) { /* falta el .5 */
+            console.log(this.value + stepValue * x)
+            const newValue = x === actualSteps && this.value + value === 100
+            ? 100
+            : this.value + stepValue * x
+            infoText.textContent = `[ ${newValue.toFixed(1)} ]`
+            await new Promise(r => setTimeout(r, delay / actualSteps))
+        }
+    }
+
+    async changeValue(value) {
+        const visuals = Array.from(this.dom.querySelectorAll(".visualBox"))
+        const infoBox = this.dom.querySelector(".infoBox")
+        const refPos = this.#getRefPosition()
+        const delay = this.deps.timers.getTransition(infoBox) / 3 /* transition css */
+
+        if (this.value + value < 0 || this.value + value > 100) {
+            console.error(this, "value not valid 0 - 100")
+            return
+        }
+
+        await Promise.all([
+            this.#updateValue(value, infoBox, refPos, visuals, delay)
+
+/*             this.#moveTo(value, infoBox, refPos, delay, visual),
+ */        ])
+        this.value = this.value + value
     }
 
     /* public methods */
@@ -233,13 +258,12 @@ export default class InfoBar extends HTMLElement {
             const visualBoxes = this.#drawBar(boxes.visual, "visualBox absolute center transition", this.data.items - this.data.infoLenght)
 /*             await new Promise(requestAnimationFrame)
  */            this.#correctPosition(refPos, visualBoxes)
-
             this.#drawItems(visualBoxes)
 
-            await new Promise(resolve => setTimeout(resolve, 3000))
-            await this.moveTo(50)
-            console.log("d")
-            await this.moveTo(100)
+            await this.deps.timers.sleep(3000)
+            this.changeValue(50)
+            await this.deps.timers.sleep(3000)
+            this.changeValue(50)
         }
     }
 }

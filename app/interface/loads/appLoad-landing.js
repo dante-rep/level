@@ -128,7 +128,9 @@ const addProgressBar = async (help, box) => {
     })
     const helpers = {
         'dom': help.dom,
-        'css': help.css
+        'css': help.css,
+        'events': help.events,
+        'timers': help.timers
     }
     const deps = {
         'base': `${window.level.route}/framework/dependencies/classes/class_base.js`,
@@ -152,7 +154,7 @@ const addProgressBar = async (help, box) => {
 
         transition: "300ms ease-out"
     }
-    const data = {items: 20, infoLenght: 4}
+    const data = {items: 25, infoLenght: 4}
 
     const barComponent = help.dom.add(box, componentMod.module.tag)
     await help.import.object(deps)
