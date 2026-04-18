@@ -1,4 +1,4 @@
-export const tag = "nano-cube-3d"
+export const tag = "cube-3d"
 export default class cube3D extends HTMLElement {
     /* private props */
     #DEPS = ["base", "dom"]

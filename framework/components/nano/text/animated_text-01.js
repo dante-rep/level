@@ -1,4 +1,4 @@
-export const tag = "nano-animated-text"
+export const tag = "animated_text-01"
 export default class AnimatedText extends HTMLElement {
     /* private props */
     #DEPS = ["base", "fonts", "dom"]

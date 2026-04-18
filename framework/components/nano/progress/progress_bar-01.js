@@ -1,4 +1,4 @@
-export const tag = "nano-info-bar"
+export const tag = "progress_bar-01"
 export default class InfoBar extends HTMLElement {
     /* private props */
     #DEPS = ["base", "fonts", "dom"]
@@ -189,7 +189,7 @@ export default class InfoBar extends HTMLElement {
                 visual[i].style.left = `${refPos[i]}px`;
                 visual[i].querySelector(".itemBar").classList.replace("itemOff", "itemOn");
             }
-            await this.deps.timers.sleep(delay)
+            await this.deps.timers.sleep(delay / 3)
         }
     }
 
@@ -203,16 +203,16 @@ export default class InfoBar extends HTMLElement {
         const stepValue = 100 / totalSteps
 
         console.log("total:", totalSteps, "blocks", blocks, "step", stepValue, "actualSteps", actualSteps)
-
-        console.log(this.value)
+        console.log("value", this.value)
         for (let x = 1; x <= actualSteps; x++) { /* falta el .5 */
             console.log(this.value + stepValue * x)
-            const newValue = x === actualSteps && this.value + value === 100
-            ? 100
-            : this.value + stepValue * x
+            const newValue = x === actualSteps
+                ? this.value + value
+                : this.value + stepValue * x
             infoText.textContent = `[ ${newValue.toFixed(1)} ]`
             await new Promise(r => setTimeout(r, delay / actualSteps))
         }
+        this.value === value
     }
 
     async changeValue(value) {
@@ -229,9 +229,8 @@ export default class InfoBar extends HTMLElement {
         await Promise.all([
             this.#updateValue(value, infoBox, refPos, visuals, delay)
 
-/*             this.#moveTo(value, infoBox, refPos, delay, visual),
+/*             this.#moveTo(value, infoBox, refPos, visual, delay),
  */        ])
-        this.value = this.value + value
     }
 
     /* public methods */
@@ -261,9 +260,11 @@ export default class InfoBar extends HTMLElement {
             this.#drawItems(visualBoxes)
 
             await this.deps.timers.sleep(3000)
-            this.changeValue(50)
+            this.changeValue(10)
             await this.deps.timers.sleep(3000)
-            this.changeValue(50)
+            this.changeValue(30)
+            await this.deps.timers.sleep(3000)
+            this.changeValue(100)
         }
     }
 }

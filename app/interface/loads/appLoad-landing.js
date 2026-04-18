@@ -40,7 +40,7 @@ const drawLanding = async (help) => {
 
 const addCube = async (help, box) => {
     const componentMod = await help.import.object({
-        "module": `${window.level.route}/framework/components/nano/geometry/cube.js`
+        "module": `${window.level.route}/framework/components/nano/geometry/cube_3d.js`
     })
     const helpers = {
         'dom': help.dom
@@ -68,7 +68,7 @@ const addCube = async (help, box) => {
 
 const addTextComponents = async (help, box) => {
     const componentMod = await help.import.object({
-        "module": `${window.level.route}/framework/components/nano/text/animatedText.js`
+        "module": `${window.level.route}/framework/components/nano/text/animated_text-01.js`
     })
     const helpers = {
         'dom': help.dom
@@ -124,7 +124,7 @@ const addTextComponents = async (help, box) => {
 
 const addProgressBar = async (help, box) => {
     const componentMod = await help.import.object({
-        "module": `${window.level.route}/framework/components/nano/progress/infoBar.js`
+        "module": `${window.level.route}/framework/components/nano/progress/progress_bar-01.js`
     })
     const helpers = {
         'dom': help.dom,
@@ -154,7 +154,7 @@ const addProgressBar = async (help, box) => {
 
         transition: "300ms ease-out"
     }
-    const data = {items: 25, infoLenght: 4}
+    const data = {items: 24, infoLenght: 4}
 
     const barComponent = help.dom.add(box, componentMod.module.tag)
     await help.import.object(deps)

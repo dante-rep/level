@@ -14,7 +14,7 @@ export const addGlobalLevel = async () => {
     window.level["route"] = window.location.pathname.split("/")[1] === serverPath ? `/${serverPath}` : ""
     console.log("global - route:", window.level.route)
     /* helpers */
-    const modulesPath = await import(`${window.level.route}/framework/conf/paths.js`)
-    window.level["help"] = modulesPath.help
+    const modulesPath = await import(`${window.level.route}/framework/conf/helpersPaths.js`)
+    window.level["help"] = modulesPath.default
     await addToObject(window.level.help)
 }
