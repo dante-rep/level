@@ -191,7 +191,7 @@ const addEvents = (boxes) => {
 
 export const init = async () => {
     console.log("appLoading - landing")
-    const help = window.level.help
+    const help = window.level.deps.helpers
     const boxes = await drawLanding(help)
     await animateIn(help, boxes)
     addEvents(boxes)
@@ -199,6 +199,6 @@ export const init = async () => {
 }
 
 const exit = async () => {
-    const help = window.level.help
+    const help = window.level.deps.helpers
     console.log("access")
 }

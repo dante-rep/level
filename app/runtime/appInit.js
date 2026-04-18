@@ -24,7 +24,7 @@ const loadStyles = async (styles) => {
 }
 
 const loadModules = async (modules) => {
-    return await window.level.help.import.object(modules)
+    return await window.level.deps.helpers.import.object(modules)
 }
 
 const init = async () => {

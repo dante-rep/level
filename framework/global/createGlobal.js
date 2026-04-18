@@ -1,6 +1,6 @@
 const addToObject = async (obj) => {
     const imports = Object.entries(obj).map(async ([name, url]) => {
-        obj[name] = window.level.route === "" 
+        obj[name] = window.level.route === ""
             ? await import(url)
             : await import(`${window.level.route}${url}`)
     })
@@ -13,8 +13,10 @@ export const addGlobalLevel = async () => {
     /* route */
     window.level["route"] = window.location.pathname.split("/")[1] === serverPath ? `/${serverPath}` : ""
     console.log("global - route:", window.level.route)
-    /* helpers */
-    const modulesPath = await import(`${window.level.route}/framework/conf/helpersPaths.js`)
-    window.level["help"] = modulesPath.default
-    await addToObject(window.level.help)
+    /* dependencies */
+    const dependencies = (await import(`${window.level.route}/framework/conf/dependencies_paths.js`)).default
+    window.level["deps"] = {}
+    window.level.deps["classes"] = dependencies.classes
+    window.level.deps["helpers"] = dependencies.helpers
+    await addToObject(window.level.deps.helpers)
 }
