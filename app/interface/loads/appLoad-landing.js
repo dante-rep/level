@@ -137,24 +137,31 @@ const addProgressBar = async (help, box) => {
         'fonts': `${window.level.route}/framework/dependencies/classes/class_fonts.js`
     }
     const css = {
-        box_border: "1px solid grey",
         box_radius: "4px",
         box_padding: "4px",
 
-        info_fontFamily: "qqq",
-/*         info_border: "1px solid grey",
- */        info_radius: "2px",
+        progress_height: "24px",
+        progress_back: "rgba(0, 0, 0, 0.6)",
+        progress_radius: "4px",
+        progress_fontFamily: "ds-digi",
+        progress_fontSize: "14px",
+        progress_fontColor: "rgb(200, 200, 200)",
+        progress_fontWeight: "bolder",
+        progress_letterSpacing: "2px",
 
-        item_width: "calc(100% - 4px)",
-        item_height: "12px",
-        item_radius: "4px",
-        item_borderOn: "1px solid grey",
-        item_borderOff: "1px solid grey",
-        item_backOn: help.css.getVar("landingColor1"),
+        item_widthOff: "calc(100% - 2px)",
+        item_heightOff: "100%",
+        item_radiusOff: "4px",
+        item_borderOff: "1px solid rgba(0, 0, 0, 0.2)",
 
-        transition: "300ms ease-out"
+        item_widthOn: "14px",
+        item_heightOn: "10px",
+        item_radiusOn: "0px",
+        item_borderOn: "1px solid rgba(0, 0, 0, 0.2)",
+
+        transition: "250ms ease-out"
     }
-    const data = {items: 24, infoLenght: 4}
+    const data = { items_multiplier: 2, progress_length: 2, progress_steps: 5 }
 
     const barComponent = help.dom.add(box, componentMod.module.tag)
     await help.import.object(deps)
@@ -162,7 +169,7 @@ const addProgressBar = async (help, box) => {
     Object.entries(helpers).forEach(([key, value]) => barComponent.deps[key] = value)
     barComponent.css = css
     barComponent.data = data
-    barComponent.fonts = [{ 'name': 'qqq', 'src': `${window.level.route}/app/src/fonts/ds-digi.ttf` }]
+    barComponent.fonts = [{ 'name': 'ds-digi', 'src': `${window.level.route}/app/src/fonts/ds-digi.ttf` }]
 
     barComponent.init()
 }
@@ -177,7 +184,7 @@ const animateIn = async (help, boxes) => {
     await help.timers.awaitTransition(boxes.landingContainer)
     boxes.appBar.classList.remove("invisible")
     boxes.appBar.classList.add("barBox_down", "visible")
-    help.events.send("algo", {value: 1})
+    help.events.send("algo", { value: 1 })
 }
 
 const addEvents = (boxes) => {

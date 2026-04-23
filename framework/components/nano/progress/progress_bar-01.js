@@ -1,6 +1,7 @@
 export const tag = "progress_bar-01"
-export default class InfoBar extends HTMLElement {
+export default class progressBar extends HTMLElement {
     /* private props */
+    #BOXMOVED = 0
     #DEPS = ["base", "fonts", "dom"]
     #CSS = {
         box_width: "100%",
@@ -10,21 +11,29 @@ export default class InfoBar extends HTMLElement {
         box_back: "none",
         box_padding: "none",
 
-        info_height: "100%",
-        info_border: "none",
-        info_radius: "none",
-        info_back: "none",
-        info_fontFamily: "initial",
+        progress_height: "100%",
+        progress_border: "none",
+        progress_radius: "none",
+        progress_back: "transparent",
+        progress_fontFamily: "initial",
+        progress_fontSize: "initial",
+        progress_fontColor: "initial",
+        progress_fontWeight: "initial",
+        progress_letterSpacing: "0px",
 
-        item_width: "80%",
-        item_height: "100%",
-        item_radius: "none",
+        item_widthOff: "80%",
+        item_heightOff: "100%",
+        item_radiusOff: "none",
         item_backOff: "none",
-        item_backOn: "red",
         item_borderOff: "none",
+
+        item_widthOn: "30%",
+        item_heightOn: "100%",
+        item_radiusOn: "none",
+        item_backOn: "none",
         item_borderOn: "none",
 
-        transition: "200ms ease-in-out"
+        transition: "300ms ease-in-out"
     }
 
     constructor() {
@@ -37,8 +46,9 @@ export default class InfoBar extends HTMLElement {
         this.logic = {}
         this.deps = {}
         this.data = {
-            'items': 30,
-            'infoLenght': 2,
+            'items_multiplier': 2,
+            'progress_length': 2,
+            'progress_steps': 3,
         }
         this.state = null
         this.value = 0
@@ -48,18 +58,21 @@ export default class InfoBar extends HTMLElement {
     #drawComponent() {
         this.mainBox = this.deps.dom.add(this.dom, "div", "mainBox max relative")
         this.mainBox.innerHTML = `
-        <ul class="refLayer absolute max"></ul>
-        <ul class="visualLayer absolute max"></ul>
-        <div class="infoLayer absolute max">
-            <div class="infoBox absolute center transition">
-                <span class="infoText center">[ 0 ]</span>
+        <ul class="boxesLayer relative max"></ul>
+        <div class="progressLayer absolute max">
+            <div class="progressBox relative center max transition">
+                <div class="progress center">
+                    <span class="bracket">[ </span>
+                    <span class="progressText center">0</span>
+                    <span class="bracket"> ]</span>
+                </div>
             </div>
         </div>
         `
         return {
-            ref: this.dom.querySelector(".refLayer"),
+            ref: this.dom.querySelector(".boxesLayer"),
             visual: this.dom.querySelector(".visualLayer"),
-            info: this.dom.querySelector(".infoLayer")
+            progress: this.dom.querySelector(".progressLayer")
         }
     }
 
@@ -71,73 +84,83 @@ export default class InfoBar extends HTMLElement {
             margin: 0px;
             box-sizing: border-box;
             list-style: none;
+            user-select: none;
         }
 
         :host {
             display: flex;
             width: var(--box_width);
             height: var(--box_height);
+
+            --blockWidth: calc(100% / ${this.data.items_multiplier * (10 + this.data.progress_length)});
         }
 
         .mainBox {
             background: var(--box_back);
             border: var(--box_border);
             border-radius: var(--box_radius);
+            padding: var(--box_padding);
 
-            .refLayer,
-            .visualLayer {
+            .boxesLayer {
                 display: flex;
-                padding: var(--box_padding);
+                justify-content: flex-end;
+                
+                .box {
+                    width: var(--blockWidth);
+                    height: 100%;
+                }
 
-                .refBox, 
-                .visualBox {width: calc((100% - 2 * var(--box_padding)) / ${this.data.items});}
+                .boxOff .item {
+                    width: var(--item_widthOff);
+                    height: var(--item_heightOff);
+                    border-radius: var(--item_radiusOff);
+                    border: var(--item_borderOff); 
+                    background: var(--item_backOff);
+                }
 
-                .visualBox {
-                    border-radius: var(--item_radius);
-                    height: calc(100% - 2 * var(--box_padding));
-                    background: var(--item_back);
+                .boxOn .item {
+                    width: var(--item_widthOn);
+                    height: var(--item_heightOn);
+                    border-radius: var(--item_radiusOn);
+                    border: var(--item_borderOn); 
+                    background: var(--item_backOn);
                 }
             }
 
-            .refLayer {justify-content: space-between;}
+            .progressLayer {
+                top: 0px;
 
-            .itemBar {
-                width: var(--item_width);
-                height: var(--item_height);
-                border-radius: var(--item_radius);
-            }
-        }
+                .progressBox {
+                    left: 0px;
+                    width: calc(var(--blockWidth) * ${this.data.progress_length * this.data.items_multiplier}); 
+                
+                    .progress {
+                        width: calc(100% - 10px);
+                        height: var(--progress_height);
+                        border: var(--progress_border);
+                        border-radius: var(--progress_radius);
+                        background: var(--progress_back);
+                        backdrop-filter: blur(10px);
+                        
+                        * {
+                            font-family: var(--progress_fontFamily);
+                            font-size: var(--progress_fontSize);
+                            font-weight: var(--progress_fontWeight);
+                            color: var(--progress_fontColor);
+                            letter-spacing: var(--progress_letterSpacing);
+                        }
 
-        .infoLayer {
-            display: flex;
-            align-items: center;
-
-            .infoBox {
-                left: 0px;
-                width: calc(((100% - 2 * var(--box_padding)) / ${this.data.items}) * ${this.data.infoLenght});
-                height: var(--info_height);
-                border: var(--info_border);
-                border-radius: var(--info_radius);
-                background: var(--info_back);
-                backdrop-filter: blur(4px);
-
-                .infoText {
-                    font-family: var(--info_fontFamily);
-                    font-size: 18px;
-/*                  font-weight: bolder;
-*/               
-                    color: grey;
-                    letter-spacing: 2px;
+                        .progressText { width: 60%; }
+                    }
                 }
             }
         }
+
     
         .relative {position: relative;}
         .absolute {position: absolute;}
         .max {width: 100%; height: 100%;}
         .center {display: flex; justify-content: center; align-items: center;}
-        .itemOff {border: var(--item_borderOff); background: var(--item_backOff);}
-        .itemOn {border: var(--item_borderOn); background: var(--item_backOn);}
         .transition {transition: var(--transition);}
         `
     }
@@ -152,85 +175,70 @@ export default class InfoBar extends HTMLElement {
         this.state = ready
     }
 
-    #drawBar(box, className, number) {
-        for (let i = 0; i < number; i++) { const item = this.deps.dom.add(box, "li", className) }
-        return Array.from(box.querySelectorAll("li"))
+    #drawBar() {
+        for (let i = 0; i < this.data.items_multiplier * 10; i++) { const item = this.deps.dom.add(this.dom.querySelector(".boxesLayer"), "li", "box boxOff absolute center transition") }
+        return Array.from(this.dom.querySelectorAll(".boxesLayer .box"))
     }
 
     #drawItems(boxes) {
-        boxes.forEach(box => { this.deps.dom.add(box, "div", "itemBar itemOff transition") })
+        boxes.forEach(box => { this.deps.dom.add(box, "div", "item transition") })
     }
 
-    #getRefPosition() {
-        const refBoxes = Array.from(this.dom.querySelectorAll(".refBox"))
-        return refBoxes.map(item => item.offsetLeft)
-    }
-
-    #correctPosition(refs, visualBoxes) {
-        const indexPos = refs.length - visualBoxes.length
-        visualBoxes.forEach((box, index) => { box.style.left = `${refs[index + indexPos]}px` })
+    #configurePos(boxes) {
+        const progressBox = this.dom.querySelector(".progressBox")
+        boxes.forEach((box, index) => {
+            index === 0 && (box.style.left = `${progressBox.offsetLeft + progressBox.offsetWidth}px`)
+            index >= 1 && (box.style.left = `${boxes[index - 1].offsetLeft + boxes[index - 1].offsetWidth}px`)
+        })
     }
 
     #addFonts() {
         this.deps.fonts.addFonts(this.fonts)
     }
 
-    async #moveTo(value, infoBox, refPos, delay, visual) {
-        const visualBarWidth = this.mainBox.offsetWidth - infoBox.offsetWidth
-        const distance = visualBarWidth * (value / 100)
+    async #moveTo(value, boxes, progressBox, boxesLayer, delay) {
+        const boxWidth = boxes[0].offsetWidth
+        const boxStep = 100 / boxes.length
 
-        for (let i = 0; i < refPos.length; i++) {
-            if (refPos[i] >= distance) return
+        for (let i = this.value; i <= value; i++) {
+            const currentBox = Math.floor(i / boxStep)
 
-            if (visual[i] && visual[i].querySelector(".itemBar").classList.contains("itemOff")) {
-                /* move info */
-                infoBox.style.left = `${refPos[i + 1]}px`;
-                /* move item */
-                visual[i].style.left = `${refPos[i]}px`;
-                visual[i].querySelector(".itemBar").classList.replace("itemOff", "itemOn");
+            if (currentBox !== this.#BOXMOVED) {
+                boxes[currentBox - 1].style.left = `${boxWidth * this.#BOXMOVED}px`
+                boxes[currentBox - 1].classList.replace("boxOff", "boxOn")
+                progressBox.style.left = `${boxWidth * (this.#BOXMOVED + 1)}px`
+                this.#BOXMOVED = currentBox
+                await this.deps.timers.sleep(delay / 2)
             }
-            await this.deps.timers.sleep(delay / 3)
+            this.#updateValue(i, delay)
+            this.value = value
         }
     }
 
-    async #updateValue(value, infoBox, refPos, visuals, delay) {
-        const percentageBox = this.dom.querySelector(".percentage")
-        const infoText = infoBox.querySelector(".infoText")
-        const roundSteps = 5
-        const blocks = visuals.length
-        const totalSteps = roundSteps * blocks
-        const actualSteps = Math.floor((value * totalSteps) / 100)
-        const stepValue = 100 / totalSteps
+    async #updateValue(value, delay) {
+        const progressText = this.dom.querySelector(".progressText")
+        const steps = this.data.progress_steps
 
-        console.log("total:", totalSteps, "blocks", blocks, "step", stepValue, "actualSteps", actualSteps)
-        console.log("value", this.value)
-        for (let x = 1; x <= actualSteps; x++) { /* falta el .5 */
-            console.log(this.value + stepValue * x)
-            const newValue = x === actualSteps
-                ? this.value + value
-                : this.value + stepValue * x
-            infoText.textContent = `[ ${newValue.toFixed(1)} ]`
-            await new Promise(r => setTimeout(r, delay / actualSteps))
+        for (let prog = 1; prog <= steps; prog++) {
+            const progress = ((1 / steps) * prog + value - 1).toFixed(1)
+            if (progress > 0) {
+                progressText.textContent = progress === "100.0" ? "100" : progress
+                await this.deps.timers.sleep((delay / 2) / steps)
+            }
         }
-        this.value === value
     }
 
     async changeValue(value) {
-        const visuals = Array.from(this.dom.querySelectorAll(".visualBox"))
-        const infoBox = this.dom.querySelector(".infoBox")
-        const refPos = this.#getRefPosition()
-        const delay = this.deps.timers.getTransition(infoBox) / 3 /* transition css */
+        const boxesLayer = this.dom.querySelector(".boxesLayer")
+        const boxes = boxesLayer.querySelectorAll(".box")
+        const progressBox = this.dom.querySelector(".progressBox")
+        const delay = this.deps.timers.getTransition(progressBox)
 
-        if (this.value + value < 0 || this.value + value > 100) {
+        if (value < 0 || value > 100) {
             console.error(this, "value not valid 0 - 100")
             return
         }
-
-        await Promise.all([
-            this.#updateValue(value, infoBox, refPos, visuals, delay)
-
-/*             this.#moveTo(value, infoBox, refPos, visual, delay),
- */        ])
+        await this.#moveTo(value, boxes, progressBox, boxesLayer, delay)
     }
 
     /* public methods */
@@ -247,25 +255,17 @@ export default class InfoBar extends HTMLElement {
             await new Promise(requestAnimationFrame)
             await new Promise(requestAnimationFrame)
 
-            const boxes = this.#drawComponent()
-
-            const refsBoxes = this.#drawBar(boxes.ref, "refBox", this.data.items)
-            await new Promise(requestAnimationFrame)
-            await new Promise(requestAnimationFrame)
-
-            const refPos = this.#getRefPosition(refsBoxes)
-            const visualBoxes = this.#drawBar(boxes.visual, "visualBox absolute center transition", this.data.items - this.data.infoLenght)
-/*             await new Promise(requestAnimationFrame)
- */            this.#correctPosition(refPos, visualBoxes)
-            this.#drawItems(visualBoxes)
+            const layers = this.#drawComponent()
+            /*             await new Promise(requestAnimationFrame)
+                        await new Promise(requestAnimationFrame)
+             */
+            const boxes = this.#drawBar(layers.ref, "refBox", this.data.items_multiplier * 10)
+            this.#configurePos(boxes)
+            this.#drawItems(boxes)
 
             await this.deps.timers.sleep(3000)
-            this.changeValue(10)
-            await this.deps.timers.sleep(3000)
-            this.changeValue(30)
-            await this.deps.timers.sleep(3000)
-            this.changeValue(100)
+            await this.changeValue(100)
         }
     }
 }
-customElements.define(tag, InfoBar)
+customElements.define(tag, progressBar)
