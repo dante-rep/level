@@ -1,8 +1,15 @@
-const
+let register
 
-
-const infoLists = {
-    "comp": `${level.route}/framework/conf/components_paths.js`,
-    "deps": `${level.route}/framework/conf/dependencies_paths.js`,
+export const createRegister = () => {
+    if (!register) {
+        register = {
+            deps: {
+                helpers: new Map(),
+                classes: new Map()
+            },
+            components: new Map()
+        }
+    }
 }
-await level.helper.import.object(infoLists)
+
+/* para guadar y acceder: metodos */

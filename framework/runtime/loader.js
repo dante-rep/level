@@ -1,12 +1,3 @@
-const checkLevel = () => {
-    if (!globalThis.level) {
-        console.error("level as gloval not exists")
-        return false
-    } else {
-        return true
-    }
-}
-
 const importLoaderDeps = async () => {
     const infoLists = {
         "comp": `${level.route}/framework/conf/components_paths.js`,
@@ -14,6 +5,15 @@ const importLoaderDeps = async () => {
     }
     await level.helper.import.object(infoLists)
     return infoLists
+}
+
+const checkLevel = () => {
+    if (!globalThis.level) {
+        console.error("level as gloval not exists")
+        return false
+    } else {
+        return true
+    }
 }
 
 const checkId = (id) => {

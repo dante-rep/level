@@ -8,12 +8,11 @@ const addToObject = async (obj, route) => {
     )
 }
 
-const addGlobalLevel = async () => {
+export const addGlobalLevel = async () => {
     const serverPath = "level"
     const level = {}
     /* route */
     level["route"] = window.location.pathname.split("/")[1] === serverPath ? `/${serverPath}` : ""
-    console.log("global - route:", level.route)
     /* dependencies */
     const dependencies = (await import(`${level.route}/framework/conf/dependencies_paths.js`)).default
     await addToObject(dependencies.helper, level.route)
@@ -22,5 +21,3 @@ const addGlobalLevel = async () => {
     /* global assign */
     globalThis.level = level
 }
-
-await addGlobalLevel()

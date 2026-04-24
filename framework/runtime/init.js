@@ -1,7 +1,13 @@
 export const init = async () => {
-    await import("./createGlobal.js")
-    await Promise.all([
-
+    const [global, register] = await Promise.all([
+        import("./createGlobal.js"),
+        import("./register.js")
     ])
-    console.log("level loaded")
+
+    await Promise.all([
+        global.addGlobalLevel(),
+        register.createRegister()
+    ])
+
+    console.log("level.route:", level.route)
 }
