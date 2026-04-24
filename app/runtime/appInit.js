@@ -1,4 +1,5 @@
-import { addGlobalLevel } from "../../framework/global/createGlobal.js"
+/* import { addGlobalLevel } from "../../framework/global/createGlobal.js"
+ */import * as levelFrame from "../../framework/runtime/init.js"
 import conf from "../conf/app.js"
 
 const addStyles = (url) => {
@@ -24,32 +25,32 @@ const loadStyles = async (styles) => {
 }
 
 const loadModules = async (modules) => {
-    return await level.deps.helpers.import.object(modules)
+    return await level.helper.import.object(modules)
 }
 
 const init = async () => {
-    await addGlobalLevel()
+    /* load level */
+    const levelFrame = await import("../../framework/runtime/init.js")
+    await levelFrame.init()
 
-    const landing = {
-        "module": `${level.route}/app/interface/loads/appLoad-landing.js`
+    /* load shared styles */
+    const styles = {
+        "conf": `${level.route}/app/styles/conf.css`,
+        "mainClasses": `${level.route}/app/styles/mainClasses.css`,
+        "mainContainers": `${level.route}/app//styles/mainContainers.css`
     }
-    const app = {
-        "styles": {
-            "conf": `${level.route}/app/styles/conf.css`,
-            "mainClasses": `${level.route}/app/styles/mainClasses.css`,
-            "mainContainers": `${level.route}/app//styles/mainContainers.css`
-        },
-        "modules": {
-            "mainContainers": `${level.route}/app/interface/loads/mainContainers.js`
-        }
-    }
+    await loadStyles(styles)
 
-    await loadStyles(app.styles)
+    /* load landing */
     if (conf.developerMode) {
-        await loadModules(landing)
+        const landing = await loadModules({ "module": `${level.route}/app/interface/loads/appLoad-landing.js` })
         await landing.module.init()
     }
 
+    /* load interface modules */
+    const modules = {
+        "mainContainers": `${level.route}/app/interface/loads/mainContainers.js`
+    }
     for (let time = 0; time <= 5; time++) {
         document.dispatchEvent(new CustomEvent("appLoad", { detail: { 'loaded': time } }))
         await new Promise(resolve => setTimeout(resolve, 1000))

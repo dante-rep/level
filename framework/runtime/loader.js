@@ -1,10 +1,20 @@
-const info = {
-    "comp": `${window.level.route}/app/config/lists/components.js`,
-    "deps": `${window.level.route}/app/config/lists/dependencies.js`,
+const checkLevel = () => {
+    if (!globalThis.level) {
+        console.error("level as gloval not exists")
+        return false
+    } else {
+        return true
+    }
 }
-await window.APP.importAll(info)
-const comp_reg = window.APP.comp_reg
-const deps_reg = window.APP.deps_reg
+
+const importLoaderDeps = async () => {
+    const infoLists = {
+        "comp": `${level.route}/framework/conf/components_paths.js`,
+        "deps": `${level.route}/framework/conf/dependencies_paths.js`,
+    }
+    await level.helper.import.object(infoLists)
+    return infoLists
+}
 
 const checkId = (id) => {
     return window.APP.ids_reg[id]
@@ -31,7 +41,7 @@ const importDependencies = async (module) => {
             const url = info.deps.list[item]
             return { "class": (await import(`${window.APP.route}${url}`)).default }
         }
-        if (old) return {"class": old.class}
+        if (old) return { "class": old.class }
     }))
     return deps
 }
@@ -81,23 +91,37 @@ const applyConf = (component, config) => {
 }
 
 export const load = async (box, config) => {
-    /* validations */
-    const componentData = validateConfig(config)
-    if (!componentData) return
-    /* import modules */
-    const module = await importModules(config, componentData)
-    const dependencies = await importDependencies(module)
-    /* create component */
-    const component = box.appendChild(document.createElement(config.tag))
-    /* apply conf */
-    applyConf(component, config)
-    /* register */
-    await addReg(config, module, dependencies)
-    addRegDeps(dependencies)
-    addRegId(component)
-    /* inject dependencies */
-    injectDependencies(component, module.requiredDeps)
-    return component
+    /* check global */
+    if (checkLevel()) {
+
+        /* loads */
+        const infoLists = await importLoaderDeps()
+
+        /* validations */
+        /*     const componentData = validateConfig(config)
+            if (!componentData) return
+         */
+        /* import modules */
+        /*     const module = await importModules(config, componentData)
+            const dependencies = await importDependencies(module)
+         */
+        /* create component */
+        /*     const component = box.appendChild(document.createElement(config.tag))
+         */    /* apply conf */
+
+        /*     applyConf(component, config)
+         */    /* register */
+
+        /*     await addReg(config, module, dependencies)
+            addRegDeps(dependencies)
+            addRegId(component)
+         */
+        /* inject dependencies */
+        /*     injectDependencies(component, module.requiredDeps)
+            return component
+         */
+    }
+
 }
 
 export const init = async (box, config) => {

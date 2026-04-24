@@ -13,11 +13,13 @@ const drawLanding = async (help) => {
         </div>
         <div class="darkBar bottomDarkBar absolute transition1s"></div>
     `
+}
 
+const drawComponents = async (loader) => {
     const [titles, loadBar, cube] = await Promise.all([
-        addTextComponents(help, document.querySelector(".titlesBox")),
-        addProgressBar(help, document.querySelector(".barBox")),
-        addCube(help, document.querySelector(".animationSection"))
+        addTextComponents(loader, document.querySelector(".titlesBox")),
+        addProgressBar(loader, document.querySelector(".barBox")),
+        addCube(loader, document.querySelector(".animationSection"))
     ])
 
     return {
@@ -37,13 +39,10 @@ const drawLanding = async (help) => {
         }
     }
 }
-
-const addCube = async (help, box) => {
-    const componentMod = await help.import.object({
-        "module": `${level.route}/framework/components/nano/geometry/cube_3d.js`
-    })
+const addCube = async (loader, box) => {
+    const tag = "cube-3d"
     const helpers = {
-        'dom': help.dom
+        'dom': level.helper.dom
     }
     const deps = {
         'base': `${level.route}/framework/dependencies/classes/class_base.js`
@@ -56,22 +55,24 @@ const addCube = async (help, box) => {
         box_shadow: "inset 0 0 50px rgb(32, 32, 32)"
     }
 
-    const cubeComponent = help.dom.add(box, componentMod.module.tag)
-    await help.import.object(deps)
+    /*     const cubeComponent = help.dom.add(box, componentMod.module.tag)
+     */
+    const component = loader.load(box, tag)
+/*     await help.import.object(deps)
     Object.entries(deps).forEach(([key, value]) => cubeComponent.deps[key] = value.default)
     Object.entries(helpers).forEach(([key, value]) => cubeComponent.deps[key] = value)
     cubeComponent.css = css
 
     cubeComponent.init()
     return cubeComponent
-}
+ */}
 
-const addTextComponents = async (help, box) => {
-    const componentMod = await help.import.object({
+const addTextComponents = async (loader, box) => {
+    const componentMod = await level.helper.import.object({
         "module": `${level.route}/framework/components/nano/text/animated_text-01.js`
     })
     const helpers = {
-        'dom': help.dom
+        'dom': level.helper.dom
     }
     const deps = {
         'base': `${level.route}/framework/dependencies/classes/class_base.js`,
@@ -90,8 +91,8 @@ const addTextComponents = async (help, box) => {
         char_fontWeight: "bolder"
     }
 
-    const titleTop = help.dom.add(box, componentMod.module.tag, "topTitle relative")
-    await help.import.object(deps)
+    const titleTop = level.helper.dom.add(box, componentMod.module.tag, "topTitle relative")
+    await level.helper.import.object(deps)
     Object.entries(deps).forEach(([key, value]) => titleTop.deps[key] = value.default)
     Object.entries(helpers).forEach(([key, value]) => titleTop.deps[key] = value)
     titleTop.data.text = "Level"
@@ -103,10 +104,10 @@ const addTextComponents = async (help, box) => {
         char_empty: "30px",
         char_fontSize: "32px",
         char_fontFamily: "other",
-        char_fontColor: help.css.getVar("landingColor1"),
+        char_fontColor: level.helper.css.getVar("landingColor1"),
     }
 
-    const titleBottom = help.dom.add(box, componentMod.module.tag, "bottomTitle")
+    const titleBottom = level.helper.dom.add(box, componentMod.module.tag, "bottomTitle")
     Object.entries(deps).forEach(([key, value]) => titleBottom.deps[key] = value.default)
     Object.entries(helpers).forEach(([key, value]) => titleBottom.deps[key] = value)
     titleBottom.data.text = "Modular framework"
@@ -122,15 +123,15 @@ const addTextComponents = async (help, box) => {
     return [titleTop, titleBottom]
 }
 
-const addProgressBar = async (help, box) => {
-    const componentMod = await help.import.object({
+const addProgressBar = async (loader, box) => {
+    const componentMod = await level.helper.import.object({
         "module": `${level.route}/framework/components/nano/progress/progress_bar-01.js`
     })
     const helpers = {
-        'dom': help.dom,
-        'css': help.css,
-        'events': help.events,
-        'timers': help.timers
+        'dom': level.helper.dom,
+        'css': level.helper.css,
+        'events': level.helper.events,
+        'timers': level.helper.timers
     }
     const deps = {
         'base': `${level.route}/framework/dependencies/classes/class_base.js`,
@@ -163,8 +164,8 @@ const addProgressBar = async (help, box) => {
     }
     const data = { items_multiplier: 2, progress_length: 2, progress_steps: 5 }
 
-    const barComponent = help.dom.add(box, componentMod.module.tag)
-    await help.import.object(deps)
+    const barComponent = level.helper.dom.add(box, componentMod.module.tag)
+    await level.helper.import.object(deps)
     Object.entries(deps).forEach(([key, value]) => barComponent.deps[key] = value.default)
     Object.entries(helpers).forEach(([key, value]) => barComponent.deps[key] = value)
     barComponent.css = css
@@ -174,17 +175,17 @@ const addProgressBar = async (help, box) => {
     barComponent.init()
 }
 
-const animateIn = async (help, boxes) => {
+const animateIn = async (boxes) => {
     /* aimacion darkBar */
     boxes.bars.top.style.top = "0px"
     boxes.bars.bottom.style.bottom = "0px"
-    await help.timers.awaitTransition(boxes.bars.top)
+    await level.helper.timers.awaitTransition(boxes.bars.top)
     /*  */
     boxes.landingContainer.classList.replace("invisible", "visible")
-    await help.timers.awaitTransition(boxes.landingContainer)
+    await level.helper.timers.awaitTransition(boxes.landingContainer)
     boxes.appBar.classList.remove("invisible")
     boxes.appBar.classList.add("barBox_down", "visible")
-    help.events.send("algo", { value: 1 })
+    level.helper.events.send("algo", { value: 1 })
 }
 
 const addEvents = (boxes) => {
@@ -198,14 +199,15 @@ const addEvents = (boxes) => {
 
 export const init = async () => {
     console.log("appLoading - landing")
-    const help = level.deps.helpers
-    const boxes = await drawLanding(help)
-    await animateIn(help, boxes)
+    const loader = await import(`${level.route}/framework/runtime/loader.js`)
+
+    drawLanding(loader)
+    const boxes = await drawComponents(loader)
+    await animateIn(boxes)
     addEvents(boxes)
     return true
 }
 
 const exit = async () => {
-    const help = level.deps.helpers
     console.log("access")
 }
