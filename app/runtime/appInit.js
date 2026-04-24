@@ -24,23 +24,23 @@ const loadStyles = async (styles) => {
 }
 
 const loadModules = async (modules) => {
-    return await window.level.deps.helpers.import.object(modules)
+    return await level.deps.helpers.import.object(modules)
 }
 
 const init = async () => {
     await addGlobalLevel()
 
     const landing = {
-        "module": `${window.level.route}/app/interface/loads/appLoad-landing.js`
+        "module": `${level.route}/app/interface/loads/appLoad-landing.js`
     }
     const app = {
         "styles": {
-            "conf": `${window.level.route}/app/styles/conf.css`,
-            "mainClasses": `${window.level.route}/app/styles/mainClasses.css`,
-            "mainContainers": `${window.level.route}/app//styles/mainContainers.css`
+            "conf": `${level.route}/app/styles/conf.css`,
+            "mainClasses": `${level.route}/app/styles/mainClasses.css`,
+            "mainContainers": `${level.route}/app//styles/mainContainers.css`
         },
         "modules": {
-            "mainContainers": `${window.level.route}/app/interface/loads/mainContainers.js`
+            "mainContainers": `${level.route}/app/interface/loads/mainContainers.js`
         }
     }
 

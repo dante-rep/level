@@ -40,13 +40,13 @@ const drawLanding = async (help) => {
 
 const addCube = async (help, box) => {
     const componentMod = await help.import.object({
-        "module": `${window.level.route}/framework/components/nano/geometry/cube_3d.js`
+        "module": `${level.route}/framework/components/nano/geometry/cube_3d.js`
     })
     const helpers = {
         'dom': help.dom
     }
     const deps = {
-        'base': `${window.level.route}/framework/dependencies/classes/class_base.js`
+        'base': `${level.route}/framework/dependencies/classes/class_base.js`
     }
     const css = {
         box_perspective: "900px",
@@ -68,14 +68,14 @@ const addCube = async (help, box) => {
 
 const addTextComponents = async (help, box) => {
     const componentMod = await help.import.object({
-        "module": `${window.level.route}/framework/components/nano/text/animated_text-01.js`
+        "module": `${level.route}/framework/components/nano/text/animated_text-01.js`
     })
     const helpers = {
         'dom': help.dom
     }
     const deps = {
-        'base': `${window.level.route}/framework/dependencies/classes/class_base.js`,
-        'fonts': `${window.level.route}/framework/dependencies/classes/class_fonts.js`
+        'base': `${level.route}/framework/dependencies/classes/class_base.js`,
+        'fonts': `${level.route}/framework/dependencies/classes/class_fonts.js`
     }
 
     /* top title */
@@ -95,7 +95,7 @@ const addTextComponents = async (help, box) => {
     Object.entries(deps).forEach(([key, value]) => titleTop.deps[key] = value.default)
     Object.entries(helpers).forEach(([key, value]) => titleTop.deps[key] = value)
     titleTop.data.text = "Level"
-    titleTop.fonts = [{ 'name': 'garden', 'src': `${window.level.route}/app/src/fonts/Neuropol.otf` }]
+    titleTop.fonts = [{ 'name': 'garden', 'src': `${level.route}/app/src/fonts/Neuropol.otf` }]
     titleTop.css = topCss
 
     /* bottom title */
@@ -110,7 +110,7 @@ const addTextComponents = async (help, box) => {
     Object.entries(deps).forEach(([key, value]) => titleBottom.deps[key] = value.default)
     Object.entries(helpers).forEach(([key, value]) => titleBottom.deps[key] = value)
     titleBottom.data.text = "Modular framework"
-    titleBottom.fonts = [{ 'name': 'other', 'src': `${window.level.route}/app/src/fonts/RonduitCapitals-Light.woff` }]
+    titleBottom.fonts = [{ 'name': 'other', 'src': `${level.route}/app/src/fonts/RonduitCapitals-Light.woff` }]
     titleBottom.css = bottomCss
 
     /* components html flow */
@@ -124,7 +124,7 @@ const addTextComponents = async (help, box) => {
 
 const addProgressBar = async (help, box) => {
     const componentMod = await help.import.object({
-        "module": `${window.level.route}/framework/components/nano/progress/progress_bar-01.js`
+        "module": `${level.route}/framework/components/nano/progress/progress_bar-01.js`
     })
     const helpers = {
         'dom': help.dom,
@@ -133,8 +133,8 @@ const addProgressBar = async (help, box) => {
         'timers': help.timers
     }
     const deps = {
-        'base': `${window.level.route}/framework/dependencies/classes/class_base.js`,
-        'fonts': `${window.level.route}/framework/dependencies/classes/class_fonts.js`
+        'base': `${level.route}/framework/dependencies/classes/class_base.js`,
+        'fonts': `${level.route}/framework/dependencies/classes/class_fonts.js`
     }
     const css = {
         box_radius: "4px",
@@ -169,7 +169,7 @@ const addProgressBar = async (help, box) => {
     Object.entries(helpers).forEach(([key, value]) => barComponent.deps[key] = value)
     barComponent.css = css
     barComponent.data = data
-    barComponent.fonts = [{ 'name': 'ds-digi', 'src': `${window.level.route}/app/src/fonts/ds-digi.ttf` }]
+    barComponent.fonts = [{ 'name': 'ds-digi', 'src': `${level.route}/app/src/fonts/ds-digi.ttf` }]
 
     barComponent.init()
 }
@@ -198,7 +198,7 @@ const addEvents = (boxes) => {
 
 export const init = async () => {
     console.log("appLoading - landing")
-    const help = window.level.deps.helpers
+    const help = level.deps.helpers
     const boxes = await drawLanding(help)
     await animateIn(help, boxes)
     addEvents(boxes)
@@ -206,6 +206,6 @@ export const init = async () => {
 }
 
 const exit = async () => {
-    const help = window.level.deps.helpers
+    const help = level.deps.helpers
     console.log("access")
 }
