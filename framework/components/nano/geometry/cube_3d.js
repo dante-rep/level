@@ -103,7 +103,7 @@ export default class cube3D extends HTMLElement {
     }
 
     #configure() {
-        this.css = this.deps.base.resolveCSS(this.css, this.#CSS, this)
+        this.deps.base.validateAll(this)
     }
 
     #checkConf() {

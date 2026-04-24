@@ -1,9 +1,9 @@
 export const tag = "progress_bar-01"
 export default class progressBar extends HTMLElement {
     /* private props */
-    #BOXMOVED = 0
-    #DEPS = ["base", "fonts", "dom"]
-    #CSS = {
+    _boxMoved = 0
+    _deps = ["base", "fonts", "dom"]
+    _css = {
         box_width: "100%",
         box_height: "100%",
         box_border: "none",
@@ -35,6 +35,11 @@ export default class progressBar extends HTMLElement {
 
         transition: "300ms ease-in-out"
     }
+    _data = {
+        items_multiplier: 2,
+        progress_length: 2,
+        progress_steps: 3,
+    }
 
     constructor() {
         super()
@@ -45,11 +50,7 @@ export default class progressBar extends HTMLElement {
         this.css = {}
         this.logic = {}
         this.deps = {}
-        this.data = {
-            'items_multiplier': 2,
-            'progress_length': 2,
-            'progress_steps': 3,
-        }
+        this.data = {}
         this.state = null
         this.value = 0
     }
@@ -166,12 +167,12 @@ export default class progressBar extends HTMLElement {
     }
 
     #configure() {
-        this.css = this.deps.base.resolveCSS(this.css, this.#CSS, this)
+        this.deps.base.validateAll(this)
     }
 
     #checkConf() {
         let ready = true
-        this.#DEPS.forEach(dep => !Object.keys(this.deps).includes(dep) && (ready = false))
+        this._deps.forEach(dep => !Object.keys(this.deps).includes(dep) && (ready = false))
         this.state = ready
     }
 
@@ -203,11 +204,11 @@ export default class progressBar extends HTMLElement {
         for (let i = this.value; i <= value; i++) {
             const currentBox = Math.floor(i / boxStep)
 
-            if (currentBox !== this.#BOXMOVED) {
-                boxes[currentBox - 1].style.left = `${boxWidth * this.#BOXMOVED}px`
+            if (currentBox !== this._boxMoved) {
+                boxes[currentBox - 1].style.left = `${boxWidth * this._boxMoved}px`
                 boxes[currentBox - 1].classList.replace("boxOff", "boxOn")
-                progressBox.style.left = `${boxWidth * (this.#BOXMOVED + 1)}px`
-                this.#BOXMOVED = currentBox
+                progressBox.style.left = `${boxWidth * (this._boxMoved + 1)}px`
+                this._boxMoved = currentBox
                 await this.deps.timers.sleep(delay / 2)
             }
             this.#updateValue(i, delay)

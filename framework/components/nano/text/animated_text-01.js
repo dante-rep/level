@@ -81,8 +81,7 @@ export default class AnimatedText extends HTMLElement {
     }
 
     #configure() {
-        this.css = this.deps.base.resolveCSS(this.css, this.#CSS, this)
-        this.logic = this.deps.base.resolveLOGIC(this.logic, this.#LOGIC, this)
+        this.deps.base.validateAll(this)
     }
 
 

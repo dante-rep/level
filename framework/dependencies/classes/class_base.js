@@ -5,27 +5,25 @@ class ClassBase {
         if (object !== null) {
             Object.entries(object).forEach(([prop, value]) => {
                 prop in resumed
-                    ? typeof (value) === "string"
-                        ? resumed[prop] = value
-                        : console.error([dom], prop, `⚠️ Invalid value, will be used default: 🔄 ${resumed[prop]}`)
+                    ? resumed[prop] = value
                     : console.error([dom], prop, `❌ Not valid prop - will not be used`)
             })
         }
         return resumed
     }
 
-    resolveCSS(css, defaultCSS, dom) {
+    #resolveCSS(css, defaultCSS, dom) {
         const resumed = this.#resolve(css, defaultCSS, dom)
         this.convertCssVar(resumed, dom)
         return resumed
     }
 
-    resolveDATA(data, defaultDATA, dom) {
+    #resolveDATA(data, defaultDATA, dom) {
         const resumed = this.#resolve(data, defaultDATA, dom)
         return resumed
     }
 
-    resolveLOGIC(logic, defaultLOGIC, dom) {
+    #resolveLOGIC(logic, defaultLOGIC, dom) {
         const resumed = { ...defaultLOGIC }
         Object.entries(defaultLOGIC).forEach(([prop, value]) => {
             resumed[prop] = value[0]
@@ -40,6 +38,12 @@ class ClassBase {
             })
         }
         return resumed
+    }
+
+    validateAll(dom) {
+        dom._css && (dom.css = this.#resolveCSS(dom.css, dom._css, dom))
+        dom._logic && (dom.css = this.#resolveLOGIC(dom.logic, dom._logic, dom))
+        dom._data && (dom.css = this.#resolveDATA(dom.data, dom._data, dom))
     }
 
     /* CSS PROPS*/

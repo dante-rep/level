@@ -1,5 +1,5 @@
 const addComponentContainer = (help, box) => {
-    const componentContainer = help.dom.add(box, "div", "componentContainer absolute max")
+    const componentContainer = help.dom.add(box, "div", "componentContainer absolute maxDVH")
     const backLayer = help.dom.add(componentContainer, "div", "backLayer absolute max")
     const componentBox = help.dom.add(componentContainer, "div", "componentBox absolute max")
 }

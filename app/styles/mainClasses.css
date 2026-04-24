@@ -1,5 +1,6 @@
 /* size */
 .max {width: 100%; height: 100%;}
+.maxDVH {width: 100%; height: 100dvh;}
 .fitContent {width: fit-content; height: fit-content;}
 
 /* positions */
