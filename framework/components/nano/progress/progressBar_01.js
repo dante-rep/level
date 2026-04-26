@@ -1,9 +1,9 @@
 export const tag = "progress_bar-01"
 export default class progressBar extends HTMLElement {
     /* private props */
-    _boxMoved = 0
-    #DEPS = ["base", "fonts", "dom"]
-    _css = {
+    #BOX_MOVED = 0
+    #DEPS = ["base", "fonts", "dom", "events", "timers"]
+    #CSS = {
         box_width: "100%",
         box_height: "100%",
         box_border: "none",
@@ -32,10 +32,11 @@ export default class progressBar extends HTMLElement {
         item_radiusOn: "none",
         item_backOn: "none",
         item_borderOn: "none",
+        item_filter: "none",
 
         transition: "300ms ease-in-out"
     }
-    _data = {
+    #DATA = {
         items_multiplier: 2,
         progress_length: 2,
         progress_steps: 3,
@@ -46,11 +47,13 @@ export default class progressBar extends HTMLElement {
         /* public props */
         this.dom = this.attachShadow({ mode: "open" })
         this.data = { 'text': "some text" }
-        this.fonts = null /* [{}] */
+        this.fonts = [] /* [{}] */
         this.css = {}
-        this.logic = {}
-        this.deps = {}
+        this._css = { ...this.#CSS }
         this.data = {}
+        this._data = { ...this.#DATA }
+        this.deps = {}
+        this.requiredDeps = [...this.#DEPS]
         this.state = null
         this.value = 0
     }
@@ -125,6 +128,7 @@ export default class progressBar extends HTMLElement {
                     border-radius: var(--item_radiusOn);
                     border: var(--item_borderOn); 
                     background: var(--item_backOn);
+                    filter: var(--item_filter);
                 }
             }
 
@@ -172,7 +176,7 @@ export default class progressBar extends HTMLElement {
 
     #checkConf() {
         let ready = true
-        this._deps.forEach(dep => !Object.keys(this.deps).includes(dep) && (ready = false))
+        this.#DEPS.forEach(dep => !Object.keys(this.deps).includes(dep) && (ready = false))
         this.state = ready
     }
 
@@ -204,11 +208,11 @@ export default class progressBar extends HTMLElement {
         for (let i = this.value; i <= value; i++) {
             const currentBox = Math.floor(i / boxStep)
 
-            if (currentBox !== this._boxMoved) {
-                boxes[currentBox - 1].style.left = `${boxWidth * this._boxMoved}px`
+            if (currentBox !== this.#BOX_MOVED) {
+                boxes[currentBox - 1].style.left = `${boxWidth * this.#BOX_MOVED}px`
                 boxes[currentBox - 1].classList.replace("boxOff", "boxOn")
-                progressBox.style.left = `${boxWidth * (this._boxMoved + 1)}px`
-                this._boxMoved = currentBox
+                progressBox.style.left = `${boxWidth * (this.#BOX_MOVED + 1)}px`
+                this.#BOX_MOVED = currentBox
                 await this.deps.timers.sleep(delay / 2)
             }
             this.#updateValue(i, delay)
@@ -253,13 +257,11 @@ export default class progressBar extends HTMLElement {
             this.#configure()
             this.#addStyle()
             this.#addFonts(this.fonts)
+
+            const layers = this.#drawComponent()
             await new Promise(requestAnimationFrame)
             await new Promise(requestAnimationFrame)
 
-            const layers = this.#drawComponent()
-            /*             await new Promise(requestAnimationFrame)
-                        await new Promise(requestAnimationFrame)
-             */
             const boxes = this.#drawBar(layers.ref, "refBox", this.data.items_multiplier * 10)
             this.#configurePos(boxes)
             this.#drawItems(boxes)

@@ -1,4 +1,4 @@
-class ClassFonts {
+export default class ClassFonts {
     addFonts(fonts) {
         let fontStyle = document.head.querySelector(".dynamicStyle_fonts")
         if (!fontStyle) {
@@ -30,5 +30,3 @@ class ClassFonts {
         })
     }
 }
-
-export default ClassFonts

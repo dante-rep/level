@@ -25,10 +25,13 @@ export default class AnimatedText extends HTMLElement {
         /* public props */
         this.dom = this.attachShadow({ mode: "open" })
         this.data = { 'text': "some text" }
-        this.fonts = null /* [{}] */
+        this.fonts = [] /* [{}] */
         this.css = {}
+        this._css = { ...this.#CSS }
         this.logic = {}
+        this._logic = { ...this.#LOGIC }
         this.deps = {}
+        this.requiredDeps = [...this.#DEPS]
         this.state = false
     }
 
@@ -80,10 +83,13 @@ export default class AnimatedText extends HTMLElement {
         `
     }
 
-    #configure() {
-        this.deps.base.validateAll(this)
-    }
+    #configure() { this.deps.base.validateAll(this) }
 
+    #checkConf() {
+        let ready = true
+        this.#DEPS.forEach(dep => !Object.keys(this.deps).includes(dep) && (ready = false))
+        this.state = ready
+    }
 
     #applyLogic() {
         this.logic.orientation === "vertical" && this.mainBox.classList.add("vertical")
@@ -100,12 +106,6 @@ export default class AnimatedText extends HTMLElement {
 
     #addFonts() {
         this.deps.fonts.addFonts(this.fonts)
-    }
-
-    #checkConf() {
-        let ready = true
-        this.#DEPS.forEach(dep => !Object.keys(this.deps).includes(dep) && (ready = false))
-        this.state = ready
     }
 
     /* public methods */

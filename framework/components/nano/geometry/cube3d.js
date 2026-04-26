@@ -18,9 +18,9 @@ export default class cube3D extends HTMLElement {
         this.data = { 'text': "some text" }
         this.fonts = null /* [{}] */
         this.css = {}
-        this.logic = {}
-        this.requiredDeps = [...this.#DEPS]
+        this._css = { ...this.#CSS }
         this.deps = {}
+        this.requiredDeps = [...this.#DEPS]
         this.state = false
     }
 

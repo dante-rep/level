@@ -114,6 +114,7 @@ const applyConf = (component, config) => {
     config.logic && component.logic && (component.logic = config.logic)
     config.eventDom && component.eventDom && (component.eventDom = config.eventDom)
     config.eventName && component.eventName && (component.eventName = config.eventName)
+    config.fonts && component.fonts && (component.fonts = config.fonts)
     config.links && component.links && (component.links = config.links)
     config.data && component.data && (component.data = config.data)
     config.state && component.state && (component.state = config.state)

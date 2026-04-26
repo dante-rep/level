@@ -42,8 +42,8 @@ export default class ClassBase {
 
     validateAll(dom) {
         dom._css && (dom.css = this.#resolveCSS(dom.css, dom._css, dom))
-        dom._logic && (dom.css = this.#resolveLOGIC(dom.logic, dom._logic, dom))
-        dom._data && (dom.css = this.#resolveDATA(dom.data, dom._data, dom))
+        dom._logic && (dom.logic = this.#resolveLOGIC(dom.logic, dom._logic, dom))
+        dom._data && (dom.data = this.#resolveDATA(dom.data, dom._data, dom))
     }
 
     /* CSS PROPS*/
