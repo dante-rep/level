@@ -1,4 +1,6 @@
-const importLoaderDeps = async () => {
+import * as register from "./register.js"
+
+const importLists = async () => {
     const infoLists = {
         "comp": `${level.route}/framework/conf/components_paths.js`,
         "deps": `${level.route}/framework/conf/dependencies_paths.js`,
@@ -11,117 +13,140 @@ const checkLevel = () => {
     if (!globalThis.level) {
         console.error("level as gloval not exists")
         return false
-    } else {
-        return true
     }
+    return true
 }
 
-const checkId = (id) => {
-    return window.APP.ids_reg[id]
+const getCompData = (loaderLists, tag) => {
+    return loaderLists.comp[tag]
 }
 
-const addRegId = (component) => {
-    window.APP.ids_reg[component.id] = { "id": component.id, "component": component }
-}
-
-const importModules = async (config, componentData) => {
-    const old = comp_reg.get(config.tag)
-    if (!old) {
-        const module = await import(`${window.APP.route}${componentData.module}`)
-        return module.default
+const importModules = async (config, compInfo) => {
+    const registred = register.reg.comp.get(compInfo.tag)
+    if (!registred) {
+        const module = await import(`${level.route}${compInfo.path}`)
+        return module
     }
-    if (old) return old.mod
+    return registred.module
 }
 
-const importDependencies = async (module) => {
-    const dependencies = module.requiredDeps
-    const deps = await Promise.all(dependencies.map(async (item) => {
-        const old = deps_reg.get(item)
-        if (!old) {
-            const url = info.deps.list[item]
-            return { "class": (await import(`${window.APP.route}${url}`)).default }
+const importDependencies = async (config, compInfo, loaderLists) => {
+    const dependencies = {}
+    const createObject = async (type) => {
+        const reg = register.reg.deps
+        dependencies[type] = {}
+
+        for (const item of compInfo[type]) {
+            const registred = reg[type].get(item)
+            if (!registred) {
+                dependencies[type][item] = type === "class"
+                    ? await import(`${level.route}${loaderLists.deps[type][item]} `)
+                    : loaderLists.deps[type][item]
+            }
         }
-        if (old) return { "class": old.class }
-    }))
-    return deps
+    }
+    await Promise.all([
+        createObject("class"),
+        createObject("helper")
+    ])
+    return dependencies
 }
 
-const addReg = async (config, module, dependencies) => {
-    const oldModule = comp_reg.get(config.tag)
-    !oldModule && comp_reg.set(config.tag, { "mod": module, "deps": module.requiredDeps, "usedBy": [] })
-    dependencies.forEach(dep => {
-        const oldDependency = deps_reg.get(dep.class.name)
-        !oldDependency && deps_reg.set(dep.class.name, { "class": dep.class, "instance": null, "usedBy": [] })
+const addToReg = async (config, module, dependencies) => {
+    const components = register.reg.comp
+    const classes = register.reg.deps.class
+    const helper = register.reg.deps.helper
+    const registred = (reg, item) => { return reg.get(item) }
+    const registerBy = (reg, item, value) => { reg.get(item)["usedBy"].push(value) }
+
+    /* component */
+    const componentReg = registred(components, config.tag)
+    !componentReg && components.set(config.tag, { 'module': module, 'usedBy': [], 'deps': { 'class': dependencies.class, 'helper': dependencies.helper } })
+    components.get(config.tag)["usedBy"].push(config.id)
+    /* dependencies class */
+    Object.keys(dependencies.class).forEach(item => {
+        const classReg = registred(classes, item)
+        !classReg && classes.set(item, { 'instance': new dependencies.class[item].default(), 'usedBy': [] })
+        classes.get(item)["usedBy"].push(config.id)
+    })
+    /* dependencies helper */
+    Object.keys(dependencies.helper).forEach(item => {
+        const helperReg = registred(helper, item)
+        !helperReg && helper.set(item, { 'module': dependencies.helper[item], 'usedBy': [] })
+        helper.get(item)["usedBy"].push(config.id)
     })
 }
 
-const addRegDeps = (dependencies) => {
-    dependencies.forEach(dep => {
-        const reg = deps_reg.get(dep.class.name)
-        !reg.instance && (reg.instance = new reg.class())
+const injectDependencies = (component) => {
+    const requiredDeps = component.requiredDeps
+    let registeredDeps = {}
+
+    requiredDeps.forEach(item => {
+        const reg =
+            register.reg.deps.class.get(item) ||
+            register.reg.deps.helper.get(item)
+        registeredDeps[item] = reg.module || reg.instance
     })
+    component.deps = registeredDeps
 }
 
-const injectDependencies = (component, deps) => {
-    deps.forEach(item => component.deps[item] = deps_reg.get(item).instance)
-}
-
-const validateConfig = (config) => {
+const validateConfig = (config, loaderLists) => {
     const error = (log, prop = null,) => { console.error(prop || "", log) }
     if (!config) { error("❌ no configured"); return }
-    if (!info.comp.list[config.tag]) { error("❌ no tag in component config"); return }
+    if (!loaderLists.comp[config.tag]) { error("❌ no tag in component config"); return }
     if (!config.id) { error("❌ no id in component config", config.tag); return }
-    if (checkId(config.id)) { error(`❌ id already in use ${window.APP.ids_reg[config.id]}`, config.id); return }
-    if (!config.eventName) { error(`❌ no eventName defined`, config.id); return }
-    const componentData = info.comp.list[config.tag]
-    if (!componentData) { error("❌ not found in component list", config.tag,); return }
-    return componentData
+    if (validateId(config.id)) { error(`❌ id already in use ${register.reg.ids.get(config.id)}`); return }
+    return true
+}
+
+const validateId = (id) => {
+    const uniqueId = register.reg.ids.get(id) || null
+    return uniqueId
+}
+
+const registerID = (component) => {
+    register.reg.ids.set(component.id, { "component": component })
 }
 
 const applyConf = (component, config) => {
     component.id = config.id
-    component.css = config.css || null
-    component.logic = config.logic || null
-    config.eventDom && (component.eventDom = config.eventDom)
-    config.eventName && (component.eventName = config.eventName)
-    config.links && (component.links = config.links)
-    config.data && (component.data = config.data)
-    config.state && (component.state = config.state)
-    config.className && (component.className = config.className)
+    config.css && component.css && (component.css = config.css)
+    config.logic && component.logic && (component.logic = config.logic)
+    config.eventDom && component.eventDom && (component.eventDom = config.eventDom)
+    config.eventName && component.eventName && (component.eventName = config.eventName)
+    config.links && component.links && (component.links = config.links)
+    config.data && component.data && (component.data = config.data)
+    config.state && component.state && (component.state = config.state)
+    config.className && component.className && (component.className = config.className)
 }
 
-export const load = async (box, config) => {
+export const prepare = async (box, config) => {
     /* check global */
     if (checkLevel()) {
-
         /* loads */
-        const infoLists = await importLoaderDeps()
-
+        const loaderLists = await importLists()
         /* validations */
-        /*     const componentData = validateConfig(config)
-            if (!componentData) return
-         */
+        if (!validateConfig(config, loaderLists)) return
+        /* get component data */
+        const compInfo = getCompData(loaderLists, config.tag)
         /* import modules */
-        /*     const module = await importModules(config, componentData)
-            const dependencies = await importDependencies(module)
-         */
+        const [module, dependencies] = await Promise.all([
+            importModules(config, compInfo),
+            importDependencies(config, compInfo, loaderLists)
+        ])
+        /* register module & deps */
+        addToReg(config, module, dependencies)
         /* create component */
-        /*     const component = box.appendChild(document.createElement(config.tag))
-         */    /* apply conf */
-
-        /*     applyConf(component, config)
-         */    /* register */
-
-        /*     await addReg(config, module, dependencies)
-            addRegDeps(dependencies)
-            addRegId(component)
-         */
+        let component = register.reg.comp.get(config.tag)
+        component = box.appendChild(new component.module.default())
+        /* register id */
+        registerID(config.id)
+        /* apply conf */
+        applyConf(component, config)
         /* inject dependencies */
-        /*     injectDependencies(component, module.requiredDeps)
-            return component
-         */
+        injectDependencies(component)
+        return component
     }
-
 }
 
 export const init = async (box, config) => {

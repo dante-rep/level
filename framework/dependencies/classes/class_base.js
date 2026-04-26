@@ -1,4 +1,4 @@
-class ClassBase {
+export default class ClassBase {
     /* RESOLVE EXTERNAL CONFIG */
     #resolve(object, defaultOBJECT, dom) {
         const resumed = { ...defaultOBJECT }
@@ -51,5 +51,3 @@ class ClassBase {
         Object.entries(css).forEach(([prop, value]) => dom.style.setProperty(`--${prop}`, value))
     }
 }
-
-export default new ClassBase()

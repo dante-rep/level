@@ -1,7 +1,7 @@
 const dependencies = {
-    classes: {
-        'base': "/framework/dependencies//classes/class_base.js",
-        'fonts': "/framework/dependencies//classes/class_fonts.js"
+    class: {
+        base: "/framework/dependencies//classes/class_base.js",
+        fonts: "/framework/dependencies//classes/class_fonts.js"
     },
     helper: {
         dom: "/framework/dependencies/helpers/dom.js",

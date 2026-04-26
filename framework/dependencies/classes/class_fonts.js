@@ -31,4 +31,4 @@ class ClassFonts {
     }
 }
 
-export default new ClassFonts()
+export default ClassFonts

@@ -2,7 +2,7 @@ export const tag = "progress_bar-01"
 export default class progressBar extends HTMLElement {
     /* private props */
     _boxMoved = 0
-    _deps = ["base", "fonts", "dom"]
+    #DEPS = ["base", "fonts", "dom"]
     _css = {
         box_width: "100%",
         box_height: "100%",

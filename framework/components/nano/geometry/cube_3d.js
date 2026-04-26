@@ -19,6 +19,7 @@ export default class cube3D extends HTMLElement {
         this.fonts = null /* [{}] */
         this.css = {}
         this.logic = {}
+        this.requiredDeps = [...this.#DEPS]
         this.deps = {}
         this.state = false
     }
@@ -102,9 +103,7 @@ export default class cube3D extends HTMLElement {
         `
     }
 
-    #configure() {
-        this.deps.base.validateAll(this)
-    }
+    #configure() { this.deps.base.validateAll(this) }
 
     #checkConf() {
         let ready = true
@@ -131,6 +130,8 @@ export default class cube3D extends HTMLElement {
             this.#addStyle()
             this.#drawComponent()
             this.#addEvents()
+        } else {
+            console.error(this, "dependencies lost")
         }
     }
 }

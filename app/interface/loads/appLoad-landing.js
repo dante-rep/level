@@ -17,9 +17,9 @@ const drawLanding = async (help) => {
 
 const drawComponents = async (loader) => {
     const [titles, loadBar, cube] = await Promise.all([
-        addTextComponents(loader, document.querySelector(".titlesBox")),
+/*         addTextComponents(loader, document.querySelector(".titlesBox")),
         addProgressBar(loader, document.querySelector(".barBox")),
-        addCube(loader, document.querySelector(".animationSection"))
+ */        addCube(loader, document.querySelector(".animationSection"))
     ])
 
     return {
@@ -32,40 +32,35 @@ const drawComponents = async (loader) => {
         'appBar': document.querySelector(".barBox"),
         'access': document.querySelector("#access"),
         'components': {
-            titleLevel: titles[0],
+/*             titleLevel: titles[0],
             titleFrame: titles[1],
             loadBar: loadBar,
-            cube: cube
+ */            cube: cube
         }
     }
 }
+
 const addCube = async (loader, box) => {
-    const tag = "cube-3d"
-    const helpers = {
-        'dom': level.helper.dom
-    }
-    const deps = {
-        'base': `${level.route}/framework/dependencies/classes/class_base.js`
-    }
-    const css = {
-        box_perspective: "900px",
-        box_size: "300px",
-        box_back: "rgba(0, 0, 0, 0)",
-        box_border: "2px solid rgb(32, 32, 32)",
-        box_shadow: "inset 0 0 50px rgb(32, 32, 32)"
+    const config = {
+        id: "landing-cube3d",
+        tag: "cube-3d",
+/*         deps: {
+            helper: "dom",
+            class: "base"
+        },
+ */        css: {
+            box_perspective: "900px",
+            box_size: "300px",
+            box_back: "rgba(0, 0, 0, 0)",
+            box_border: "2px solid rgb(32, 32, 32)",
+            box_shadow: "inset 0 0 50px rgb(32, 32, 32)"
+        }
     }
 
-    /*     const cubeComponent = help.dom.add(box, componentMod.module.tag)
-     */
-    const component = loader.load(box, tag)
-/*     await help.import.object(deps)
-    Object.entries(deps).forEach(([key, value]) => cubeComponent.deps[key] = value.default)
-    Object.entries(helpers).forEach(([key, value]) => cubeComponent.deps[key] = value)
-    cubeComponent.css = css
-
-    cubeComponent.init()
-    return cubeComponent
- */}
+    const component = await loader.prepare(box, config)
+    component.init()
+/*     return cubeComponent
+ */ }
 
 const addTextComponents = async (loader, box) => {
     const componentMod = await level.helper.import.object({
