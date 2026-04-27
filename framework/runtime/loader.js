@@ -77,7 +77,7 @@ const addToReg = async (config, module, dependencies) => {
     })
 }
 
-const injectDependencies = (component) => {
+const injectDependencies = (component, list) => {
     const requiredDeps = component.requiredDeps
     let registeredDeps = {}
 
@@ -85,7 +85,7 @@ const injectDependencies = (component) => {
         const reg =
             register.reg.deps.class.get(item) ||
             register.reg.deps.helper.get(item)
-        !reg && console.error(`❌ ${component.id} requiredDeps and dependencies declared in componentsList not match, revise: ${item}`)
+        !reg && console.error(`❌ ${component.id} not found ${item} in:`, list)
         reg && (registeredDeps[item] = reg.module || reg.instance)
     })
     component.deps = registeredDeps
@@ -146,7 +146,7 @@ export const prepare = async (box, config) => {
         /* apply conf */
         applyConf(component, config)
         /* inject dependencies */
-        injectDependencies(component)
+        injectDependencies(component, loaderLists.deps)
         return component
     }
 }

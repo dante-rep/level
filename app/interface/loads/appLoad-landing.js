@@ -50,7 +50,8 @@ const addCube = async (loader, box) => {
             box_size: "300px",
             box_back: "rgba(0, 0, 0, 0)",
             box_border: "2px solid rgb(32, 32, 32)",
-            box_shadow: "inset 0 0 50px rgb(32, 32, 32)"
+            box_shadow: "inset 0 0 50px rgb(32, 32, 32)",
+            transition: "1.5s ease-in-out"
         }
     }
 
@@ -113,7 +114,7 @@ const addProgressBar = async (loader, box) => {
             progress_back: "rgba(0, 0, 0, 0.6)",
             progress_radius: "4px",
             progress_fontFamily: "ds-digi",
-            progress_fontSize: "14px",
+            progress_fontSize: "15px",
             progress_fontColor: "rgb(200, 200, 200)",
             progress_fontWeight: "bolder",
             progress_letterSpacing: "2px",
@@ -129,7 +130,7 @@ const addProgressBar = async (loader, box) => {
             item_backOn: "rgb(255, 255, 255)",
             item_boxShadowOn: "0 0 4px rgb(46, 46, 46), 0 0 8px rgb(46, 46, 46)",
 
-            transition: "350ms ease-out"
+            transition: "250ms ease-out"
         },
         data: { items_multiplier: 3, progress_length: 3, progress_steps: 5 },
         fonts: [{ 'name': 'ds-digi', 'src': `${level.route}/app/src/fonts/ds-digi.ttf` }]
@@ -144,22 +145,37 @@ const animateIn = async (boxes) => {
     /* animation darkBar */
     boxes.bars.top.style.top = "0px"
     boxes.bars.bottom.style.bottom = "0px"
-    await level.helper.timers.awaitTransition(boxes.bars.top)
-    /*  */
+    await level.helper.timer.awaitTransition(boxes.bars.top)
+    /* animation appear progressBar */
     boxes.landingContainer.classList.replace("invisible", "visible")
-    await level.helper.timers.awaitTransition(boxes.landingContainer)
+    await level.helper.timer.awaitTransition(boxes.landingContainer)
     boxes.appBar.classList.remove("invisible")
     boxes.appBar.classList.add("progressBox_down", "visible")
-    level.helper.events.send("algo", { value: 1 })
-}
+    await level.helper.timer.awaitTransition(boxes.landingContainer)
+
+    /* animation cube */
+/*     for (let turn = 0; turn <= 6; turn++) {
+        const xRandom = level.helper.util.randomRange(0, 360)
+        const yRandom = level.helper.util.randomRange(0, 360)
+        if (turn < 6) {
+            boxes.components.cube.rotate("x", xRandom)
+            boxes.components.cube.rotate("y", yRandom)
+            await level.helper.timer.sleep(1500)
+        } else {
+            boxes.components.cube.updateCss({"transition": "4s ease-in-out"})
+            boxes.components.cube.rotate("x", 0)
+            boxes.components.cube.rotate("y", 0)
+        }
+    }
+ */}
 
 const addEvents = (boxes) => {
     boxes.access.addEventListener("click", () => {
         exit()
     })
     document.addEventListener("appLoad", (e) => {
-/*         console.log(e.detail.loaded)
- */    })
+        boxes.components.progressBar.changeValue(e.detail.loaded)
+    })
 }
 
 export const init = async () => {

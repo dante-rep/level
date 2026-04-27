@@ -7,8 +7,9 @@ const dependencies = {
         dom: "/framework/dependencies/helpers/dom.js",
         css: "/framework/dependencies/helpers/css.js",
         import: "/framework/dependencies/helpers/imports.js",
-        timers: "/framework/dependencies/helpers/timers.js",
-        events: "/framework/dependencies/helpers/events.js"
+        timer: "/framework/dependencies/helpers/timer.js",
+        events: "/framework/dependencies/helpers/events.js",
+        util: "/framework/dependencies/helpers/util.js"
     }
 }
 export default dependencies

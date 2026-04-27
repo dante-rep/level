@@ -16,7 +16,6 @@ export const addGlobalLevel = async () => {
     /* dependencies */
     const dependencies = (await import(`${level.route}/framework/conf/dependencies_paths.js`)).default
     await addToObject(dependencies.helper, level.route)
-    level["class"] = dependencies.classes
     level["helper"] = dependencies.helper
     /* global assign */
     globalThis.level = level

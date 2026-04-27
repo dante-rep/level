@@ -15,7 +15,7 @@ const components = {
         tag: "progress_bar-01",
         path: "/framework/components/nano/progress/progressBar_01.js",
         class: ["base", "fonts"],
-        helper: ["dom", "css", "timers"]
+        helper: ["dom", "css", "timer"]
     }
 }
 export default components

@@ -8,7 +8,8 @@ export default class cube3D extends HTMLElement {
         box_border: "none",
         box_radius: "0px",
         box_back: "grey",
-        box_shadow: "none"
+        box_shadow: "none",
+        transition: "1s ease-in-out"
     }
 
     constructor() {
@@ -65,6 +66,7 @@ export default class cube3D extends HTMLElement {
                 transform-style: preserve-3d;
                 transform-origin: 50% 50% var(--pos_start);
                 transform: rotateY(var(--rotateY)) rotateX(var(--rotateX));
+                transition: var(--transition);
 
                 li {
                     border: ${this.css.box_border};
@@ -119,6 +121,16 @@ export default class cube3D extends HTMLElement {
     }
 
     /* public methods */
+    updateCss(css) {
+        this.deps.base.convertCssVar(css, this)
+    }
+
+    rotate(axis, value) {
+        axis === "x"
+            ? this.dom.host.style.setProperty("--rotateY", value + "deg")
+            : this.dom.host.style.setProperty("--rotateX", value + "deg")
+    }
+
     load() {
         this.#checkConf()
     }
@@ -129,8 +141,8 @@ export default class cube3D extends HTMLElement {
             this.#configure()
             this.#addStyle()
             this.#drawComponent()
-            this.#addEvents()
-        } else {
+/*             this.#addEvents()
+ */        } else {
             console.error(this, "dependencies lost")
         }
     }

@@ -51,10 +51,10 @@ const init = async () => {
     const modules = {
         "mainContainers": `${level.route}/app/interface/loads/mainContainers.js`
     }
-    for (let time = 0; time <= 5; time++) {
-        document.dispatchEvent(new CustomEvent("appLoad", { detail: { 'loaded': time } }))
-        await new Promise(resolve => setTimeout(resolve, 1000))
-    }
+    for (let time = 1; time <= 5; time++) {
+        document.dispatchEvent(new CustomEvent("appLoad", { detail: { 'loaded': time * 20 } }))
+/*         await new Promise(resolve => setTimeout(resolve, 2000))
+ */    }
 
     /*     await Promise.all([
             loadModules(app.modules)

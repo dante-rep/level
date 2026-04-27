@@ -2,7 +2,7 @@ export const tag = "progress_bar-01"
 export default class progressBar extends HTMLElement {
     /* private props */
     #BOX_MOVED = 0
-    #DEPS = ["base", "fonts", "dom", "timers"]
+    #DEPS = ["base", "fonts", "dom", "timer"]
     #CSS = {
         box_width: "100%",
         box_height: "100%",
@@ -42,6 +42,8 @@ export default class progressBar extends HTMLElement {
         progress_length: 2,
         progress_steps: 3,
     }
+    #PROGRESS_TASK = Promise.resolve()
+
 
     constructor() {
         super()
@@ -215,7 +217,7 @@ export default class progressBar extends HTMLElement {
                 boxes[currentBox - 1].classList.replace("boxOff", "boxOn")
                 progressBox.style.left = `${boxWidth * (this.#BOX_MOVED + 1)}px`
                 this.#BOX_MOVED = currentBox
-                await this.deps.timers.sleep(delay / 2)
+                await this.deps.timer.sleep(delay / 2)
             }
             this.#updateValue(i, delay)
             this.value = value
@@ -230,7 +232,7 @@ export default class progressBar extends HTMLElement {
             const progress = ((1 / steps) * prog + value - 1).toFixed(1)
             if (progress > 0) {
                 progressText.textContent = progress === "100.0" ? "100" : progress
-                await this.deps.timers.sleep((delay / 2) / steps)
+                await this.deps.timer.sleep((delay / 2) / steps)
             }
         }
     }
@@ -239,13 +241,17 @@ export default class progressBar extends HTMLElement {
         const boxesLayer = this.dom.querySelector(".boxesLayer")
         const boxes = boxesLayer.querySelectorAll(".box")
         const progressBox = this.dom.querySelector(".progressBox")
-        const delay = this.deps.timers.getTransition(progressBox)
+        const delay = this.deps.timer.getTransition(progressBox)
 
-        if (value < 0 || value > 100) {
-            console.error(this, "value not valid 0 - 100")
-            return
-        }
-        await this.#moveTo(value, boxes, progressBox, boxesLayer, delay)
+        this.#PROGRESS_TASK = this.#PROGRESS_TASK.then(async () => {
+            if (value <= this.value || value < 0 || value > 100) {
+                console.error(this, "value not valid 0 - 100")
+                return
+            } else {
+                await this.#moveTo(value, boxes, progressBox, boxesLayer, delay)
+            }
+        })
+        await this.#PROGRESS_TASK
     }
 
     /* public methods */
@@ -267,9 +273,6 @@ export default class progressBar extends HTMLElement {
             const boxes = this.#drawBar(layers.ref, "refBox", this.data.items_multiplier * 10)
             this.#configurePos(boxes)
             this.#drawItems(boxes)
-
-            await this.deps.timers.sleep(3000)
-            await this.changeValue(100)
         }
     }
 }
