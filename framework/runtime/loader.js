@@ -85,14 +85,15 @@ const injectDependencies = (component) => {
         const reg =
             register.reg.deps.class.get(item) ||
             register.reg.deps.helper.get(item)
-        registeredDeps[item] = reg.module || reg.instance
+        !reg && console.error(`❌ ${component.id} requiredDeps and dependencies declared in componentsList not match, revise: ${item}`)
+        reg && (registeredDeps[item] = reg.module || reg.instance)
     })
     component.deps = registeredDeps
 }
 
 const validateConfig = (config, loaderLists) => {
     const error = (log, prop = null,) => { console.error(prop || "", log) }
-    if (!config) { error("❌ no configured"); return }
+    if (!config) { error("❌ not configured"); return }
     if (!loaderLists.comp[config.tag]) { error("❌ no tag in component config"); return }
     if (!config.id) { error("❌ no id in component config", config.tag); return }
     if (validateId(config.id)) { error(`❌ id already in use ${register.reg.ids.get(config.id)}`); return }

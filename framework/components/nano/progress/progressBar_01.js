@@ -2,7 +2,7 @@ export const tag = "progress_bar-01"
 export default class progressBar extends HTMLElement {
     /* private props */
     #BOX_MOVED = 0
-    #DEPS = ["base", "fonts", "dom", "events", "timers"]
+    #DEPS = ["base", "fonts", "dom", "timers"]
     #CSS = {
         box_width: "100%",
         box_height: "100%",
@@ -26,13 +26,14 @@ export default class progressBar extends HTMLElement {
         item_radiusOff: "none",
         item_backOff: "none",
         item_borderOff: "none",
+        item_boxShadowOff: "none",
 
         item_widthOn: "30%",
         item_heightOn: "100%",
         item_radiusOn: "none",
         item_backOn: "none",
         item_borderOn: "none",
-        item_filter: "none",
+        item_boxShadowOn: "none",
 
         transition: "300ms ease-in-out"
     }
@@ -120,6 +121,7 @@ export default class progressBar extends HTMLElement {
                     border-radius: var(--item_radiusOff);
                     border: var(--item_borderOff); 
                     background: var(--item_backOff);
+                    box-shadow: var(--item_boxShadowOff);
                 }
 
                 .boxOn .item {
@@ -128,7 +130,7 @@ export default class progressBar extends HTMLElement {
                     border-radius: var(--item_radiusOn);
                     border: var(--item_borderOn); 
                     background: var(--item_backOn);
-                    filter: var(--item_filter);
+                    box-shadow: var(--item_boxShadowOn);
                 }
             }
 

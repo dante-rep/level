@@ -126,12 +126,12 @@ const addProgressBar = async (loader, box) => {
             item_widthOn: "4px",
             item_heightOn: "4px",
             item_radiusOn: "50%",
-            item_backOn: "rgb(46, 46, 46)",
-            item_filter: "blur(2px)",
+            item_backOn: "rgb(255, 255, 255)",
+            item_boxShadowOn: "0 0 4px rgb(46, 46, 46), 0 0 8px rgb(46, 46, 46)",
 
             transition: "350ms ease-out"
         },
-        data: { items_multiplier: 3, progress_length: 2, progress_steps: 5 },
+        data: { items_multiplier: 3, progress_length: 3, progress_steps: 5 },
         fonts: [{ 'name': 'ds-digi', 'src': `${level.route}/app/src/fonts/ds-digi.ttf` }]
     }
 

@@ -73,7 +73,7 @@ export default class cube3D extends HTMLElement {
                     background: ${this.css.box_back};
                     font-size: 100px;
                     color: rgb(255, 255, 255);
-                    filter: blur(0.2px);
+                    filter: blur(0.1px);
                 }
 
                 .left {transform: translateZ(var(--pos_start)) translateX(var(--pos_start)) rotateY(-90deg);}
