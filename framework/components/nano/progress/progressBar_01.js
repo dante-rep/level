@@ -2,6 +2,7 @@ export const tag = "progress_bar-01"
 export default class progressBar extends HTMLElement {
     /* private props */
     #BOX_MOVED = 0
+    #STATE = null
     #DEPS = ["base", "fonts", "dom", "timer"]
     #CSS = {
         box_width: "100%",
@@ -55,7 +56,6 @@ export default class progressBar extends HTMLElement {
         this._data = { ...this.#DATA }
         this.deps = {}
         this.requiredDeps = [...this.#DEPS]
-        this.state = null
         this.value = 0
     }
 
@@ -179,7 +179,7 @@ export default class progressBar extends HTMLElement {
     #checkConf() {
         let ready = true
         this.#DEPS.forEach(dep => !Object.keys(this.deps).includes(dep) && (ready = false))
-        this.state = ready
+        this.#STATE = ready
     }
 
     #drawBar() {
@@ -251,13 +251,19 @@ export default class progressBar extends HTMLElement {
     }
 
     /* public methods */
+    getState() { return this.#STATE }
+
+    updateCss(css) {
+        this.deps.base.convertCssVar(css, this)
+    }
+
     load() {
         this.#checkConf()
     }
 
     async init() {
         this.load()
-        if (this.state) {
+        if (this.#STATE) {
             this.#configure()
             this.#addStyle()
             this.#addFonts(this.fonts)

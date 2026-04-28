@@ -1,6 +1,7 @@
 export const tag = "cube-3d"
 export default class cube3D extends HTMLElement {
     /* private props */
+    #STATE = null
     #DEPS = ["base", "dom"]
     #CSS = {
         box_size: "100px",
@@ -22,7 +23,6 @@ export default class cube3D extends HTMLElement {
         this._css = { ...this.#CSS }
         this.deps = {}
         this.requiredDeps = [...this.#DEPS]
-        this.state = false
     }
 
     /* private nethods */
@@ -46,6 +46,7 @@ export default class cube3D extends HTMLElement {
         * {
             margin: 0px;
             padding: 0px;
+            box-sizing: border-box;
         }
 
         :host {
@@ -110,7 +111,7 @@ export default class cube3D extends HTMLElement {
     #checkConf() {
         let ready = true
         this.#DEPS.forEach(dep => !Object.keys(this.deps).includes(dep) && (ready = false))
-        this.state = ready
+        this.#STATE = ready
     }
 
     #addEvents() {
@@ -121,6 +122,8 @@ export default class cube3D extends HTMLElement {
     }
 
     /* public methods */
+    getState() { return this.#STATE }
+
     updateCss(css) {
         this.deps.base.convertCssVar(css, this)
     }
@@ -137,12 +140,11 @@ export default class cube3D extends HTMLElement {
 
     async init() {
         this.load()
-        if (this.state) {
+        if (this.#STATE) {
             this.#configure()
             this.#addStyle()
             this.#drawComponent()
-/*             this.#addEvents()
- */        } else {
+        } else {
             console.error(this, "dependencies lost")
         }
     }
