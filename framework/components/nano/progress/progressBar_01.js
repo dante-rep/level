@@ -42,8 +42,6 @@ export default class progressBar extends HTMLElement {
         progress_length: 2,
         progress_steps: 3,
     }
-    #PROGRESS_TASK = Promise.resolve()
-
 
     constructor() {
         super()
@@ -243,15 +241,13 @@ export default class progressBar extends HTMLElement {
         const progressBox = this.dom.querySelector(".progressBox")
         const delay = this.deps.timer.getTransition(progressBox)
 
-        this.#PROGRESS_TASK = this.#PROGRESS_TASK.then(async () => {
-            if (value <= this.value || value < 0 || value > 100) {
-                console.error(this, "value not valid 0 - 100")
-                return
-            } else {
-                await this.#moveTo(value, boxes, progressBox, boxesLayer, delay)
-            }
-        })
-        await this.#PROGRESS_TASK
+        if (value <= this.value || value < 0 || value > 100) {
+            console.error(this, "value not valid 0 - 100")
+            return
+        } else {
+            await this.#moveTo(value, boxes, progressBox, boxesLayer, delay)
+        }
+        return true
     }
 
     /* public methods */

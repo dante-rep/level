@@ -128,9 +128,9 @@ const addProgressBar = async (loader, box) => {
             item_heightOn: "4px",
             item_radiusOn: "50%",
             item_backOn: "rgb(255, 255, 255)",
-            item_boxShadowOn: "0 0 4px rgb(46, 46, 46), 0 0 8px rgb(46, 46, 46)",
+            item_boxShadowOn: "0 0 4px rgb(46, 46, 46), 0 0 6px rgb(46, 46, 46)",
 
-            transition: "250ms ease-out"
+            transition: "140ms ease-out"
         },
         data: { items_multiplier: 3, progress_length: 3, progress_steps: 5 },
         fonts: [{ 'name': 'ds-digi', 'src': `${level.route}/app/src/fonts/ds-digi.ttf` }]
@@ -152,29 +152,36 @@ const animateIn = async (boxes) => {
     boxes.appBar.classList.remove("invisible")
     boxes.appBar.classList.add("progressBox_down", "visible")
     await level.helper.timer.awaitTransition(boxes.landingContainer)
+}
 
-    /* animation cube */
-/*     for (let turn = 0; turn <= 6; turn++) {
-        const xRandom = level.helper.util.randomRange(0, 360)
-        const yRandom = level.helper.util.randomRange(0, 360)
-        if (turn < 6) {
-            boxes.components.cube.rotate("x", xRandom)
-            boxes.components.cube.rotate("y", yRandom)
-            await level.helper.timer.sleep(1500)
-        } else {
-            boxes.components.cube.updateCss({"transition": "4s ease-in-out"})
-            boxes.components.cube.rotate("x", 0)
-            boxes.components.cube.rotate("y", 0)
-        }
+const cubeAnimation = async (boxes, value) => {
+    const xRandom = level.helper.util.randomRange(0, 360)
+    const yRandom = level.helper.util.randomRange(0, 360)
+    if (value < 100) {
+        boxes.components.cube.rotate("x", xRandom)
+        boxes.components.cube.rotate("y", yRandom)
+        await level.helper.timer.sleep(1500)
+    } else {
+        boxes.components.cube.updateCss({ "transition": "4s ease-in-out" })
+        boxes.components.cube.rotate("x", 0)
+        boxes.components.cube.rotate("y", 0)
     }
- */}
+}
 
 const addEvents = (boxes) => {
+    const progressTask = { 'queue': Promise.resolve() }
+    const cubeTasks = { 'queue': Promise.resolve() }
+
     boxes.access.addEventListener("click", () => {
         exit()
     })
+
     document.addEventListener("appLoad", (e) => {
-        boxes.components.progressBar.changeValue(e.detail.loaded)
+        progressTask.queue = progressTask.queue.then(async () => {
+            boxes.components.progressBar.changeValue(e.detail.loaded)
+            await cubeAnimation(boxes, e.detail.loaded)
+            await level.helper.timer.sleep(300)
+        })
     })
 }
 
