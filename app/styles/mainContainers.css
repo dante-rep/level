@@ -19,8 +19,13 @@ body {
         background: var(--landingColor1);
     }
 
-    .topDarkBar {top: calc(var(--darkBarHeight) * -1);}
-    .bottomDarkBar {bottom: calc(var(--darkBarHeight) * -1);}
+    .topDarkBar {
+        top: calc(var(--darkBarHeight) * -1);
+    }
+
+    .bottomDarkBar {
+        bottom: calc(var(--darkBarHeight) * -1);
+    }
 
     .landingContainer {
         display: flex;
@@ -64,9 +69,28 @@ body {
         }
 
         .animationSection {
+            display: grid;
+            grid-template-columns: repeat(20, 1fr);
+            grid-template-rows: repeat(20, 1fr);
             width: 50%;
             height: 100%;
             border: 1px solid red;
+
+            .cube-3d {
+                grid-column: 10/11;
+                grid-row: 10/11;
+                border: 1px dashed grey;
+            }
+
+            .axisX {
+                grid-column: 4/5;
+                grid-row: 6/15;
+            }
+
+            .axisY {
+                grid-column: 5/16;
+                grid-row: 15/16;
+            }
         }
     }
 

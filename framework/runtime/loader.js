@@ -122,7 +122,7 @@ const applyConf = (component, config) => {
     config.className && component.className && (component.className = config.className)
 }
 
-export const prepare = async (box, config) => {
+export const prepare = async (box, config, classes = null) => {
     /* check global */
     if (checkLevel()) {
         /* loads */
@@ -147,6 +147,8 @@ export const prepare = async (box, config) => {
         applyConf(component, config)
         /* inject dependencies */
         injectDependencies(component, loaderLists.deps)
+        /* apply classNames */
+        component.className = classes
         return component
     }
 }

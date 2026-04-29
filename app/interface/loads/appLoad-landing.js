@@ -20,7 +20,9 @@ const drawComponents = async (loader) => {
         addTitleTop(loader, document.querySelector(".titlesBox")),
         addTitleBottom(loader, document.querySelector(".titlesBox")),
         addProgressBar(loader, document.querySelector(".progressBox")),
-        addCube(loader, document.querySelector(".animationSection"))
+        addCube(loader, document.querySelector(".animationSection")),
+        addAxisX(loader, document.querySelector(".animationSection")),
+        addAxisY(loader, document.querySelector(".animationSection"))
     ])
 
     return {
@@ -55,7 +57,42 @@ const addCube = async (loader, box) => {
         }
     }
 
-    const component = await loader.prepare(box, config)
+    const component = await loader.prepare(box, config, "cube-3d")
+    component.init()
+    return component
+}
+
+const addAxisX = async (loader, box) => {
+    const config = {
+        id: "landing-axisX",
+        tag: "axis_ticks_01",
+        css: {
+            box_width: "50px",
+            box_height: "100%",
+            value_width: "100%",
+            value_height: "26px"
+        },
+        logic: {
+            orientation: "vertical"
+        }
+    }
+
+    const component = await loader.prepare(box, config, "axisX")
+    component.init()
+    return component
+}
+
+const addAxisY = async (loader, box) => {
+    const config = {
+        id: "landing-axisY",
+        tag: "axis_ticks_01",
+        css: {
+            box_width: "100%",
+            box_height: "50px"
+        }
+    }
+
+    const component = await loader.prepare(box, config, "axisY")
     component.init()
     return component
 }
@@ -162,7 +199,7 @@ const cubeAnimation = async (boxes, value) => {
         boxes.components.cube.rotate("y", yRandom)
         await level.helper.timer.sleep(1500)
     } else {
-        boxes.components.cube.updateCss({ "transition": "4s ease-in-out" })
+        boxes.components.cube.updateCss({ "transition": "4s ease-out" })
         boxes.components.cube.rotate("x", 0)
         boxes.components.cube.rotate("y", 0)
     }
