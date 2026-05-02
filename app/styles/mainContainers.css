@@ -82,14 +82,14 @@ body {
                 border: 1px dashed grey;
             }
 
-            .axisX {
-                grid-column: 4/5;
+            .axisY {
+                grid-column: 2/3;
                 grid-row: 6/15;
             }
 
-            .axisY {
+            .axisX {
                 grid-column: 5/16;
-                grid-row: 15/16;
+                grid-row: 16/17;
             }
         }
     }

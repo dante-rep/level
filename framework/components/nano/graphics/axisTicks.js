@@ -3,12 +3,13 @@ export default class AxisTicks extends HTMLElement {
     /* private props */
     #STATE = null
     #HOR = null
-    #DEPS = ["base", "dom"]
+    #DEPS = ["base", "dom", "timer"]
     #CSS = {
         box_width: "100%",
         box_height: "100%",
         value_width: "40px",
-        value_height: "40px"
+        value_height: "40px",
+        transition: "1s ease-in-out"
     }
     #LOGIC = {
         orientation: ["horizontal", "vertical"]
@@ -92,11 +93,15 @@ export default class AxisTicks extends HTMLElement {
                 border-radius: 4px;
                 background: rgba(255, 255, 255, 0);
                 backdrop-filter: blur(2px);
+                font-size: 12px;
+                color: grey;
+                transition: var(--transition);
             }
         }
 
         .relative { position: relative; }
         .absolute { position: absolute; }
+        .center { display: flex; align-items: center; justify-content: center; }
         .max { width: 100%; height: 100%; }
         .column { flex-direction: column; }
 
@@ -120,8 +125,8 @@ export default class AxisTicks extends HTMLElement {
         .stepPoint_ver { left: -2px; }
         .stepPoint_hor { top: 2px; }
 
-        .pointerBox_ver { top: calc(100% - 26px); left: 16px; width: 40px; height: 26px; }
-        .pointerBox_hor { top: -42px; letf: -20px; width: 40px; height: 26px; }
+        .pointerBox_ver { top: calc(100% - 13px); left: 16px; width: 40px; height: 26px; }
+        .pointerBox_hor { top: -42px; left: -20px; width: 40px; height: 26px; }
         `
     }
 
@@ -171,18 +176,32 @@ export default class AxisTicks extends HTMLElement {
     }
 
     #drawPointer(container) {
-        const pointerBox = this.deps.dom.add(container, "div", `pointerBox relative ${this.#HOR ? "pointerBox_hor" : "pointerBox_ver"}`)
+        const pointerBox = this.deps.dom.add(container, "div", `pointerBox center relative ${this.#HOR ? "pointerBox_hor" : "pointerBox_ver"}`)
+        pointerBox.textContent = 0
     }
 
     /* public methods */
     getState() { return this.#STATE }
 
-    updateCss(css) {
-        this.deps.base.convertCssVar(css, this)
-    }
+    updateCss(css) { this.deps.base.convertCssVar(css, this) }
 
-    load() {
-        this.#checkConf()
+    load() { this.#checkConf() }
+
+    updateValue(value) {
+        const pointerBox = this.dom.querySelector(".pointerBox")
+        const pointerBox_lenght = this.#HOR ? pointerBox.offsetWidth : pointerBox.offsetHeight
+        const container = this.dom.querySelector(".pointerCont")
+        const range = this.data.max - this.data.min
+        const lenght = this.#HOR ? container.offsetWidth : container.offsetHeight
+
+        const pos = this.#HOR
+            ? (value * lenght) / 100
+            : lenght - (value * lenght) / 100
+
+        this.#HOR
+            ? pointerBox.style.left = `${pos - pointerBox_lenght / 2}px`
+            : pointerBox.style.top = `${pos - pointerBox_lenght / 2}px`
+        pointerBox.textContent = Math.round(range / 100 * value)
     }
 
     async init() {

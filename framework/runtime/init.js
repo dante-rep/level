@@ -9,5 +9,5 @@ export const init = async () => {
         register.createRegister()
     ])
 
-    console.log("level.route:", level.route)
+    console.log("level.route:", level.route || "local")
 }

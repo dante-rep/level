@@ -17,7 +17,7 @@ const components = {
     'axis_ticks_01': {
         path: "/framework/components/nano/graphics/axisTicks.js",
         class: ["base"],
-        helper: ["dom"]
+        helper: ["dom", "timer"]
     }
 }
 export default components

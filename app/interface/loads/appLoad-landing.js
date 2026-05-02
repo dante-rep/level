@@ -16,7 +16,7 @@ const drawLanding = async (help) => {
 }
 
 const drawComponents = async (loader) => {
-    const [topTitle, bottomTitle, progressBar, cube] = await Promise.all([
+    const [topTitle, bottomTitle, progressBar, cube, axisX, axisY] = await Promise.all([
         addTitleTop(loader, document.querySelector(".titlesBox")),
         addTitleBottom(loader, document.querySelector(".titlesBox")),
         addProgressBar(loader, document.querySelector(".progressBox")),
@@ -38,7 +38,9 @@ const drawComponents = async (loader) => {
             'topTitle': topTitle,
             'bottomTitle': bottomTitle,
             'progressBar': progressBar,
-            'cube': cube
+            'cube': cube,
+            'axisX': axisX,
+            'axisY': axisY
         }
     }
 }
@@ -48,7 +50,7 @@ const addCube = async (loader, box) => {
         id: "landing-cube3d",
         tag: "cube_3d",
         css: {
-            box_perspective: "900px",
+            box_perspective: "500px",
             box_size: "300px",
             box_back: "rgba(0, 0, 0, 0)",
             box_border: "2px solid rgb(32, 32, 32)",
@@ -62,9 +64,9 @@ const addCube = async (loader, box) => {
     return component
 }
 
-const addAxisX = async (loader, box) => {
+const addAxisY = async (loader, box) => {
     const config = {
-        id: "landing-axisX",
+        id: "landing-axisY",
         tag: "axis_ticks_01",
         css: {
             box_width: "50px",
@@ -77,14 +79,14 @@ const addAxisX = async (loader, box) => {
         }
     }
 
-    const component = await loader.prepare(box, config, "axisX")
+    const component = await loader.prepare(box, config, "axisY")
     component.init()
     return component
 }
 
-const addAxisY = async (loader, box) => {
+const addAxisX = async (loader, box) => {
     const config = {
-        id: "landing-axisY",
+        id: "landing-axisX",
         tag: "axis_ticks_01",
         css: {
             box_width: "100%",
@@ -92,7 +94,7 @@ const addAxisY = async (loader, box) => {
         }
     }
 
-    const component = await loader.prepare(box, config, "axisY")
+    const component = await loader.prepare(box, config, "axisX")
     component.init()
     return component
 }
@@ -191,23 +193,33 @@ const animateIn = async (boxes) => {
     await level.helper.timer.awaitTransition(boxes.landingContainer)
 }
 
-const cubeAnimation = async (boxes, value) => {
-    const xRandom = level.helper.util.randomRange(0, 360)
-    const yRandom = level.helper.util.randomRange(0, 360)
+const calculeCubeAnimation = (value) => {
     if (value < 100) {
-        boxes.components.cube.rotate("x", xRandom)
-        boxes.components.cube.rotate("y", yRandom)
-        await level.helper.timer.sleep(1500)
+        return {
+            'x': level.helper.util.randomRange(0, 360),
+            'y': level.helper.util.randomRange(0, 360)
+        }
     } else {
-        boxes.components.cube.updateCss({ "transition": "4s ease-out" })
-        boxes.components.cube.rotate("x", 0)
-        boxes.components.cube.rotate("y", 0)
+        return { 'x': 0, 'y': 0 }
     }
+}
+
+const cubeAnimation = async (boxes, values) => {
+    boxes.components.cube.rotate("x", values.x)
+    boxes.components.cube.rotate("y", values.y)
+    await level.helper.timer.sleep(1500)
+}
+
+const calculeAxisValues = (cubeValues) => {
+    const axisY_height = document.getElementById("landing-axisY").shadowRoot.querySelector(".pointsCont").offsetHeight
+    const axisX_width = document.getElementById("landing-axisX").shadowRoot.querySelector(".pointsCont").offsetWidth
+    return { 'x': Math.round(cubeValues.x / axisX_width * 100), 'y': Math.round(cubeValues.y / axisY_height * 100) }
 }
 
 const addEvents = (boxes) => {
     const progressTask = { 'queue': Promise.resolve() }
     const cubeTasks = { 'queue': Promise.resolve() }
+    const oldValues = { x: 0, y: 0 }
 
     boxes.access.addEventListener("click", () => {
         exit()
@@ -215,8 +227,28 @@ const addEvents = (boxes) => {
 
     document.addEventListener("appLoad", (e) => {
         progressTask.queue = progressTask.queue.then(async () => {
-            boxes.components.progressBar.changeValue(e.detail.loaded)
-            await cubeAnimation(boxes, e.detail.loaded)
+            let cubeValues = {}
+            let dif_x, dif_y
+            do {
+                cubeValues = calculeCubeAnimation(e.detail.progress)
+                dif_x = Math.abs(cubeValues.x - oldValues.x)
+                dif_y = Math.abs(cubeValues.y - oldValues.y)
+                console.log(cubeValues)
+            } while (e.detail.progress < 100 && dif_x < 90 || dif_y < 90)
+            const axisValues = calculeAxisValues(cubeValues)
+
+            if (e.detail.progress === 100) {
+                boxes.components.axisX.updateCss({ "transition": "6s ease-out" })
+                boxes.components.axisY.updateCss({ "transition": "6s ease-out" })
+                boxes.components.cube.updateCss({ "transition": "6s ease-in-out" })
+            }
+            boxes.components.progressBar.changeValue(e.detail.progress)
+            boxes.components.axisY.updateValue(axisValues.y)
+            boxes.components.axisX.updateValue(axisValues.x)
+            await level.helper.timer.sleep(500)
+            await cubeAnimation(boxes, cubeValues)
+            oldValues.x = cubeValues.x
+            oldValues.y = cubeValues.y
             await level.helper.timer.sleep(300)
         })
     })
