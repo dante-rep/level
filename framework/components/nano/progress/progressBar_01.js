@@ -34,7 +34,6 @@ export default class progressBar extends HTMLElement {
         item_radiusOn: "none",
         item_backOn: "none",
         item_borderOn: "none",
-        item_boxShadowOn: "none",
 
         transition: "300ms ease-in-out"
     }
@@ -121,7 +120,6 @@ export default class progressBar extends HTMLElement {
                     border-radius: var(--item_radiusOff);
                     border: var(--item_borderOff); 
                     background: var(--item_backOff);
-                    box-shadow: var(--item_boxShadowOff);
                 }
 
                 .boxOn .item {
@@ -147,7 +145,6 @@ export default class progressBar extends HTMLElement {
                         border: var(--progress_border);
                         border-radius: var(--progress_radius);
                         background: var(--progress_back);
-                        backdrop-filter: blur(10px);
                         
                         * {
                             font-family: var(--progress_fontFamily);

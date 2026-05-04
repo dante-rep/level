@@ -156,7 +156,7 @@ const addTitleBottom = async (loader, box) => {
             char_empty: "30px",
             char_fontSize: "32px",
             char_fontFamily: "other",
-            char_fontColor: level.helper.css.getVar("landingColor1"),
+            char_fontColor: "rgba(0, 0, 0, 0.42)",
         },
         data: { text: "Modular framework" },
         fonts: [{ 'name': 'other', 'src': `${level.route}/app/src/fonts/RonduitCapitals-Light.woff` }]
@@ -176,26 +176,28 @@ const addProgressBar = async (loader, box) => {
             box_padding: "4px",
 
             progress_height: "24px",
-            progress_back: "rgba(0, 0, 0, 0.6)",
+            progress_back: "rgba(0, 0, 0, 0.7)",
             progress_radius: "4px",
             progress_fontFamily: "ds-digi",
-            progress_fontSize: "15px",
-            progress_fontColor: "rgb(200, 200, 200)",
+            progress_fontSize: "14px",
+            progress_fontColor: "rgb(154, 154, 154)",
             progress_fontWeight: "bolder",
             progress_letterSpacing: "2px",
 
             item_widthOff: "calc(100% - 2px)",
             item_heightOff: "100%",
-            item_radiusOff: "4px",
+            item_radiusOff: "3px",
+            item_backOff: "rgba(0, 0, 0, 0)",
             item_borderOff: "1px solid rgba(0, 0, 0, 0.2)",
 
-            item_widthOn: "4px",
-            item_heightOn: "4px",
-            item_radiusOn: "50%",
-            item_backOn: "rgb(255, 255, 255)",
-            item_boxShadowOn: "0 0 4px rgb(46, 46, 46), 0 0 6px rgb(46, 46, 46)",
+            item_widthOn: "calc(100% - 2px)",
+            item_heightOn: "100%",
+            item_borderOn: "1px solid rgba(0, 0, 0, 0)",
+            item_borderOn: "1px solid rgba(0, 0, 0, 0.2)",
+            item_radiusOn: "3px",
+            item_backOn: "rgb(216, 216, 216)",
 
-            transition: "140ms ease-out"
+            transition: "300ms ease-out"
         },
         data: { items_multiplier: 3, progress_length: 3, progress_steps: 5 },
         fonts: [{ 'name': 'ds-digi', 'src': `${level.route}/app/src/fonts/ds-digi.ttf` }]
