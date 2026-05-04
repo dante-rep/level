@@ -18,6 +18,11 @@ const components = {
         path: "/framework/components/nano/graphics/axisTicks.js",
         class: ["base", "fonts"],
         helper: ["dom", "timer"]
+    },
+    'flex_matrix': {
+        path: "/framework/components/nano/background/flexMatrix.js",
+        class: ["base"],
+        helper: ["dom"]
     }
 }
 export default components

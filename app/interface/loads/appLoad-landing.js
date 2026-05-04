@@ -1,47 +1,52 @@
-const drawLanding = async (help) => {
+const drawLanding = (help) => {
     document.body.innerHTML += `
+    <section class="landingSection max">
         <div class="darkBar topDarkBar absolute transition1s"></div>
-        <div class="landingContainer invisible max transition08s">
-            <section class="titlesSection column">
-                <div class="titlesContainer columnCenter">
-                    <div class="titlesBox column"></div>
-                    <div class="progressBox invisible transition05s"></div>
+        <div class="landingBox invisible max transition08s">
+            <section class="titlesSection center column">
+                <div class="titlesContainer column">
+                    <div class="titleTopBox"></div>
+                    <div class="titleBottomBox"></div>
                 </div> 
+                <div class="progressBox invisible transition05s"></div>
                 <input id="access" type="button" class="button hidden" value="Access">
             </section>
             <section class="animationSection center"></section>
         </div>
         <div class="darkBar bottomDarkBar absolute transition1s"></div>
+    </section>
     `
+    return {
+        'landingSection': document.querySelector(".landingSection"),
+        'landingBox': document.querySelector(".landingBox"),
+        'topBar': document.querySelector(".topDarkBar"),
+        'bottomBar': document.querySelector(".bottomDarkBar"),
+        'titleTopBox': document.querySelector(".titleTopBox"),
+        'titleBottomBox': document.querySelector(".titleBottomBox"),
+        'progressBox': document.querySelector(".progressBox"),
+        'access': document.querySelector("#access"),
+    }
 }
 
-const drawComponents = async (loader) => {
-    const [topTitle, bottomTitle, progressBar, cube, axisX, axisY] = await Promise.all([
-        addTitleTop(loader, document.querySelector(".titlesBox")),
-        addTitleBottom(loader, document.querySelector(".titlesBox")),
-        addProgressBar(loader, document.querySelector(".progressBox")),
-        addCube(loader, document.querySelector(".animationSection")),
+const drawComponents = async (loader, containers) => {
+    const [/* backMatrix, */ topTitle, bottomTitle, progressBar, cube, axisX, axisY] = await Promise.all([
+/*         addBackground(loader, containers.landingSection),
+ */        addTitleTop(loader, containers.titleTopBox),
+        addTitleBottom(loader, containers.titleBottomBox),
+        addProgressBar(loader, containers.progressBox),
+/*         addCube(loader, document.querySelector(".animationSection")),
         addAxisX(loader, document.querySelector(".animationSection")),
         addAxisY(loader, document.querySelector(".animationSection"))
-    ])
+ */    ])
 
     return {
-        'landingContainer': document.querySelector(".landingContainer"),
-        'bars': {
-            'top': document.querySelector(".topDarkBar"),
-            'bottom': document.querySelector(".bottomDarkBar")
-        },
-        'titlesBox': document.querySelector(".titlesBox"),
-        'appBar': document.querySelector(".progressBox"),
-        'access': document.querySelector("#access"),
-        'components': {
-            'topTitle': topTitle,
-            'bottomTitle': bottomTitle,
-            'progressBar': progressBar,
-            'cube': cube,
-            'axisX': axisX,
-            'axisY': axisY
-        }
+/*         'backgroundMatrix': backMatrix,
+ */        'topTitle': topTitle,
+        'bottomTitle': bottomTitle,
+        'progressBar': progressBar,
+        'cube': cube,
+        'axisX': axisX,
+        'axisY': axisY
     }
 }
 
@@ -71,7 +76,7 @@ const addAxisY = async (loader, box) => {
         css: {
             box_width: "50px",
             box_height: "100%",
-            steps_fontFamily: "other",
+            steps_fontFamily: "ronduit",
             steps_fontSize: "9px",
             simplePoint_width: "2px",
             simplePoint_height: "1px",
@@ -80,7 +85,7 @@ const addAxisY = async (loader, box) => {
             stepPoint_width: "5px",
             stepPoint_height: "5px",
             stepPoint_back: "rgba(0, 0, 0, 0.4)",
-            valueBox_fontFamily: "other",
+            valueBox_fontFamily: "ronduit",
             valueBox_fontSize: "9px",
             valueBox_fontStyle: "italic"
         },
@@ -88,7 +93,7 @@ const addAxisY = async (loader, box) => {
             orientation: "vertical"
         },
         data: { steps: 8 },
-        fonts: [{ 'name': 'other', 'src': `${level.route}/app/src/fonts/RonduitCapitals-Light.woff` }]
+        fonts: [{ 'name': 'ronduit', 'src': `${level.route}/app/src/fonts/RonduitCapitals-Light.woff` }]
     }
 
     const component = await loader.prepare(box, config, "axisY")
@@ -103,7 +108,7 @@ const addAxisX = async (loader, box) => {
         css: {
             box_width: "100%",
             box_height: "50px",
-            steps_fontFamily: "other",
+            steps_fontFamily: "ronduit",
             steps_fontSize: "9px",
             simplePoint_width: "1px",
             simplePoint_height: "2px",
@@ -112,12 +117,12 @@ const addAxisX = async (loader, box) => {
             stepPoint_width: "5px",
             stepPoint_height: "5px",
             stepPoint_back: "rgba(0, 0, 0, 0.4)",
-            valueBox_fontFamily: "other",
+            valueBox_fontFamily: "ronduit",
             valueBox_fontSize: "9px",
             valueBox_fontStyle: "italic"
         },
         data: { steps: 8 },
-        fonts: [{ 'name': 'other', 'src': `${level.route}/app/src/fonts/RonduitCapitals-Light.woff` }]
+        fonts: [{ 'name': 'ronduit', 'src': `${level.route}/app/src/fonts/RonduitCapitals-Light.woff` }]
     }
 
     const component = await loader.prepare(box, config, "axisX")
@@ -134,7 +139,7 @@ const addTitleTop = async (loader, box) => {
             charBox_radius: "4px",
             charBox_margin: "5px",
             charBox_padding: "10px 14px",
-            char_fontSize: "40px",
+            char_fontSize: "44px",
             char_fontFamily: "garden",
             char_fontColor: "rgb(220, 220, 220)",
             char_fontWeight: "bolder"
@@ -153,13 +158,14 @@ const addTitleBottom = async (loader, box) => {
         id: "bottomTitle",
         tag: "animated_text_01",
         css: {
-            char_empty: "30px",
-            char_fontSize: "32px",
-            char_fontFamily: "other",
+            char_empty: "20px",
+            char_fontSize: "20px",
+            char_fontFamily: "ronduit",
             char_fontColor: "rgba(0, 0, 0, 0.42)",
+            char_fontWeight: "bolder"
         },
         data: { text: "Modular framework" },
-        fonts: [{ 'name': 'other', 'src': `${level.route}/app/src/fonts/RonduitCapitals-Light.woff` }]
+        fonts: [{ 'name': 'ronduit', 'src': `${level.route}/app/src/fonts/RonduitCapitals-Light.woff` }]
     }
 
     const component = await loader.prepare(box, config)
@@ -172,10 +178,12 @@ const addProgressBar = async (loader, box) => {
         id: "landingProgressBar",
         tag: "progress_bar_01",
         css: {
+            box_width: "100%",
+            box_height: "24px",
             box_radius: "4px",
             box_padding: "4px",
 
-            progress_height: "24px",
+            progress_height: "22px",
             progress_back: "rgba(0, 0, 0, 0.7)",
             progress_radius: "4px",
             progress_fontFamily: "ds-digi",
@@ -186,7 +194,7 @@ const addProgressBar = async (loader, box) => {
 
             item_widthOff: "calc(100% - 2px)",
             item_heightOff: "100%",
-            item_radiusOff: "3px",
+            item_radiusOff: "2px",
             item_backOff: "rgba(0, 0, 0, 0)",
             item_borderOff: "1px solid rgba(0, 0, 0, 0.2)",
 
@@ -194,12 +202,12 @@ const addProgressBar = async (loader, box) => {
             item_heightOn: "100%",
             item_borderOn: "1px solid rgba(0, 0, 0, 0)",
             item_borderOn: "1px solid rgba(0, 0, 0, 0.2)",
-            item_radiusOn: "3px",
-            item_backOn: "rgb(216, 216, 216)",
+            item_radiusOn: "2px",
+            item_backOn: "rgba(22, 22, 22, 0.58)",
 
             transition: "300ms ease-out"
         },
-        data: { items_multiplier: 3, progress_length: 3, progress_steps: 5 },
+        data: { items_multiplier: 4, progress_length: 3, progress_steps: 5 },
         fonts: [{ 'name': 'ds-digi', 'src': `${level.route}/app/src/fonts/ds-digi.ttf` }]
     }
 
@@ -208,17 +216,24 @@ const addProgressBar = async (loader, box) => {
     return component
 }
 
-const animateIn = async (boxes) => {
+const addBackground = async (loader, box) => {
+
+}
+
+const animateIn = async (boxes, components) => {
+    console.log(boxes)
     /* animation darkBar */
-    boxes.bars.top.style.top = "0px"
-    boxes.bars.bottom.style.bottom = "0px"
-    await level.helper.timer.awaitTransition(boxes.bars.top)
-    /* animation appear progressBar */
-    boxes.landingContainer.classList.replace("invisible", "visible")
-    await level.helper.timer.awaitTransition(boxes.landingContainer)
-    boxes.appBar.classList.remove("invisible")
-    boxes.appBar.classList.add("progressBox_down", "visible")
-    await level.helper.timer.awaitTransition(boxes.landingContainer)
+    boxes.topBar.style.top = "0px"
+    boxes.bottomBar.style.bottom = "0px"
+    await level.helper.timer.awaitTransition(boxes.topBar)
+    /* animation visivility */
+    boxes.landingBox.classList.replace("invisible", "visible")
+    await level.helper.timer.awaitTransition(boxes.landingBox)
+    /* progress bar */
+    console.log(components.progressBar)
+    boxes.progressBox.classList.remove("invisible")
+    boxes.progressBox.classList.add("progressBox_down", "visible")
+    await level.helper.timer.awaitTransition(boxes.landingBox)
 }
 
 const calculeCubeAnimation = (value) => {
@@ -285,11 +300,11 @@ export const init = async () => {
     console.log("appLoading - landing")
     const loader = await import(`${level.route}/framework/runtime/loader.js`)
 
-    drawLanding(loader)
-    const boxes = await drawComponents(loader)
-    await animateIn(boxes)
-    addEvents(boxes)
-    return true
+    const boxes = drawLanding(loader)
+    const components = await drawComponents(loader, boxes)
+    await animateIn(boxes, components)
+/*     addEvents(boxes)
+ */    return true
 }
 
 const exit = async () => {

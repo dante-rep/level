@@ -19,29 +19,27 @@ body {
         background: var(--landingColor1);
     }
 
-    .topDarkBar {
-        top: calc(var(--darkBarHeight) * -1);
-    }
+    .landingSection {
 
-    .bottomDarkBar {
-        bottom: calc(var(--darkBarHeight) * -1);
-    }
+        .topDarkBar {
+            top: calc(var(--darkBarHeight) * -1);
+        }
 
-    .landingContainer {
-        display: flex;
+        .bottomDarkBar {
+            bottom: calc(var(--darkBarHeight) * -1);
+        }
 
-        .titlesSection {
-            align-items: center;
-            justify-content: center;
-            width: 50%;
-            height: 100%;
-            border: 1px dashed grey;
+        .landingBox {
+            display: flex;
 
-            .titlesContainer {
+            .titlesSection {
+                width: 50%;
+                height: 100%;
 
-                .titlesBox {
-                    width: fit-content;
-                    height: auto;
+                .titlesContainer {
+                    width: 80%;
+                    height: fit-content;
+                    border: 1px solid red;
 
                     .topTitle {
                         left: -6px;
@@ -51,48 +49,49 @@ body {
                 }
 
                 .progressBox {
-                    margin-top: 20px;
-                    width: 100%;
+/*                     margin-top: 20px;
+ */                    width: 80%;
                     height: 30px;
                 }
 
                 .progressBox_down {
-                    margin-top: 50px;
+                    margin-top: 30px;
+                }
+
+                input {
+                    font-size: 22px;
+                    padding: 0 40px;
+                    cursor: pointer;
                 }
             }
 
-            input {
-                font-size: 22px;
-                padding: 0 40px;
-                cursor: pointer;
-            }
-        }
+            .animationSection {
+                display: grid;
+                grid-template-columns: repeat(20, 1fr);
+                grid-template-rows: repeat(20, 1fr);
+                width: 50%;
+                height: 100%;
+                border: 1px solid red;
 
-        .animationSection {
-            display: grid;
-            grid-template-columns: repeat(20, 1fr);
-            grid-template-rows: repeat(20, 1fr);
-            width: 50%;
-            height: 100%;
-            border: 1px solid red;
+                .cube-3d {
+                    grid-column: 10/11;
+                    grid-row: 10/11;
+                    border: 1px dashed grey;
+                }
 
-            .cube-3d {
-                grid-column: 10/11;
-                grid-row: 10/11;
-                border: 1px dashed grey;
-            }
+                .axisY {
+                    grid-column: 2/3;
+                    grid-row: 6/15;
+                }
 
-            .axisY {
-                grid-column: 2/3;
-                grid-row: 6/15;
-            }
-
-            .axisX {
-                grid-column: 5/16;
-                grid-row: 16/17;
+                .axisX {
+                    grid-column: 5/16;
+                    grid-row: 16/17;
+                }
             }
         }
     }
+
 
     .componentContainer {
 
