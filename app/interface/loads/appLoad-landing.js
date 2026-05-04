@@ -71,12 +71,24 @@ const addAxisY = async (loader, box) => {
         css: {
             box_width: "50px",
             box_height: "100%",
-            value_width: "100%",
-            value_height: "26px"
+            steps_fontFamily: "other",
+            steps_fontSize: "9px",
+            simplePoint_width: "2px",
+            simplePoint_height: "1px",
+            halfPoint_width: "5px",
+            halfPoint_height: "1px",
+            stepPoint_width: "5px",
+            stepPoint_height: "5px",
+            stepPoint_back: "rgba(0, 0, 0, 0.4)",
+            valueBox_fontFamily: "other",
+            valueBox_fontSize: "9px",
+            valueBox_fontStyle: "italic"
         },
         logic: {
             orientation: "vertical"
-        }
+        },
+        data: { steps: 8 },
+        fonts: [{ 'name': 'other', 'src': `${level.route}/app/src/fonts/RonduitCapitals-Light.woff` }]
     }
 
     const component = await loader.prepare(box, config, "axisY")
@@ -90,8 +102,22 @@ const addAxisX = async (loader, box) => {
         tag: "axis_ticks_01",
         css: {
             box_width: "100%",
-            box_height: "50px"
-        }
+            box_height: "50px",
+            steps_fontFamily: "other",
+            steps_fontSize: "9px",
+            simplePoint_width: "1px",
+            simplePoint_height: "2px",
+            halfPoint_width: "1px",
+            halfPoint_height: "5px",
+            stepPoint_width: "5px",
+            stepPoint_height: "5px",
+            stepPoint_back: "rgba(0, 0, 0, 0.4)",
+            valueBox_fontFamily: "other",
+            valueBox_fontSize: "9px",
+            valueBox_fontStyle: "italic"
+        },
+        data: { steps: 8 },
+        fonts: [{ 'name': 'other', 'src': `${level.route}/app/src/fonts/RonduitCapitals-Light.woff` }]
     }
 
     const component = await loader.prepare(box, config, "axisX")
@@ -228,13 +254,12 @@ const addEvents = (boxes) => {
     document.addEventListener("appLoad", (e) => {
         progressTask.queue = progressTask.queue.then(async () => {
             let cubeValues = {}
-            let dif_x, dif_y
+            let difference_x, difference_y
             do {
                 cubeValues = calculeCubeAnimation(e.detail.progress)
-                dif_x = Math.abs(cubeValues.x - oldValues.x)
-                dif_y = Math.abs(cubeValues.y - oldValues.y)
-                console.log(cubeValues)
-            } while (e.detail.progress < 100 && dif_x < 90 || dif_y < 90)
+                difference_x = Math.abs(cubeValues.x - oldValues.x)
+                difference_y = Math.abs(cubeValues.y - oldValues.y)
+            } while (e.detail.progress < 100 && ((difference_x < 90 || difference_x > 270) || (difference_y < 90 || difference_y > 270)))
             const axisValues = calculeAxisValues(cubeValues)
 
             if (e.detail.progress === 100) {

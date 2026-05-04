@@ -40,7 +40,7 @@ const importDependencies = async (config, compInfo, loaderLists) => {
             const registred = reg[type].get(item)
             if (!registred) {
                 dependencies[type][item] = type === "class"
-                    ? await import(`${level.route}${loaderLists.deps[type][item]} `)
+                    ? await import(`${level.route}${loaderLists.deps[type][item]}`)
                     : loaderLists.deps[type][item]
             }
         }

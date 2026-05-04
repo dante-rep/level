@@ -18,7 +18,7 @@ export default class XXXX extends HTMLElement {
         /* public props */
         this.dom = this.attachShadow({ mode: "open" })
         this.data = { 'text': "some text" }
-        this.fonts = null /* [{}] */
+        this.fonts = [] /* [{}] */
         this.css = {}
         this._css = { ...this.#CSS }
         this.logic = {}
@@ -86,4 +86,4 @@ export default class XXXX extends HTMLElement {
         }
     }
 }
-customElements.define(tag, cube3D)
+customElements.define(tag, XXXX)

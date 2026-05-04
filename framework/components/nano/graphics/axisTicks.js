@@ -3,12 +3,46 @@ export default class AxisTicks extends HTMLElement {
     /* private props */
     #STATE = null
     #HOR = null
-    #DEPS = ["base", "dom", "timer"]
+    #DEPS = ["base", "dom", "timer", "fonts"]
     #CSS = {
         box_width: "100%",
         box_height: "100%",
-        value_width: "40px",
-        value_height: "40px",
+
+        steps_fontFamily: "initial",
+        steps_fontSize: "12px",
+        steps_fontWeight: "initial",
+        steps_fontStyle: "normal",
+        steps_fontColor: "grey",
+
+        simplePoint_width: "1px",
+        simplePoint_height: "3px",
+        simplePoint_border: "none",
+        simplePoint_radius: "none",
+        simplePoint_back: "grey",
+
+        halfPoint_width: "1px",
+        halfPoint_height: "5px",
+        halfPoint_border: "none",
+        halfPoint_radius: "none",
+        halfPoint_back: "grey",
+
+        stepPoint_width: "4px",
+        stepPoint_height: "4px",
+        stepPoint_border: "none",
+        stepPoint_radius: "50%",
+        stepPoint_back: "grey",
+
+        valueBox_width: "40px",
+        valueBox_height: "22px",
+        valueBox_border: "none",
+        valueBox_radius: "4px",
+        valueBox_back: "grey",
+        valueBox_fontFamily: "initial",
+        valueBox_fontSize: "12px",
+        valueBox_fontWeight: "initial",
+        valueBox_fontStyle: "normal",
+        valueBox_fontColor: "white",
+
         transition: "1s ease-in-out"
     }
     #LOGIC = {
@@ -25,8 +59,7 @@ export default class AxisTicks extends HTMLElement {
         super()
         /* public props */
         this.dom = this.attachShadow({ mode: "open" })
-        this.data = { 'text': "some text" }
-        this.fonts = null /* [{}] */
+        this.fonts = [] /* [{}] */
         this.css = {}
         this._css = { ...this.#CSS }
         this.logic = {}
@@ -56,45 +89,81 @@ export default class AxisTicks extends HTMLElement {
             display: flex;
             width: var(--box_width);
             height: var(--box_height);
-
-            --pointerBox_top: 
         }
 
         .mainBox {
             display: flex;
             
-            .valuesCont {
+            .stepsCont {
                 display: flex;
 
-                .valueBox {
-                    font-size: 12px;
-                    color: grey;
+                .stepBox {
+                    font-family: var(--steps_fontFamily);
+                    font-size: var(--steps_fontSize);
+                    font-style: var(--steps_fontStyle);
+                    font-weight: var(--steps_fontWeight); 
+                    color: var(--steps_fontColor);
                 }
             }
 
             .pointsCont {
                 display: flex; 
                 justify-content: space-between;
+                
+                .simplePoint {
+                    width: var(--simplePoint_width);
+                    height: var(--simplePoint_height);
+                    border: var(--simplePoint_border);
+                    border-radius: var(--simplePoint_radius);
+                    background: var(--simplePoint_back);
+                }
 
-                .point {
-                    display: block;
-                    background: grey;
+                .halfPoint {
+                    width: var(--halfPoint_width);
+                    height: var(--halfPoint_height);
+                    border: var(--halfPoint_border);
+                    border-radius: var(--halfPoint_radius);
+                    background: var(--halfPoint_back);
                 }
 
                 .stepPoint {
-                    width: 4px; 
-                    height: 4px; 
-                    border-radius: 50%; 
+                    width: var(--stepPoint_width); 
+                    height: var(--stepPoint_height); 
+                    border: var(--stepPoint_border);
+                    border-radius: var(--stepPoint_radius); 
+                    background: var(--stepPoint_back);
                 }
             }
 
-            .pointerCont .pointerBox {
-                border: 1px solid grey;
-                border-radius: 4px;
-                background: rgba(255, 255, 255, 0);
-                backdrop-filter: blur(2px);
-                font-size: 12px;
-                color: grey;
+            .pointsCont_ver { 
+                top: calc((100% / ${this.data.values + 1}) / 2 - var(--stepPoint_height) / 2); 
+                flex-direction: column; 
+                width: 40%; 
+                height: calc(100% / ${this.data.values + 1} * ${this.data.values} + var(--stepPoint_height)); 
+
+                .stepPoint_ver { left: calc(var(--stepPoint_width) / 2 * -1); }
+            }   
+
+            .pointsCont_hor { 
+                left: calc(100% / ${this.data.values + 1} / 2 - var(--stepPoint_width));
+                align-items: end;  
+                width: calc(100% / ${this.data.values + 1} * ${this.data.values} + var(--stepPoint_height) * 2); 
+                height: 40%; 
+
+               .stepPoint_hor { top: calc(var(--stepPoint_height) / 2); }
+            }
+
+            .valueCont .valueBox {
+                width: var(--valueBox_width);
+                height: var(--valueBox_height);
+                border: var(--valueBox_border);
+                border-radius: var(--valueBox_radius); 
+                background: var(--valueBox_back);
+                font-family: var(--valueBox_fontFamily);
+                font-size: var(--valueBox_fontSize);
+                font-style: var(--valueBox_fontStyle);
+                font-weight: var(--valueBox_fontWeight); 
+                color: var(--valueBox_fontColor);
                 transition: var(--transition);
             }
         }
@@ -105,28 +174,18 @@ export default class AxisTicks extends HTMLElement {
         .max { width: 100%; height: 100%; }
         .column { flex-direction: column; }
 
-        .valuesCont_ver { flex-direction: column; width: 60%; height: 100%; }
-        .pointsCont_ver { top: calc(100% / ${this.data.values + 1} / 2); flex-direction: column; width: 40%; height: calc(100% / ${this.data.values + 1} * ${this.data.values}); border-left: 1px solid grey; }
-        .pointerCont_ver { width: 1px; height: 100%; } 
+        .stepsCont_ver { flex-direction: column; width: 60%; height: 100%; border-right: 1px solid grey; }
+        .stepsCont_hor { width: 100%; height: 60%; border-top: 1px solid grey; }
 
-        .valuesCont_hor { width: 100%; height: 60%; }
-        .pointsCont_hor { left: calc(100% / ${this.data.values + 1} / 2); width: calc(100% / ${this.data.values + 1} * ${this.data.values}); height: 40%; align-items: end;  border-bottom: 1px solid grey; }
-        .pointerCont_hor { width: 100%; height: 1px; }
+        .stepPoint_ver { left: calc(var(--stepPoint_width) / 2); }
 
-        .valueBox_ver { display: flex; align-items: center; justify-content: right; padding-right: 10px; }
-        .valueBox_hor { display: flex; align-items: top; justify-content: center; padding-top: 10px; }
+        .valueCont_ver { width: 1px; height: 100%; } 
+        .valueCont_hor { width: 100%; height: 1px; }
 
-        .point_ver { width: 2px; height: 1px; }
-        .point_hor { width: 1px; height: 2px; }
+        .stepBox_ver { padding-right: 10px; }
 
-        .halfPoint_ver {width: 5px; height: 1px; }
-        .halfPoint_hor {width: 1px; height: 5px; }
-
-        .stepPoint_ver { left: -2px; }
-        .stepPoint_hor { top: 2px; }
-
-        .pointerBox_ver { top: calc(100% - 13px); left: 16px; width: 40px; height: 26px; }
-        .pointerBox_hor { top: -42px; left: -20px; width: 40px; height: 26px; }
+        .valueBox_ver { top: calc(100% - 13px); left: 16px; }
+        .valueBox_hor { top: -34px; left: -20px; }
         `
     }
 
@@ -145,17 +204,17 @@ export default class AxisTicks extends HTMLElement {
         this.#HOR = this.logic.orientation === "horizontal"
         this.#HOR && this.mainBox.classList.add("column")
         const pointsCont = this.deps.dom.add(this.mainBox, "ul", `pointsCont relative ${this.#HOR ? "pointsCont_hor" : "pointsCont_ver"}`)
-        const valuesCont = this.deps.dom.add(this.mainBox, "ul", `valuesCont relative ${this.#HOR ? "valuesCont_hor" : "valuesCont_ver"}`)
-        !this.#HOR && this.mainBox.prepend(valuesCont)
-        const pointerCont = this.deps.dom.add(pointsCont, "div", `pointerCont absolute ${this.#HOR ? "pointerCont_hor" : "pointerCont_ver"}`)
-        return { 'pointsCont': pointsCont, 'valuesCont': valuesCont, 'pointerCont': pointerCont }
+        const stepsCont = this.deps.dom.add(this.mainBox, "ul", `stepsCont relative ${this.#HOR ? "stepsCont_hor" : "stepsCont_ver"}`)
+        !this.#HOR && this.mainBox.prepend(stepsCont)
+        const valueCont = this.deps.dom.add(pointsCont, "div", `valueCont absolute ${this.#HOR ? "valueCont_hor" : "valueCont_ver"}`)
+        return { 'pointsCont': pointsCont, 'stepsCont': stepsCont, 'valueCont': valueCont }
     }
 
     #drawBoxes(container) {
         const range = (this.data.max - this.data.min) / this.data.values
         for (let x = 0; x <= this.data.values; x++) {
-            const valueBox = this.deps.dom.add(container, "li", `valueBox max ${this.#HOR ? "valueBox_hor" : "valueBox_ver"}`)
-            valueBox.textContent = this.#HOR
+            const stepBox = this.deps.dom.add(container, "li", `stepBox max center ${this.#HOR ? "stepBox_hor" : "stepBox_ver"}`)
+            stepBox.textContent = this.#HOR
                 ? this.data.min + range * x
                 : this.data.min + (this.data.values * range) - (range * x)
         }
@@ -164,20 +223,24 @@ export default class AxisTicks extends HTMLElement {
     #drawPoints(container) {
         const steps = this.data.values * this.data.steps
         for (let x = 0; x <= steps; x++) {
-            const point = this.deps.dom.add(container, "li", "point relative")
+            const point = this.deps.dom.add(container, "li", "relative")
             if (x % this.data.steps === 0) {
-                point.classList.add("stepPoint", `${this.#HOR ? "stepPoint_hor" : "stepPoint_ver"}`)
+                point.className = `stepPoint relative ${this.#HOR ? "stepPoint_hor" : "stepPoint_ver"}`
             } else if (x % (this.data.steps / 2) === 0) {
-                point.classList.add(`${this.#HOR ? "halfPoint_hor" : "halfPoint_ver"}`)
+                point.classList.add("halfPoint")
             } else {
-                point.classList.add(`${this.#HOR ? "point_hor" : "point_ver"}`)
+                point.classList.add("simplePoint")
             }
         }
     }
 
     #drawPointer(container) {
-        const pointerBox = this.deps.dom.add(container, "div", `pointerBox center relative ${this.#HOR ? "pointerBox_hor" : "pointerBox_ver"}`)
-        pointerBox.textContent = 0
+        const valueBox = this.deps.dom.add(container, "div", `valueBox center relative ${this.#HOR ? "valueBox_hor" : "valueBox_ver"}`)
+        valueBox.textContent = 0
+    }
+
+    #addFonts() {
+        this.deps.fonts.addFonts(this.fonts)
     }
 
     /* public methods */
@@ -188,32 +251,37 @@ export default class AxisTicks extends HTMLElement {
     load() { this.#checkConf() }
 
     updateValue(value) {
-        const pointerBox = this.dom.querySelector(".pointerBox")
-        const pointerBox_lenght = this.#HOR ? pointerBox.offsetWidth : pointerBox.offsetHeight
-        const container = this.dom.querySelector(".pointerCont")
-        const range = this.data.max - this.data.min
-        const lenght = this.#HOR ? container.offsetWidth : container.offsetHeight
+        if (value >= 0 && value <= 100) {
+            const valueBox = this.dom.querySelector(".valueBox")
+            const valueBox_length = this.#HOR ? valueBox.offsetWidth : valueBox.offsetHeight
+            const container = this.dom.querySelector(".valueCont")
+            const range = this.data.max - this.data.min
+            const length = this.#HOR ? container.offsetWidth : container.offsetHeight
 
-        const pos = this.#HOR
-            ? (value * lenght) / 100
-            : lenght - (value * lenght) / 100
+            const pos = this.#HOR
+                ? (value * length) / 100
+                : length - (value * length) / 100
 
-        this.#HOR
-            ? pointerBox.style.left = `${pos - pointerBox_lenght / 2}px`
-            : pointerBox.style.top = `${pos - pointerBox_lenght / 2}px`
-        pointerBox.textContent = Math.round(range / 100 * value)
+            this.#HOR
+                ? valueBox.style.left = `${pos - valueBox_length / 2}px`
+                : valueBox.style.top = `${pos - valueBox_length / 2}px`
+            valueBox.textContent = Math.round(this.data.min + (range / 100 * value))
+        } else {
+            console.error(this, "value out of range: 0-100")
+        }
     }
 
     async init() {
         this.load()
         if (this.#STATE) {
+            this.#addFonts()
             this.#configure()
             this.#addStyle()
             this.#drawComponent()
             const containers = this.#drawContainers()
-            this.#drawBoxes(containers.valuesCont)
+            this.#drawBoxes(containers.stepsCont)
             this.#drawPoints(containers.pointsCont)
-            this.#drawPointer(containers.pointerCont)
+            this.#drawPointer(containers.valueCont)
         } else {
             console.error(this, "dependencies lost")
         }

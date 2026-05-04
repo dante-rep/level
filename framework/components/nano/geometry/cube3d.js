@@ -43,67 +43,61 @@ export default class cube3D extends HTMLElement {
     #addStyle() {
         const style = this.deps.dom.add(this.dom, "style")
         style.textContent += `
-        * {
-            margin: 0px;
-            padding: 0px;
-            box-sizing: border-box;
-        }
+    * {
+        margin: 0px;
+        padding: 0px;
+        box-sizing: border-box;
+        list-style: none;
+    }
 
-        :host {
-            display: flex;
-            width: ${this.css.box_size};
-            aspect-ratio: 1/1;
+    :host {
+        display: flex;
+        width: var(--box_size);
+        aspect-ratio: 1/1;
 
-            --pos_start: calc(${this.css.box_size} * -0.5);
-            --pos_end: calc(${this.css.box_size} * 0.5);
-            --rotateY: 0deg;
-            --rotateX: 0deg;
-        }
+        --pos_start: calc(var(--box_size) * -0.5);
+        --pos_end: calc(var(--box_size) * 0.5);
+        --rotateY: 0deg;
+        --rotateX: 0deg;
+    }
 
-        .mainBox {
-            perspective: ${this.css.box_perspective};
+    .mainBox {
+        width: 100%;
+        height: 100%;
+        perspective: var(--box_perspective);
 
-            .cube {
-                transform-style: preserve-3d;
-                transform-origin: 50% 50% var(--pos_start);
-                transform: rotateY(var(--rotateY)) rotateX(var(--rotateX));
-                transition: var(--transition);
+        .cube {
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+            transform-origin: 50% 50% var(--pos_start);
+            transform: rotateY(var(--rotateY)) rotateX(var(--rotateX));
+            transition: var(--transition);
 
-                li {
-                    border: ${this.css.box_border};
-                    border-radius: ${this.css.box_radius};
-                    box-shadow: ${this.css.box_shadow};
-                    background: ${this.css.box_back};
-                    font-size: 100px;
-                    color: rgb(255, 255, 255);
-                    filter: blur(0.1px);
-                }
-
-                .left {transform: translateZ(var(--pos_start)) translateX(var(--pos_start)) rotateY(-90deg);}
-                .right {transform: translateZ(var(--pos_start)) translateX(var(--pos_end)) rotateY(90deg);}
-                .top {transform: translateY(var(--pos_start)) translateZ(var(--pos_start)) rotateX(90deg) ;}
-                .bottom {transform: translateY(var(--pos_end)) translateZ(var(--pos_start)) rotateY(180deg) rotateX(-90deg);}
-                .back {transform: translateZ(-${this.css.box_size}) rotateY(180deg);}
+            li {
+                border: var(--box_border);
+                border-radius: var(--box_radius);
+                box-shadow: var(--box_shadow);
+                background: var(--box_back);
+                font-size: 20px; 
+                color: rgb(255, 255, 255);
+                filter: blur(0.1px);
             }
 
-            .inputsBox {
-                margin-top: 50px;
-                width: 300px;
-                height: 100px;
-                border: 1px solid red;
-
-                input {
-                    width: 100%;
-                    height: 50%;
-                }
-            }
+            .front  { transform: rotateY(0deg)   translateZ(0px); }
+            .back   { transform: rotateY(180deg) translateZ(var(--box_size)); }
+            .right  { transform: rotateY(90deg)  translateZ(var(--pos_start)) translateX(var(--pos_end)); }
+            .left   { transform: rotateY(-90deg) translateZ(var(--pos_start)) translateX(var(--pos_start)); }
+            .top    { transform: rotateX(90deg)  translateZ(var(--pos_start)) translateY(var(--pos_start)); }
+            .bottom { transform: rotateX(-90deg) translateZ(var(--pos_start)) translateY(var(--pos_end)); }
         }
+    }
 
-        .max {width: 100%; height: 100%;}
-        .center {display: flex; align-items: center; justify-content: center;}
-        .absolute {position: absolute;}
-        .relative {position: relative;}
-        `
+    .max { width: 100%; height: 100%; }
+    .center { display: flex; align-items: center; justify-content: center; }
+    .absolute { position: absolute; }
+    .relative { position: relative; }
+    `
     }
 
     #configure() { this.deps.base.validateAll(this) }
