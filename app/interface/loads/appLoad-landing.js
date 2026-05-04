@@ -2,42 +2,48 @@ const drawLanding = (help) => {
     document.body.innerHTML += `
     <section class="landingSection max">
         <div class="darkBar topDarkBar absolute transition1s"></div>
-        <div class="landingBox invisible max transition08s">
+        <div class="landingBox invisible max transition1s">
             <section class="titlesSection center column">
-                <div class="titlesContainer column">
+                <div class="titlesContainer columnCenter transition1s">
                     <div class="titleTopBox"></div>
-                    <div class="titleBottomBox"></div>
+                    <div class="titleBottomBox transition1s"></div>
+                    <input id="access" type="button" class="button hidden" value="Access">
                 </div> 
-                <div class="progressBox invisible transition05s"></div>
-                <input id="access" type="button" class="button hidden" value="Access">
+                <div class="progressBox invisible transition1s"></div>
             </section>
-            <section class="animationSection center"></section>
+            <section class="animationSection center">
+                <div class="animationBox">
+
+                </div>
+            </section>
         </div>
         <div class="darkBar bottomDarkBar absolute transition1s"></div>
     </section>
     `
     return {
         'landingSection': document.querySelector(".landingSection"),
-        'landingBox': document.querySelector(".landingBox"),
         'topBar': document.querySelector(".topDarkBar"),
         'bottomBar': document.querySelector(".bottomDarkBar"),
+        'landingBox': document.querySelector(".landingBox"),
+        'titlesContainer': document.querySelector(".titlesContainer"),
         'titleTopBox': document.querySelector(".titleTopBox"),
         'titleBottomBox': document.querySelector(".titleBottomBox"),
         'progressBox': document.querySelector(".progressBox"),
         'access': document.querySelector("#access"),
+        'animationBox': document.querySelector(".animationBox")
     }
 }
 
-const drawComponents = async (loader, containers) => {
+const drawComponents = async (loader, boxes) => {
     const [/* backMatrix, */ topTitle, bottomTitle, progressBar, cube, axisX, axisY] = await Promise.all([
-/*         addBackground(loader, containers.landingSection),
- */        addTitleTop(loader, containers.titleTopBox),
-        addTitleBottom(loader, containers.titleBottomBox),
-        addProgressBar(loader, containers.progressBox),
-/*         addCube(loader, document.querySelector(".animationSection")),
-        addAxisX(loader, document.querySelector(".animationSection")),
-        addAxisY(loader, document.querySelector(".animationSection"))
- */    ])
+/*         addBackground(loader, boxes.landingSection),
+ */        addTitleTop(loader, boxes.titleTopBox),
+        addTitleBottom(loader, boxes.titleBottomBox),
+        addProgressBar(loader, boxes.progressBox),
+        addCube(loader, boxes.animationBox),
+        addAxisX(loader, boxes.animationBox),
+        addAxisY(loader, boxes.animationBox)
+    ])
 
     return {
 /*         'backgroundMatrix': backMatrix,
@@ -159,7 +165,7 @@ const addTitleBottom = async (loader, box) => {
         tag: "animated_text_01",
         css: {
             char_empty: "20px",
-            char_fontSize: "20px",
+            char_fontSize: "24px",
             char_fontFamily: "ronduit",
             char_fontColor: "rgba(0, 0, 0, 0.42)",
             char_fontWeight: "bolder"
@@ -181,9 +187,8 @@ const addProgressBar = async (loader, box) => {
             box_width: "100%",
             box_height: "24px",
             box_radius: "4px",
-            box_padding: "4px",
 
-            progress_height: "22px",
+            progress_height: "20px",
             progress_back: "rgba(0, 0, 0, 0.7)",
             progress_radius: "4px",
             progress_fontFamily: "ds-digi",
@@ -193,13 +198,13 @@ const addProgressBar = async (loader, box) => {
             progress_letterSpacing: "2px",
 
             item_widthOff: "calc(100% - 2px)",
-            item_heightOff: "100%",
+            item_heightOff: "80%",
             item_radiusOff: "2px",
             item_backOff: "rgba(0, 0, 0, 0)",
             item_borderOff: "1px solid rgba(0, 0, 0, 0.2)",
 
             item_widthOn: "calc(100% - 2px)",
-            item_heightOn: "100%",
+            item_heightOn: "60%",
             item_borderOn: "1px solid rgba(0, 0, 0, 0)",
             item_borderOn: "1px solid rgba(0, 0, 0, 0.2)",
             item_radiusOn: "2px",
@@ -207,7 +212,7 @@ const addProgressBar = async (loader, box) => {
 
             transition: "300ms ease-out"
         },
-        data: { items_multiplier: 4, progress_length: 3, progress_steps: 5 },
+        data: { items_multiplier: 4, progress_length: 2, progress_steps: 5 },
         fonts: [{ 'name': 'ds-digi', 'src': `${level.route}/app/src/fonts/ds-digi.ttf` }]
     }
 
@@ -229,10 +234,11 @@ const animateIn = async (boxes, components) => {
     /* animation visivility */
     boxes.landingBox.classList.replace("invisible", "visible")
     await level.helper.timer.awaitTransition(boxes.landingBox)
+    /* expand container & move title */
+    boxes.titlesContainer.classList.add("titlesContainer_expanded")
+    boxes.titleBottomBox.classList.add("titleBottomBox_desplazed")
     /* progress bar */
-    console.log(components.progressBar)
-    boxes.progressBox.classList.remove("invisible")
-    boxes.progressBox.classList.add("progressBox_down", "visible")
+    boxes.progressBox.classList.replace("invisible", "visible")
     await level.helper.timer.awaitTransition(boxes.landingBox)
 }
 
@@ -247,9 +253,9 @@ const calculeCubeAnimation = (value) => {
     }
 }
 
-const cubeAnimation = async (boxes, values) => {
-    boxes.components.cube.rotate("x", values.x)
-    boxes.components.cube.rotate("y", values.y)
+const cubeAnimation = async (components, values) => {
+    components.cube.rotate("x", values.x)
+    components.cube.rotate("y", values.y)
     await level.helper.timer.sleep(1500)
 }
 
@@ -259,7 +265,7 @@ const calculeAxisValues = (cubeValues) => {
     return { 'x': Math.round(cubeValues.x / axisX_width * 100), 'y': Math.round(cubeValues.y / axisY_height * 100) }
 }
 
-const addEvents = (boxes) => {
+const addEvents = (boxes, components) => {
     const progressTask = { 'queue': Promise.resolve() }
     const cubeTasks = { 'queue': Promise.resolve() }
     const oldValues = { x: 0, y: 0 }
@@ -280,15 +286,15 @@ const addEvents = (boxes) => {
             const axisValues = calculeAxisValues(cubeValues)
 
             if (e.detail.progress === 100) {
-                boxes.components.axisX.updateCss({ "transition": "6s ease-out" })
-                boxes.components.axisY.updateCss({ "transition": "6s ease-out" })
-                boxes.components.cube.updateCss({ "transition": "6s ease-in-out" })
+                components.axisX.updateCss({ "transition": "6s ease-out" })
+                components.axisY.updateCss({ "transition": "6s ease-out" })
+                components.cube.updateCss({ "transition": "6s ease-in-out" })
             }
-            boxes.components.progressBar.changeValue(e.detail.progress)
-            boxes.components.axisY.updateValue(axisValues.y)
-            boxes.components.axisX.updateValue(axisValues.x)
+            components.progressBar.changeValue(e.detail.progress)
+            components.axisY.updateValue(axisValues.y)
+            components.axisX.updateValue(axisValues.x)
             await level.helper.timer.sleep(500)
-            await cubeAnimation(boxes, cubeValues)
+            await cubeAnimation(components, cubeValues)
             oldValues.x = cubeValues.x
             oldValues.y = cubeValues.y
             await level.helper.timer.sleep(300)
@@ -303,8 +309,8 @@ export const init = async () => {
     const boxes = drawLanding(loader)
     const components = await drawComponents(loader, boxes)
     await animateIn(boxes, components)
-/*     addEvents(boxes)
- */    return true
+    addEvents(boxes, components)
+    return true
 }
 
 const exit = async () => {

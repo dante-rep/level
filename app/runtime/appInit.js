@@ -51,7 +51,7 @@ const init = async () => {
     const modules = {
         "mainContainers": `${level.route}/app/interface/loads/mainContainers.js`
     }
-    const steps = 5
+    const steps = 10
     for (let time = 1; time <= steps; time++) {
         document.dispatchEvent(new CustomEvent("appLoad", { detail: { 'progress': Math.round(time * (100 / steps)) } }))
         await new Promise(resolve => setTimeout(resolve, 2000))

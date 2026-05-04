@@ -33,29 +33,34 @@ body {
             display: flex;
 
             .titlesSection {
-                width: 50%;
+                width: 45%;
                 height: 100%;
 
                 .titlesContainer {
-                    width: 80%;
-                    height: fit-content;
-                    border: 1px solid red;
+                    width: 500px;
+                    height: 180px;
+                    padding: 30px;
+                    border: 1px solid rgba(128, 128, 128, 0.534);
+                    border-radius: 16px;
 
-                    .topTitle {
-                        left: -6px;
-                        /* fix font margin left */
-                        margin-bottom: 12px;
+                    .titleTopBox {
+                        margin-bottom: 10px;
+                    }
+
+                    .titleBottomBox_desplazed {
+                        margin-top: 50px;
                     }
                 }
 
-                .progressBox {
-/*                     margin-top: 20px;
- */                    width: 80%;
-                    height: 30px;
+                .titlesContainer_expanded {
+                    height: 60%;
                 }
 
-                .progressBox_down {
+                .progressBox {
                     margin-top: 30px;
+                    width: 500px;
+                    height: auto;
+                    border: 1px solid red;
                 }
 
                 input {
@@ -66,27 +71,31 @@ body {
             }
 
             .animationSection {
-                display: grid;
-                grid-template-columns: repeat(20, 1fr);
-                grid-template-rows: repeat(20, 1fr);
-                width: 50%;
+                width: 55%;
                 height: 100%;
                 border: 1px solid red;
 
+                .animationBox {
+                    display: grid;
+                    grid-template-columns: repeat(16, 1fr);
+                    grid-template-rows: repeat(16, 1fr);
+                    width: 600px;
+                    height: 500px;
+                }
+
                 .cube-3d {
-                    grid-column: 10/11;
-                    grid-row: 10/11;
-                    border: 1px dashed grey;
+                    grid-column: 7 / 11;
+                    grid-row: 3 / 10;
                 }
 
                 .axisY {
-                    grid-column: 2/3;
-                    grid-row: 6/15;
+                    grid-column: 1 / 2;
+                    grid-row: 1 / 15;
                 }
 
                 .axisX {
-                    grid-column: 5/16;
-                    grid-row: 16/17;
+                    grid-column: 4 / 17;
+                    grid-row: 16 / 17;
                 }
             }
         }

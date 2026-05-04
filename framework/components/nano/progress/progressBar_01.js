@@ -10,7 +10,6 @@ export default class progressBar extends HTMLElement {
         box_border: "none",
         box_radius: "none",
         box_back: "none",
-        box_padding: "none",
 
         progress_height: "100%",
         progress_border: "none",
@@ -103,7 +102,6 @@ export default class progressBar extends HTMLElement {
             background: var(--box_back);
             border: var(--box_border);
             border-radius: var(--box_radius);
-            padding: var(--box_padding);
 
             .boxesLayer {
                 display: flex;
