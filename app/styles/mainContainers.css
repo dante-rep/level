@@ -20,6 +20,10 @@ body {
     }
 
     .landingSection {
+        .backMatrix {
+            z-index: -1;
+            top: 0px;
+        }
 
         .topDarkBar {
             top: calc(var(--darkBarHeight) * -1);
@@ -42,6 +46,7 @@ body {
                     padding: 30px;
                     border: 1px solid rgba(128, 128, 128, 0.534);
                     border-radius: 16px;
+                    background: var(--bodyBack);
 
                     .titleTopBox {
                         margin-bottom: 10px;

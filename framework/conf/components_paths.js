@@ -19,8 +19,8 @@ const components = {
         class: ["base", "fonts"],
         helper: ["dom", "timer"]
     },
-    'flex_matrix': {
-        path: "/framework/components/nano/background/flexMatrix.js",
+    'adaptative_grid': {
+        path: "/framework/components/nano/background/adaptativeGrid.js",
         class: ["base"],
         helper: ["dom"]
     }

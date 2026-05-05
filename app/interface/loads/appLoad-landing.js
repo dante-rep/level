@@ -1,6 +1,6 @@
 const drawLanding = (help) => {
     document.body.innerHTML += `
-    <section class="landingSection max">
+    <section class="landingSection max relative">
         <div class="darkBar topDarkBar absolute transition1s"></div>
         <div class="landingBox invisible max transition1s">
             <section class="titlesSection center column">
@@ -35,9 +35,9 @@ const drawLanding = (help) => {
 }
 
 const drawComponents = async (loader, boxes) => {
-    const [/* backMatrix, */ topTitle, bottomTitle, progressBar, cube, axisX, axisY] = await Promise.all([
-/*         addBackground(loader, boxes.landingSection),
- */        addTitleTop(loader, boxes.titleTopBox),
+    const [backMatrix, topTitle, bottomTitle, progressBar, cube, axisX, axisY] = await Promise.all([
+        addBackground(loader, boxes.landingSection),
+        addTitleTop(loader, boxes.titleTopBox),
         addTitleBottom(loader, boxes.titleBottomBox),
         addProgressBar(loader, boxes.progressBox),
         addCube(loader, boxes.animationBox),
@@ -46,8 +46,8 @@ const drawComponents = async (loader, boxes) => {
     ])
 
     return {
-/*         'backgroundMatrix': backMatrix,
- */        'topTitle': topTitle,
+        'backAdaptative': backMatrix,
+        'topTitle': topTitle,
         'bottomTitle': bottomTitle,
         'progressBar': progressBar,
         'cube': cube,
@@ -222,11 +222,23 @@ const addProgressBar = async (loader, box) => {
 }
 
 const addBackground = async (loader, box) => {
+    const config = {
+        id: "adaptativeGrid",
+        tag: "adaptative_grid",
+        css: {
+            cell_width: "20px",
+            cell_height: "80px",
+            cell_borderColor: "rgba(0, 0, 0, 0.1)"
+        },
+    }
 
+    const component = await loader.prepare(box, config, "backMatrix absolute")
+    component.autoResize = true
+    component.init()
+    return component
 }
 
 const animateIn = async (boxes, components) => {
-    console.log(boxes)
     /* animation darkBar */
     boxes.topBar.style.top = "0px"
     boxes.bottomBar.style.bottom = "0px"
@@ -290,11 +302,16 @@ const addEvents = (boxes, components) => {
                 components.axisY.updateCss({ "transition": "6s ease-out" })
                 components.cube.updateCss({ "transition": "6s ease-in-out" })
             }
+            
             components.progressBar.changeValue(e.detail.progress)
             components.axisY.updateValue(axisValues.y)
             components.axisX.updateValue(axisValues.x)
+            /*  */
+            components.backAdaptative.updateCss({ "cell_width": "80px" })
+            /*  */
             await level.helper.timer.sleep(500)
             await cubeAnimation(components, cubeValues)
+
             oldValues.x = cubeValues.x
             oldValues.y = cubeValues.y
             await level.helper.timer.sleep(300)

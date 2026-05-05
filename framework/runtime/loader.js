@@ -92,7 +92,7 @@ const injectDependencies = (component, list) => {
 }
 
 const validateConfig = (config, loaderLists) => {
-    const error = (log, prop = null,) => { console.error(prop || "", log) }
+    const error = (log, prop = null,) => { console.error(prop || config.tag, log) }
     if (!config) { error("❌ not configured"); return }
     if (!loaderLists.comp[config.tag]) { error("❌ no tag in component config"); return }
     if (!config.id) { error("❌ no id in component config", config.tag); return }

@@ -48,6 +48,9 @@ export default class ClassBase {
 
     /* CSS PROPS*/
     convertCssVar(css, dom) {
-        Object.entries(css).forEach(([prop, value]) => dom.style.setProperty(`--${prop}`, value))
+        Object.entries(css).forEach(([prop, value]) => {
+            dom.css[prop] = value
+            dom.style.setProperty(`--${prop}`, value)
+        })
     }
 }
