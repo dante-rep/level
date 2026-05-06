@@ -1,61 +1,49 @@
 const drawLanding = (help) => {
     document.body.innerHTML += `
-    <section class="landingSection max relative">
-        <div class="landingBack verticalCenter max absolute"></div>
-        <div class="darkBar topDarkBar absolute transition1s"></div>
-        <div class="landingBox invisible max transition1s">
-            <section class="titlesSection center column">
-                <div class="titlesContainer columnCenter transition1s">
+    <section class="landingSection max center invisible transition1s">
+            <div class="contentBox columnCenterSpace transition1s">
+                <div class="titlesBox columnCenter transition1s">
                     <div class="titleTopBox"></div>
                     <div class="titleBottomBox transition1s"></div>
-                    <input id="access" type="button" class="button hidden" value="Access">
                 </div> 
-                <div class="progressBox invisible transition1s"></div>
-            </section>
-            <section class="animationSection center">
-                <div class="animationBox">
-
+                <div class="animationCube invisible transition1s">
+                    
                 </div>
-            </section>
-        </div>
-        <div class="darkBar bottomDarkBar absolute transition1s"></div>
+                <div class="animationText invisible transition1s"></div>
+            </div>
     </section>
     `
     return {
         'landingSection': document.querySelector(".landingSection"),
-        'landingBack': document.querySelector(".landingBack"),
-        'topBar': document.querySelector(".topDarkBar"),
-        'bottomBar': document.querySelector(".bottomDarkBar"),
-        'landingBox': document.querySelector(".landingBox"),
-        'titlesContainer': document.querySelector(".titlesContainer"),
+        'contentBox': document.querySelector(".contentBox"),
+        'titlesBox': document.querySelector(".titlesBox"),
         'titleTopBox': document.querySelector(".titleTopBox"),
         'titleBottomBox': document.querySelector(".titleBottomBox"),
-        'progressBox': document.querySelector(".progressBox"),
-        'access': document.querySelector("#access"),
-        'animationBox': document.querySelector(".animationBox")
+        'animationCube': document.querySelector(".animationCube"),
+        'animationText': document.querySelector(".animationText")
     }
 }
 
 const drawComponents = async (loader, boxes) => {
-    const [backMatrix, topTitle, bottomTitle, progressBar, cube, axisX, axisY] = await Promise.all([
-        addBackground(loader, boxes.landingBack),
+    const [topTitle, bottomTitle, /* progressBar, */ cube, axisX, axisY] = await Promise.all([
         addTitleTop(loader, boxes.titleTopBox),
         addTitleBottom(loader, boxes.titleBottomBox),
-        addProgressBar(loader, boxes.progressBox),
-        addCube(loader, boxes.animationBox),
-        addAxisX(loader, boxes.animationBox),
-        addAxisY(loader, boxes.animationBox)
-    ])
+        addCube(loader, boxes.animationCube),
+        addAxisX(loader, boxes.animationCube),
+        addAxisY(loader, boxes.animationCube)
+
+/*         addProgressBar(loader, boxes.progressBox),
+ */    ])
 
     return {
-        'backAdaptative': backMatrix,
         'topTitle': topTitle,
         'bottomTitle': bottomTitle,
-        'progressBar': progressBar,
         'cube': cube,
         'axisX': axisX,
         'axisY': axisY
-    }
+
+/*         'progressBar': progressBar,
+ */    }
 }
 
 const addCube = async (loader, box) => {
@@ -64,10 +52,10 @@ const addCube = async (loader, box) => {
         tag: "cube_3d",
         css: {
             box_perspective: "500px",
-            box_size: "300px",
+            box_size: "220px",
             box_back: "rgba(0, 0, 0, 0)",
-            box_border: "2px solid rgb(32, 32, 32)",
-            box_shadow: "inset 0 0 50px rgb(32, 32, 32)",
+            box_border: "1px solid rgb(32, 32, 32)",
+            box_shadow: "inset 0 0 10px rgb(32, 32, 32)",
             transition: "1500ms ease-in-out"
         }
     }
@@ -115,7 +103,7 @@ const addAxisX = async (loader, box) => {
         tag: "axis_ticks_01",
         css: {
             box_width: "100%",
-            box_height: "50px",
+            box_height: "49px",
             steps_fontFamily: "ronduit",
             steps_fontSize: "9px",
             simplePoint_width: "1px",
@@ -147,7 +135,7 @@ const addTitleTop = async (loader, box) => {
             charBox_radius: "4px",
             charBox_margin: "5px",
             charBox_padding: "10px 14px",
-            char_fontSize: "44px",
+            char_fontSize: "36px",
             char_fontFamily: "garden",
             char_fontColor: "rgb(220, 220, 220)",
             char_fontWeight: "bolder"
@@ -166,8 +154,8 @@ const addTitleBottom = async (loader, box) => {
         id: "bottomTitle",
         tag: "animated_text_01",
         css: {
-            char_empty: "20px",
-            char_fontSize: "24px",
+            char_empty: "16px",
+            char_fontSize: "16px",
             char_fontFamily: "ronduit",
             char_fontColor: "rgba(0, 0, 0, 0.42)",
             char_fontWeight: "bolder"
@@ -243,19 +231,20 @@ const addBackground = async (loader, box) => {
 }
 
 const animateIn = async (boxes, components) => {
-    /* animation darkBar */
-    boxes.topBar.style.top = "0px"
-    boxes.bottomBar.style.bottom = "0px"
-    await level.helper.timer.awaitTransition(boxes.topBar)
     /* animation visivility */
-    boxes.landingBox.classList.replace("invisible", "visible")
-    await level.helper.timer.awaitTransition(boxes.landingBox)
-    /* expand container & move title */
-    boxes.titlesContainer.classList.add("titlesContainer_expanded")
-    boxes.titleBottomBox.classList.add("titleBottomBox_desplazed")
-    /* progress bar */
-    boxes.progressBox.classList.replace("invisible", "visible")
-    await level.helper.timer.awaitTransition(boxes.landingBox)
+    boxes.landingSection.classList.replace("invisible", "visible")
+    await level.helper.timer.awaitTransition(boxes.landingSection)
+    /* expand contentBox */
+    boxes.contentBox.classList.add("contentBox_expanded")
+    boxes.animationCube.classList.add("animationCube_expanded")
+    boxes.animationText.classList.add("animationText_expanded")
+    boxes.animationCube.classList.replace("invisible", "visible")
+    boxes.animationText.classList.replace("invisible", "visible")
+    /*     boxes.titleBottomBox.classList.add("titleBottomBox_desplazed")
+     */    /* progress bar */
+    /*     boxes.progressBox.classList.replace("invisible", "visible")
+     */
+    await level.helper.timer.awaitTransition(boxes.animationCube)
 }
 
 const calculeCubeAnimation = (value) => {
@@ -278,7 +267,11 @@ const cubeAnimation = async (components, values) => {
 const calculeAxisValues = (cubeValues) => {
     const axisY_height = document.getElementById("landing-axisY").shadowRoot.querySelector(".pointsCont").offsetHeight
     const axisX_width = document.getElementById("landing-axisX").shadowRoot.querySelector(".pointsCont").offsetWidth
-    return { 'x': Math.round(cubeValues.x / axisX_width * 100), 'y': Math.round(cubeValues.y / axisY_height * 100) }
+    const x = (cubeValues.x / 360) * axisX_width;
+    const y = (cubeValues.y / 360) * axisY_height;
+    const xPercent = (x / axisX_width) * 100;
+    const yPercent = (y / axisY_height) * 100;
+    return { 'x': Math.round(xPercent), 'y': Math.round(yPercent) }
 }
 
 const changeBack = () => {
@@ -289,10 +282,6 @@ const addEvents = (boxes, components) => {
     const progressTask = { 'queue': Promise.resolve() }
     const cubeTasks = { 'queue': Promise.resolve() }
     const oldValues = { x: 0, y: 0 }
-
-    boxes.access.addEventListener("click", () => {
-        exit()
-    })
 
     document.addEventListener("appLoad", (e) => {
         progressTask.queue = progressTask.queue.then(async () => {
@@ -311,12 +300,10 @@ const addEvents = (boxes, components) => {
                 components.cube.updateCss({ "transition": "6s ease-in-out" })
             }
 
-            components.progressBar.changeValue(e.detail.progress)
-            components.axisY.updateValue(axisValues.y)
+/*             components.progressBar.changeValue(e.detail.progress)
+ */            components.axisY.updateValue(axisValues.y)
             components.axisX.updateValue(axisValues.x)
-            /*  */
-            components.backAdaptative.updateCss({ "rotate": `${(e.detail.progress / 100) * 40}deg` })
-            /*  */
+
             await level.helper.timer.sleep(500)
             await cubeAnimation(components, cubeValues)
 
@@ -336,8 +323,4 @@ export const init = async () => {
     await animateIn(boxes, components)
     addEvents(boxes, components)
     return true
-}
-
-const exit = async () => {
-    console.log("access")
 }

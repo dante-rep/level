@@ -21,86 +21,105 @@ body {
 
     .landingSection {
 
-        .topDarkBar {
-            top: calc(var(--darkBarHeight) * -1);
-        }
+        .contentBox {
+            width: 500px;
+            height: 140px;
+            padding: 20px;
+            border: 1px solid rgba(128, 128, 128, 0.534);
+            border-radius: 16px;
 
-        .bottomDarkBar {
-            bottom: calc(var(--darkBarHeight) * -1);
-        }
+            .titlesBox {
+                border: 1px solid red;
 
-        .landingBox {
-            display: flex;
-
-            .titlesSection {
-                width: 45%;
-                height: 100%;
-
-                .titlesContainer {
-                    width: 500px;
-                    height: 180px;
-                    padding: 30px;
-                    border: 1px solid rgba(128, 128, 128, 0.534);
-                    border-radius: 16px;
-/*                     background: var(--bodyBack);
- */                    backdrop-filter: blur(2px);
-
-                    .titleTopBox {
-                        margin-bottom: 10px;
-                    }
-
-                    .titleBottomBox_desplazed {
-                        margin-top: 50px;
-                    }
+                .titleBottomBox {
+                    margin-top: 10px;
                 }
 
-                .titlesContainer_expanded {
-                    height: 60%;
+/*                 .titleBottomBox_desplazed {
+                    margin-top: 30px;
+                }
+ */            }
+
+            .animationCube {
+                display: grid;
+                grid-template-columns: 50px 30px 1fr;
+                grid-template-rows: 310px 20px 50px;
+                grid-template-areas:
+                "axisY . cube"
+                ". . ."
+                ". . axisX";
+                width: 420px;
+                height: 0px;
+                overflow: hidden;
+                border: 1px solid red;
+
+                .axisY {
+                    grid-area: axisY;
                 }
 
-                .progressBox {
+                .axisX {
+                    grid-area: axisX;
+                    align-self: end;
+                    border: 1px solid red;
+                }
+
+                .cube-3d {
+                    grid-area: cube;
+                    display: block;
+                    justify-self: center;
+                    align-self: center;
+                }
+            }
+
+            .animationCube_expanded {
+                height: 380px;
+            }
+
+            .animationText {
+                width: 420px;
+                height: 0px;
+                border: 1px solid red;
+            }
+
+            .animationText_expanded {
+                height: 100px;
+            }
+        }
+
+        .contentBox_expanded {
+            height: 90%;
+        }
+
+        /*                 .progressBox {
                     margin-top: 30px;
                     width: 500px;
                     height: auto;
                     border: 1px solid red;
                 }
+ */
 
-                input {
-                    font-size: 22px;
-                    padding: 0 40px;
-                    cursor: pointer;
-                }
+        /*         .animationSection {
+            width: 55%;
+            height: 100%;
+            border: 1px solid red;
+
+
+            .cube-3d {
+                grid-column: 7 / 11;
+                grid-row: 3 / 10;
             }
 
-            .animationSection {
-                width: 55%;
-                height: 100%;
-                border: 1px solid red;
+            .axisY {
+                grid-column: 1 / 2;
+                grid-row: 1 / 15;
+            }
 
-                .animationBox {
-                    display: grid;
-                    grid-template-columns: repeat(16, 1fr);
-                    grid-template-rows: repeat(16, 1fr);
-                    width: 600px;
-                    height: 500px;
-                }
-
-                .cube-3d {
-                    grid-column: 7 / 11;
-                    grid-row: 3 / 10;
-                }
-
-                .axisY {
-                    grid-column: 1 / 2;
-                    grid-row: 1 / 15;
-                }
-
-                .axisX {
-                    grid-column: 4 / 17;
-                    grid-row: 16 / 17;
-                }
+            .axisX {
+                grid-column: 4 / 17;
+                grid-row: 16 / 17;
             }
         }
+ */
     }
 
 
