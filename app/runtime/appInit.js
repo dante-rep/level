@@ -51,7 +51,7 @@ const init = async () => {
     const modules = {
         "mainContainers": `${level.route}/app/interface/loads/mainContainers.js`
     }
-    const steps = 10
+    const steps = 5
     const animation = true
     if (animation) {
         for (let time = 1; time <= steps; time++) {

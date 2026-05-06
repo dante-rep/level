@@ -4,9 +4,12 @@ export default class AdaptativeGrid extends HTMLElement {
     #STATE = null
     #DEPS = ["base", "dom"]
     #CSS = {
+        box_width: "100%",
+        box_height: "100%",
         cell_width: "80px",
         cell_height: "80px",
-        cell_borderColor: "grey"
+        cell_borderColor: "grey",
+        rotate: "0deg"
     }
     #LOGIC = {
 
@@ -50,13 +53,18 @@ export default class AdaptativeGrid extends HTMLElement {
         }
 
         :host {
-            width: 100%;
-            height: 100%;
+            width: var(--box_width);
+            height: var(--box_height);
         }
 
         .mainBox {
+            transform-style: perspective-3d;
+            perspective: 1000px;
 
             .centerMain {
+                transform: rotateY(var(--rotate));
+                transform-origin: 5%;
+                transition: 2s ease-in-out;
 
                 .row {
                     display: flex;
@@ -64,24 +72,26 @@ export default class AdaptativeGrid extends HTMLElement {
                     .cell {
                         width: var(--cell_width);
                         height: var(--cell_height);
-                        border-top: 1px solid var(--cell_borderColor);
-                        border-left: 1px solid var(--cell_borderColor);
-                        transition: 1s;
-                    }
+                        border-top: 1px dashed var(--cell_borderColor);
+                        border-left: 1px dashed var(--cell_borderColor);
+    /*                     transition: 1s;
+    */                }
                 }
             }
         }
 
         .max {width: 100%; height: 100%}
         .center {display: flex; justify-content: center; align-items: center;}
+        .bottomBorder {border-bottom: 1px dashed var(--cell_borderColor);}
+        .rightBorder {border-right: 1px dashed var(--cell_borderColor);}
         `
     }
 
     #calculeGrid() {
         const cellWidth = Number(parseFloat(this.css.cell_width))
         const cellHeight = Number(parseFloat(this.css.cell_height))
-        const rowsNum = Math.floor(this.mainBox.offsetHeight / cellWidth)
-        const cellPerRow = Math.floor(this.mainBox.offsetWidth / cellHeight)
+        const rowsNum = Math.floor(this.mainBox.offsetHeight / cellHeight)
+        const cellPerRow = Math.floor(this.mainBox.offsetWidth / cellWidth)
         return { 'rowsNum': rowsNum, 'cellPerRow': cellPerRow }
     }
 
@@ -95,6 +105,8 @@ export default class AdaptativeGrid extends HTMLElement {
 
             for (let cell = 0; cell <= calculed.cellPerRow; cell++) {
                 const newCell = this.deps.dom.add(newRow, "div", "cell")
+                row === calculed.rowsNum && newCell.classList.add("bottomBorder")
+                row === calculed.cellPerRow && newCell.classList.add("rightBorder")
             }
         }
     }

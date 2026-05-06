@@ -14,16 +14,12 @@ body {
     overflow: hidden;
 
     .darkBar {
-        width: 100%;
+        width: 200%;
         height: var(--darkBarHeight);
         background: var(--landingColor1);
     }
 
     .landingSection {
-        .backMatrix {
-            z-index: -1;
-            top: 0px;
-        }
 
         .topDarkBar {
             top: calc(var(--darkBarHeight) * -1);
@@ -46,7 +42,8 @@ body {
                     padding: 30px;
                     border: 1px solid rgba(128, 128, 128, 0.534);
                     border-radius: 16px;
-                    background: var(--bodyBack);
+/*                     background: var(--bodyBack);
+ */                    backdrop-filter: blur(2px);
 
                     .titleTopBox {
                         margin-bottom: 10px;

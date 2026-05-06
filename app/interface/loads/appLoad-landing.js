@@ -1,6 +1,7 @@
 const drawLanding = (help) => {
     document.body.innerHTML += `
     <section class="landingSection max relative">
+        <div class="landingBack verticalCenter max absolute"></div>
         <div class="darkBar topDarkBar absolute transition1s"></div>
         <div class="landingBox invisible max transition1s">
             <section class="titlesSection center column">
@@ -22,6 +23,7 @@ const drawLanding = (help) => {
     `
     return {
         'landingSection': document.querySelector(".landingSection"),
+        'landingBack': document.querySelector(".landingBack"),
         'topBar': document.querySelector(".topDarkBar"),
         'bottomBar': document.querySelector(".bottomDarkBar"),
         'landingBox': document.querySelector(".landingBox"),
@@ -36,7 +38,7 @@ const drawLanding = (help) => {
 
 const drawComponents = async (loader, boxes) => {
     const [backMatrix, topTitle, bottomTitle, progressBar, cube, axisX, axisY] = await Promise.all([
-        addBackground(loader, boxes.landingSection),
+        addBackground(loader, boxes.landingBack),
         addTitleTop(loader, boxes.titleTopBox),
         addTitleBottom(loader, boxes.titleBottomBox),
         addProgressBar(loader, boxes.progressBox),
@@ -66,7 +68,7 @@ const addCube = async (loader, box) => {
             box_back: "rgba(0, 0, 0, 0)",
             box_border: "2px solid rgb(32, 32, 32)",
             box_shadow: "inset 0 0 50px rgb(32, 32, 32)",
-            transition: "1.5s ease-in-out"
+            transition: "1500ms ease-in-out"
         }
     }
 
@@ -226,9 +228,11 @@ const addBackground = async (loader, box) => {
         id: "adaptativeGrid",
         tag: "adaptative_grid",
         css: {
-            cell_width: "20px",
-            cell_height: "80px",
-            cell_borderColor: "rgba(0, 0, 0, 0.1)"
+            box_width: "200%",
+            box_height: "140%",
+            cell_width: "40px",
+            cell_height: "40px",
+            cell_borderColor: "rgba(0, 0, 0, 0.4)"
         },
     }
 
@@ -277,6 +281,10 @@ const calculeAxisValues = (cubeValues) => {
     return { 'x': Math.round(cubeValues.x / axisX_width * 100), 'y': Math.round(cubeValues.y / axisY_height * 100) }
 }
 
+const changeBack = () => {
+
+}
+
 const addEvents = (boxes, components) => {
     const progressTask = { 'queue': Promise.resolve() }
     const cubeTasks = { 'queue': Promise.resolve() }
@@ -302,12 +310,12 @@ const addEvents = (boxes, components) => {
                 components.axisY.updateCss({ "transition": "6s ease-out" })
                 components.cube.updateCss({ "transition": "6s ease-in-out" })
             }
-            
+
             components.progressBar.changeValue(e.detail.progress)
             components.axisY.updateValue(axisValues.y)
             components.axisX.updateValue(axisValues.x)
             /*  */
-            components.backAdaptative.updateCss({ "cell_width": "80px" })
+            components.backAdaptative.updateCss({ "rotate": `${(e.detail.progress / 100) * 40}deg` })
             /*  */
             await level.helper.timer.sleep(500)
             await cubeAnimation(components, cubeValues)
