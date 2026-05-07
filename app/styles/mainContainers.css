@@ -23,35 +23,25 @@ body {
 
         .contentBox {
             width: 500px;
-            height: 140px;
-            padding: 20px;
+            height: 230px;
+            padding: 10px;
             border: 1px solid rgba(128, 128, 128, 0.534);
             border-radius: 16px;
 
-            .titlesBox {
-                border: 1px solid red;
+            .titlesBox .titleBottomBox {
+                margin-top: 10px;
+            }
 
-                .titleBottomBox {
-                    margin-top: 10px;
-                }
-
-/*                 .titleBottomBox_desplazed {
-                    margin-top: 30px;
-                }
- */            }
-
-            .animationCube {
+            .cubeBox {
                 display: grid;
                 grid-template-columns: 50px 30px 1fr;
-                grid-template-rows: 310px 20px 50px;
+                grid-template-rows: 280px 20px 50px;
                 grid-template-areas:
-                "axisY . cube"
-                ". . ."
-                ". . axisX";
+                    "axisY . cube"
+                    ". . ."
+                    ". . axisX";
                 width: 420px;
                 height: 0px;
-                overflow: hidden;
-                border: 1px solid red;
 
                 .axisY {
                     grid-area: axisY;
@@ -60,7 +50,6 @@ body {
                 .axisX {
                     grid-area: axisX;
                     align-self: end;
-                    border: 1px solid red;
                 }
 
                 .cube-3d {
@@ -71,18 +60,22 @@ body {
                 }
             }
 
-            .animationCube_expanded {
-                height: 380px;
+            .cubeBox_expanded {
+                height: 350px;
+                margin-top: 20px;
+                margin-bottom: 10px;
             }
 
-            .animationText {
+            .listBox {
                 width: 420px;
                 height: 0px;
+                list-style: none;
                 border: 1px solid red;
             }
 
-            .animationText_expanded {
-                height: 100px;
+            .listBox_expanded {
+                width: 420px;
+                flex: 1;
             }
         }
 
