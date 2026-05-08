@@ -71,6 +71,10 @@ body {
                 height: 0px;
                 list-style: none;
                 border: 1px solid red;
+
+                .landing_text {
+                    transition: 80ms;
+                }
             }
 
             .listBox_expanded {

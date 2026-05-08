@@ -8,11 +8,11 @@ const drawLanding = (help) => {
                 </div> 
                 <div class="cubeBox invisible transition1s"></div>
                 <ul class="listBox invisible transition1s">
-                    <li class="text"></li>
-                    <li class="text"></li>
-                    <li class="text"></li>
-                    <li class="text"></li>
-                    <li class="text"></li>
+                    <li class="landing_text"></li>
+                    <li class="landing_text"></li>
+                    <li class="landing_text"></li>
+                    <li class="landing_text"></li>
+                    <li class="landing_text"></li>
                 </ul>
             </div>
     </section>
@@ -250,10 +250,14 @@ const animateIn = async (boxes, components) => {
 }
 
 const animateList = async (boxes, animate) => {
+    const textBox = Array.from(document.querySelectorAll(".landing_text"))
+    const delay = level.helper.timer.getTransition(textBox[0])
+    const symbol = ">"
+    
     const list = [
-        {text: "TEXTO DE PRUEVA 1", type: "text", animation: "terminal", box: boxes.listBox},
-        {text: "TEXTO DE PRUEVA 2", type: "text", animation: "terminal", box: boxes.listBox},
-        {text: "TEXTO DE PRUEVA 3", type: "text", animation: "terminal", box: boxes.listBox},        
+        {text: "TEXTO DE PRUEVA 1", type: "text", animation: "terminal", symbol: symbol ,box: textBox[0], delay: delay},
+        {text: "TEXTO DE PRUEVA 2", type: "text", animation: "terminal", symbol: symbol, box: textBox[1], delay: delay},
+        {text: "TEXTO DE PRUEVA 3", type: "text", animation: "terminal", symbol: symbol, box: textBox[2], delay: delay},        
     ]
     await animate.secuencial(list)
 }

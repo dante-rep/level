@@ -12,7 +12,6 @@ export const secuencial = async (array, box) => {
             console.error(`❌ ${item.animation} is not a valid animation`)
             return
         }
-
-        await level.helper.animations[item.type][item.animation](item.text, item.box)
+        await level.helper.animations[item.type][item.animation](item)
     }
 }
