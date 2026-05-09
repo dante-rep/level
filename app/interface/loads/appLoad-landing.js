@@ -13,6 +13,7 @@ const drawLanding = (help) => {
                     <li class="landing_text"></li>
                     <li class="landing_text"></li>
                     <li class="landing_text"></li>
+                    <div class="progressBox"></div>
                 </ul>
             </div>
     </section>
@@ -92,8 +93,8 @@ const addAxisY = async (loader, box) => {
         logic: {
             orientation: "vertical"
         },
-        data: { steps: 4, values: 4},
-        fonts: [{ 'name': 'ronduit', 'src': `${level.route}/app/src/fonts/RonduitCapitals-Light.woff` }]
+        data: { steps: 4, values: 4 },
+        fonts: [{ 'name': 'ronduit', 'src': `${level.route}/app/src/fonts/ronduitCapitals-Light.woff` }]
     }
 
     const component = await loader.prepare(box, config, "axisY")
@@ -121,8 +122,8 @@ const addAxisX = async (loader, box) => {
             valueBox_fontSize: "9px",
             valueBox_fontStyle: "italic"
         },
-        data: { steps: 4, values: 4},
-        fonts: [{ 'name': 'ronduit', 'src': `${level.route}/app/src/fonts/RonduitCapitals-Light.woff` }]
+        data: { steps: 4, values: 4 },
+        fonts: [{ 'name': 'ronduit', 'src': `${level.route}/app/src/fonts/ronduitCapitals-Light.woff` }]
     }
 
     const component = await loader.prepare(box, config, "axisX")
@@ -140,12 +141,12 @@ const addTitleTop = async (loader, box) => {
             charBox_margin: "5px",
             charBox_padding: "10px 14px",
             char_fontSize: "36px",
-            char_fontFamily: "garden",
+            char_fontFamily: "neuropol",
             char_fontColor: "rgb(220, 220, 220)",
             char_fontWeight: "bolder"
         },
         data: { text: "Level" },
-        fonts: [{ 'name': 'garden', 'src': `${level.route}/app/src/fonts/Neuropol.otf` }]
+        fonts: [{ 'name': 'neuropol', 'src': `${level.route}/app/src/fonts/neuropol.otf` }]
     }
 
     const component = await loader.prepare(box, config)
@@ -165,7 +166,7 @@ const addTitleBottom = async (loader, box) => {
             char_fontWeight: "bolder"
         },
         data: { text: "Modular framework" },
-        fonts: [{ 'name': 'ronduit', 'src': `${level.route}/app/src/fonts/RonduitCapitals-Light.woff` }]
+        fonts: [{ 'name': 'ronduit', 'src': `${level.route}/app/src/fonts/ronduitCapitals-Light.woff` }]
     }
 
     const component = await loader.prepare(box, config)
@@ -252,12 +253,14 @@ const animateIn = async (boxes, components) => {
 const animateList = async (boxes, animate) => {
     const textBox = Array.from(document.querySelectorAll(".landing_text"))
     const delay = level.helper.timer.getTransition(textBox[0])
-    const symbol = ">"
-    
+    const font = [{ 'name': 'Xolonium-Regular', 'src': `${level.route}/app/src/fonts/Xolonium-Regular.otf` }]
+    level.helper.fonts.addFonts(font)
+    const symbol = " ▄"
+
     const list = [
-        {text: "TEXTO DE PRUEVA 1", type: "text", animation: "terminal", symbol: symbol ,box: textBox[0], delay: delay},
-        {text: "TEXTO DE PRUEVA 2", type: "text", animation: "terminal", symbol: symbol, box: textBox[1], delay: delay},
-        {text: "TEXTO DE PRUEVA 3", type: "text", animation: "terminal", symbol: symbol, box: textBox[2], delay: delay},        
+        { text: "TEXTO DE PRUEVA 1", type: "text", animation: "terminal", symbol: symbol, box: textBox[0], delay: delay },
+        { text: "TEXTO DE PRUEVA 2", type: "text", animation: "terminal", symbol: symbol, box: textBox[1], delay: delay },
+        { text: "TEXTO DE PRUEVA 3", type: "text", animation: "terminal", symbol: symbol, box: textBox[2], delay: delay },
     ]
     await animate.secuencial(list)
 }

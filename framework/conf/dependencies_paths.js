@@ -4,8 +4,9 @@ const dependencies = {
         fonts: "/framework/dependencies/classes/class_fonts.js"
     },
     helper: {
-        dom: "/framework/dependencies/helpers/dom.js",
         css: "/framework/dependencies/helpers/css.js",
+        dom: "/framework/dependencies/helpers/dom.js",
+        fonts: "/framework/dependencies/helpers/fonts.js",
         import: "/framework/dependencies/helpers/imports.js",
         timer: "/framework/dependencies/helpers/timer.js",
         events: "/framework/dependencies/helpers/events.js",
