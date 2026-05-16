@@ -1,8 +1,6 @@
 export const tag = "progress_bar-01"
 export default class progressBar extends HTMLElement {
     /* private props */
-    #BOX_MOVED = 0
-    #STATE = null
     #DEPS = ["base", "fonts", "dom", "timer"]
     #CSS = {
         box_width: "100%",
@@ -10,7 +8,9 @@ export default class progressBar extends HTMLElement {
         box_border: "none",
         box_radius: "none",
         box_back: "none",
+        box_padding: "4px",
 
+        progress_width: "80px",
         progress_height: "100%",
         progress_border: "none",
         progress_radius: "none",
@@ -21,26 +21,26 @@ export default class progressBar extends HTMLElement {
         progress_fontWeight: "initial",
         progress_letterSpacing: "0px",
 
-        item_widthOff: "80%",
-        item_heightOff: "100%",
-        item_radiusOff: "none",
+        item_width: "80%",
+        item_height: "100%",
+        item_radius: "none",
+        item_border: "none",
         item_backOff: "none",
-        item_borderOff: "none",
-        item_boxShadowOff: "none",
-
-        item_widthOn: "30%",
-        item_heightOn: "100%",
-        item_radiusOn: "none",
         item_backOn: "none",
-        item_borderOn: "none",
 
         transition: "300ms ease-in-out"
     }
-    #DATA = {
-        items_multiplier: 2,
-        progress_length: 2,
-        progress_steps: 3,
+    #LOGIC = {
+        side: ["left", "right"]
     }
+    #DATA = {
+        max: 100,
+        items: 10,
+        steps: 3,
+        delay: 10
+    }
+    #BAR = {}
+    #STATE = null
 
     constructor() {
         super()
@@ -50,37 +50,31 @@ export default class progressBar extends HTMLElement {
         this.fonts = [] /* [{}] */
         this.css = {}
         this._css = { ...this.#CSS }
+        this.logic = {}
+        this._logic = { ...this.#LOGIC }
         this.data = {}
         this._data = { ...this.#DATA }
         this.deps = {}
         this.requiredDeps = [...this.#DEPS]
         this.value = 0
+        this.progressTask = { 'queue': Promise.resolve() }
     }
 
     /* private nethods */
     #drawComponent() {
-        this.mainBox = this.deps.dom.add(this.dom, "div", "mainBox max relative")
+        this.mainBox = this.deps.dom.add(this.dom, "div", "mainBox max")
         this.mainBox.innerHTML = `
-        <ul class="boxesLayer relative max"></ul>
-        <div class="progressLayer absolute max">
-            <div class="progressBox relative center max transition">
-                <div class="progress center">
-                    <span class="bracket">[ </span>
-                    <span class="progressText center">0</span>
-                    <span class="bracket"> ]</span>
-                </div>
-            </div>
+        <div class="progressBox center">
+            <span class="symbol">[</span>
+            <span class="progressCounter center">${this.value}</span>
+            <span class="symbol">]</span>            
         </div>
+        <ul class="barBox"></ul>
         `
-        return {
-            ref: this.dom.querySelector(".boxesLayer"),
-            visual: this.dom.querySelector(".visualLayer"),
-            progress: this.dom.querySelector(".progressLayer")
-        }
     }
 
     #addStyle() {
-        const style = this.deps.dom.add(this.dom, "style")
+        const style = this.deps.dom.add(this.dom, "style", "customStyle")
         style.textContent += `
         * {
             padding: 0px;
@@ -94,67 +88,54 @@ export default class progressBar extends HTMLElement {
             display: flex;
             width: var(--box_width);
             height: var(--box_height);
-
-            --blockWidth: calc(100% / ${this.data.items_multiplier * (10 + this.data.progress_length)});
         }
 
         .mainBox {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
             background: var(--box_back);
             border: var(--box_border);
             border-radius: var(--box_radius);
+            padding: var(--box_padding);
 
-            .boxesLayer {
+            .barBox {
                 display: flex;
-                justify-content: flex-end;
-                
+                width: calc(100% - (var(--progress_width) + 6px));
+                height: 100%;
+
                 .box {
-                    width: var(--blockWidth);
+                    width: 100%;
                     height: 100%;
-                }
 
-                .boxOff .item {
-                    width: var(--item_widthOff);
-                    height: var(--item_heightOff);
-                    border-radius: var(--item_radiusOff);
-                    border: var(--item_borderOff); 
-                    background: var(--item_backOff);
-                }
-
-                .boxOn .item {
-                    width: var(--item_widthOn);
-                    height: var(--item_heightOn);
-                    border-radius: var(--item_radiusOn);
-                    border: var(--item_borderOn); 
-                    background: var(--item_backOn);
-                    box-shadow: var(--item_boxShadowOn);
-                }
-            }
-
-            .progressLayer {
-                top: 0px;
-
-                .progressBox {
-                    left: 0px;
-                    width: calc(var(--blockWidth) * ${this.data.progress_length * this.data.items_multiplier}); 
-                
-                    .progress {
-                        width: calc(100% - 10px);
-                        height: var(--progress_height);
-                        border: var(--progress_border);
-                        border-radius: var(--progress_radius);
-                        background: var(--progress_back);
-                        
-                        * {
-                            font-family: var(--progress_fontFamily);
-                            font-size: var(--progress_fontSize);
-                            font-weight: var(--progress_fontWeight);
-                            color: var(--progress_fontColor);
-                            letter-spacing: var(--progress_letterSpacing);
-                        }
-
-                        .progressText { width: 60%; }
+                    .item {
+                        width: var(--item_width);
+                        height: var(--item_height);
+                        border-radius: var(--item_radius);
+                        border: var(--item_border); 
                     }
                 }
+
+                .box_off .item {background: var(--item_backOff);}
+                .box_on .item {background: var(--item_backOn);}
+            }
+
+            .progressBox {
+                width: calc(var(--progress_width));
+                height: var(--progress_height);
+                border: var(--progress_border);
+                border-radius: var(--progress_radius);
+                background: var(--progress_back);
+                
+                * {
+                    font-family: var(--progress_fontFamily);
+                    font-size: var(--progress_fontSize);
+                    font-weight: var(--progress_fontWeight);
+                    color: var(--progress_fontColor);
+                    letter-spacing: var(--progress_letterSpacing);
+                }
+
+                .progressCounter { width: 60%; }
             }
         }
 
@@ -178,71 +159,62 @@ export default class progressBar extends HTMLElement {
     }
 
     #drawBar() {
-        for (let i = 0; i < this.data.items_multiplier * 10; i++) { const item = this.deps.dom.add(this.dom.querySelector(".boxesLayer"), "li", "box boxOff absolute center transition") }
-        return Array.from(this.dom.querySelectorAll(".boxesLayer .box"))
-    }
+        const barBox = this.mainBox.querySelector(".barBox")
+        const progressBox = this.mainBox.querySelector(".progressBox")
+        const containerWidth = this.mainBox.querySelector(".barBox").offsetWidth
 
-    #drawItems(boxes) {
-        boxes.forEach(box => { this.deps.dom.add(box, "div", "item transition") })
-    }
+        for (let i = 0; i < this.data.items; i++) {
+            const itemBox = this.deps.dom.add(barBox, "li", "box box_off center relative transition")
+            const visibleItem = this.deps.dom.add(itemBox, "div", "item transition")
+        }
+        this.logic.side === "right" && this.mainBox.appendChild(progressBox)
 
-    #configurePos(boxes) {
-        const progressBox = this.dom.querySelector(".progressBox")
-        boxes.forEach((box, index) => {
-            index === 0 && (box.style.left = `${progressBox.offsetLeft + progressBox.offsetWidth}px`)
-            index >= 1 && (box.style.left = `${boxes[index - 1].offsetLeft + boxes[index - 1].offsetWidth}px`)
-        })
-    }
-
-    #addFonts() {
-        this.deps.fonts.addFonts(this.fonts)
-    }
-
-    async #moveTo(value, boxes, progressBox, boxesLayer, delay) {
-        const boxWidth = boxes[0].offsetWidth
-        const boxStep = 100 / boxes.length
-
-        for (let i = this.value; i <= value; i++) {
-            const currentBox = Math.floor(i / boxStep)
-
-            if (currentBox !== this.#BOX_MOVED) {
-                boxes[currentBox - 1].style.left = `${boxWidth * this.#BOX_MOVED}px`
-                boxes[currentBox - 1].classList.replace("boxOff", "boxOn")
-                progressBox.style.left = `${boxWidth * (this.#BOX_MOVED + 1)}px`
-                this.#BOX_MOVED = currentBox
-                await this.deps.timer.sleep(delay / 2)
-            }
-            this.#updateValue(i, delay)
-            this.value = value
+        return {
+            progress: this.mainBox.querySelectorAll("span")[1],
+            boxes: Array.from(this.mainBox.querySelectorAll(".barBox .box"))
         }
     }
 
-    async #updateValue(value, delay) {
-        const progressText = this.dom.querySelector(".progressText")
-        const steps = this.data.progress_steps
+    #addFonts() { this.deps.fonts.addFonts(this.fonts) }
 
-        for (let prog = 1; prog <= steps; prog++) {
-            const progress = ((1 / steps) * prog + value - 1).toFixed(1)
-            if (progress > 0) {
-                progressText.textContent = progress === "100.0" ? "100" : progress
-                await this.deps.timer.sleep((delay / 2) / steps)
-            }
+    async #updateBar(value, delay) {
+        const steps = this.data.steps
+        const boxes = this.#BAR.boxes
+        const boxSteps = this.data.max / boxes.length * steps
+        const stepValue = 1 / this.data.steps
+        const initialStep = this.value * steps
+        const finalStep = value * steps
+        console.log("initial", initialStep, "final", finalStep, "boxSteps", boxSteps)
+
+        for (let i = initialStep; i <= finalStep; i++) {
+            const progress = (i * stepValue)
+            this.#BAR.progress.textContent = progress.toFixed(1)
+
+             if (i / boxSteps >= 1) {
+                const box = boxes[Math.floor(i / boxSteps) - 1]
+                console.log(box)
+                box.classList.contains("box_off") && box.classList.replace("box_off", "box_on")
+             }
+            await this.deps.timer.sleep(delay)
         }
+    }
+
+    async #updateProgress(value, delay) {
+
     }
 
     async changeValue(value) {
-        const boxesLayer = this.dom.querySelector(".boxesLayer")
-        const boxes = boxesLayer.querySelectorAll(".box")
-        const progressBox = this.dom.querySelector(".progressBox")
-        const delay = this.deps.timer.getTransition(progressBox)
+        this.progressTask.queue = this.progressTask.queue.then(async () => {
 
-        if (value <= this.value || value < 0 || value > 100) {
-            console.error(this, "value not valid 0 - 100")
-            return
-        } else {
-            await this.#moveTo(value, boxes, progressBox, boxesLayer, delay)
-        }
-        return true
+            if (value < 0 || value > 100) {
+                console.error(this, "value not valid 0 - 100")
+                return
+            } else {
+                await this.#updateBar(value, this.data.delay)
+                this.value = value
+            }
+            return true
+        })
     }
 
     /* public methods */
@@ -263,13 +235,8 @@ export default class progressBar extends HTMLElement {
             this.#addStyle()
             this.#addFonts(this.fonts)
 
-            const layers = this.#drawComponent()
-            await new Promise(requestAnimationFrame)
-            await new Promise(requestAnimationFrame)
-
-            const boxes = this.#drawBar(layers.ref, "refBox", this.data.items_multiplier * 10)
-            this.#configurePos(boxes)
-            this.#drawItems(boxes)
+            this.#drawComponent()
+            this.#BAR = this.#drawBar()
         }
     }
 }

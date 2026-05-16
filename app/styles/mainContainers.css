@@ -75,6 +75,12 @@ body {
                 .landing_text {
                     transition: 100ms;
                 }
+
+                .progressBox {
+                    bottom: 0px;
+                    width: 100%;
+                    height: 30px;
+                }
             }
 
             .listBox_expanded {

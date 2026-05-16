@@ -7,13 +7,13 @@ const drawLanding = (help) => {
                     <div class="titleBottomBox transition1s"></div>
                 </div> 
                 <div class="cubeBox invisible transition1s"></div>
-                <ul class="listBox invisible transition1s">
+                <ul class="listBox relative invisible transition1s">
                     <li class="landing_text"></li>
                     <li class="landing_text"></li>
                     <li class="landing_text"></li>
                     <li class="landing_text"></li>
                     <li class="landing_text"></li>
-                    <div class="progressBox"></div>
+                    <div class="progressBox absolute"></div>
                 </ul>
             </div>
     </section>
@@ -25,30 +25,29 @@ const drawLanding = (help) => {
         'titleTopBox': document.querySelector(".titleTopBox"),
         'titleBottomBox': document.querySelector(".titleBottomBox"),
         'cubeBox': document.querySelector(".cubeBox"),
-        'listBox': document.querySelector(".listBox")
+        'listBox': document.querySelector(".listBox"),
+        'progressBox': document.querySelector(".progressBox")
     }
 }
 
 const drawComponents = async (loader, boxes) => {
-    const [topTitle, bottomTitle, /* progressBar, */ cube, axisX, axisY] = await Promise.all([
+    const [topTitle, bottomTitle, cube, axisX, axisY, progressBar] = await Promise.all([
         addTitleTop(loader, boxes.titleTopBox),
         addTitleBottom(loader, boxes.titleBottomBox),
         addCube(loader, boxes.cubeBox),
         addAxisX(loader, boxes.cubeBox),
-        addAxisY(loader, boxes.cubeBox)
-
-/*         addProgressBar(loader, boxes.progressBox),
- */    ])
+        addAxisY(loader, boxes.cubeBox),
+        addProgressBar(loader, boxes.progressBox),
+    ])
 
     return {
         'topTitle': topTitle,
         'bottomTitle': bottomTitle,
         'cube': cube,
         'axisX': axisX,
-        'axisY': axisY
-
-/*         'progressBar': progressBar,
- */    }
+        'axisY': axisY,
+        'progressBar': progressBar,
+    }
 }
 
 const addCube = async (loader, box) => {
@@ -179,12 +178,11 @@ const addProgressBar = async (loader, box) => {
         id: "landingProgressBar",
         tag: "progress_bar_01",
         css: {
-            box_width: "100%",
-            box_height: "24px",
             box_radius: "4px",
+            box_padding: "4px 8px",
 
-            progress_height: "20px",
-            progress_back: "rgba(0, 0, 0, 0.7)",
+            progress_width: "80px",
+            progress_border: "1px solid rgba(0, 0, 0, 0.14)",
             progress_radius: "4px",
             progress_fontFamily: "ds-digi",
             progress_fontSize: "14px",
@@ -192,24 +190,19 @@ const addProgressBar = async (loader, box) => {
             progress_fontWeight: "bolder",
             progress_letterSpacing: "2px",
 
-            item_widthOff: "calc(100% - 2px)",
-            item_heightOff: "80%",
-            item_radiusOff: "2px",
+            item_width: "80%",
+            item_height: "56%",
+            item_radius: "2px",
+            item_border: "1px solid rgba(0, 0, 0, 0.2)",
             item_backOff: "rgba(0, 0, 0, 0)",
-            item_borderOff: "1px solid rgba(0, 0, 0, 0.2)",
-
-            item_widthOn: "calc(100% - 2px)",
-            item_heightOn: "60%",
-            item_borderOn: "1px solid rgba(0, 0, 0, 0)",
-            item_borderOn: "1px solid rgba(0, 0, 0, 0.2)",
-            item_radiusOn: "2px",
             item_backOn: "rgba(22, 22, 22, 0.58)",
-
-            transition: "300ms ease-out"
+            transition: "500ms"
         },
-        data: { items_multiplier: 4, progress_length: 2, progress_steps: 5 },
+        logic: { side: "right" },
+        data: { items: 25, steps: 5, delay: 5 },
         fonts: [{ 'name': 'ds-digi', 'src': `${level.route}/app/src/fonts/ds-digi.ttf` }]
     }
+
 
     const component = await loader.prepare(box, config)
     component.init()
@@ -314,8 +307,8 @@ const addEvents = (boxes, components) => {
                 components.cube.updateCss({ "transition": "6s ease-in-out" })
             }
 
-/*             components.progressBar.changeValue(e.detail.progress)
- */            components.axisY.updateValue(axisValues.y)
+            components.progressBar.changeValue(e.detail.progress)
+            components.axisY.updateValue(axisValues.y)
             components.axisX.updateValue(axisValues.x)
 
             await level.helper.timer.sleep(500)
