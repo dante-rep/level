@@ -2,19 +2,15 @@ const drawLanding = (help) => {
     document.body.innerHTML += `
     <section class="landingSection max center invisible transition1s">
             <div class="contentBox column center transition1s">
-                <div class="titlesBox columnCenter transition1s">
+                <div class="titlesBox column_Hcenter transition1s">
                     <div class="titleTopBox"></div>
                     <div class="titleBottomBox transition1s"></div>
                 </div> 
                 <div class="cubeBox invisible transition1s"></div>
-                <ul class="listBox relative invisible transition1s">
-                    <li class="landing_text"></li>
-                    <li class="landing_text"></li>
-                    <li class="landing_text"></li>
-                    <li class="landing_text"></li>
-                    <li class="landing_text"></li>
-                    <div class="progressBox absolute"></div>
-                </ul>
+                <div class="listBox relative invisible transition1s">
+                    <ul class="terminal"></ul>
+                    <div class="progressBox"></div>
+                </div>
             </div>
     </section>
     `
@@ -26,6 +22,7 @@ const drawLanding = (help) => {
         'titleBottomBox': document.querySelector(".titleBottomBox"),
         'cubeBox': document.querySelector(".cubeBox"),
         'listBox': document.querySelector(".listBox"),
+        'terminal': document.querySelector(".terminal"),
         'progressBox': document.querySelector(".progressBox")
     }
 }
@@ -179,7 +176,7 @@ const addProgressBar = async (loader, box) => {
         tag: "progress_bar_01",
         css: {
             box_radius: "4px",
-            box_padding: "4px 8px",
+            box_padding: "4px 0px",
 
             progress_width: "80px",
             progress_border: "1px solid rgba(0, 0, 0, 0.14)",
@@ -195,7 +192,7 @@ const addProgressBar = async (loader, box) => {
             item_radius: "2px",
             item_border: "1px solid rgba(0, 0, 0, 0.2)",
             item_backOff: "rgba(0, 0, 0, 0)",
-            item_backOn: "rgba(22, 22, 22, 0.58)",
+            item_backOn: "rgb(56, 56, 56)",
             transition: "500ms"
         },
         logic: { side: "right" },
@@ -243,19 +240,30 @@ const animateIn = async (boxes, components) => {
     await level.helper.timer.awaitTransition(boxes.cubeBox)
 }
 
-const animateList = async (boxes, animate) => {
-    const textBox = Array.from(document.querySelectorAll(".landing_text"))
-    const delay = level.helper.timer.getTransition(textBox[0])
+const createCommandsBoxes = (boxes) => {
+    const terminal_height = boxes.terminal.offsetHeight
+    const terminal_padding = parseFloat(getComputedStyle(boxes.terminal).padding)
+    const li_height = parseFloat(getComputedStyle(boxes.listBox).getPropertyValue("--commandLine_height"))
+    const optimalList = Math.floor((terminal_height - 2 * terminal_padding) / li_height)
+    for (let i = 0; i < optimalList; i++) { const commandLine = level.helper.dom.add(boxes.terminal, "li", "commandLine column_Vcenter") }
+    return boxes.terminal.querySelectorAll(".commandLine")
+}
+
+const animateList = async (commandLines, boxes) => {
+    const delay = 50
     const font = [{ 'name': 'Xolonium-Regular', 'src': `${level.route}/app/src/fonts/Xolonium-Regular.otf` }]
     level.helper.fonts.addFonts(font)
-    const symbol = " ▄"
 
-    const list = [
-        { text: "TEXTO DE PRUEVA 1", type: "text", animation: "terminal", symbol: symbol, box: textBox[0], delay: delay },
-        { text: "TEXTO DE PRUEVA 2", type: "text", animation: "terminal", symbol: symbol, box: textBox[1], delay: delay },
-        { text: "TEXTO DE PRUEVA 3", type: "text", animation: "terminal", symbol: symbol, box: textBox[2], delay: delay },
-    ]
-    await animate.secuencial(list)
+    for (let i = 0; i < commandLines.length; i++) {
+        await level.helper.animate.simple({
+            text: `TEXTO DE PRUEVA ${i}`,
+            type: "text",
+            animation: "terminal",
+            symbol: " ▄",
+            box: commandLines[i],
+            delay: delay
+        })
+    }
 }
 
 const calculeCubeAnimation = (value) => {
@@ -324,12 +332,12 @@ const addEvents = (boxes, components) => {
 export const init = async () => {
     console.log("appLoading - landing")
     const loader = await import(`${level.route}/framework/runtime/loader.js`)
-    const animate = await import(`${level.route}/framework/runtime/animate.js`)
 
     const boxes = drawLanding(loader)
     const components = await drawComponents(loader, boxes)
     await animateIn(boxes, components)
-    animateList(boxes, animate)
+    const commandLines = createCommandsBoxes(boxes)
+    animateList(commandLines, boxes)
     addEvents(boxes, components)
     return true
 }

@@ -192,7 +192,6 @@ export default class progressBar extends HTMLElement {
 
              if (i / boxSteps >= 1) {
                 const box = boxes[Math.floor(i / boxSteps) - 1]
-                console.log(box)
                 box.classList.contains("box_off") && box.classList.replace("box_off", "box_on")
              }
             await this.deps.timer.sleep(delay)

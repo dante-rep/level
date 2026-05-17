@@ -54,8 +54,8 @@ const init = async () => {
     const steps = 5
     const animation = true
     if (animation) {
-        for (let time = 1; time <= steps; time++) {
-            document.dispatchEvent(new CustomEvent("appLoad", { detail: { 'progress': Math.round(time * (100 / steps)) } }))
+        for (let i = 1; i <= steps; i++) {
+        document.dispatchEvent(new CustomEvent("appLoad", { detail: { 'progress': Math.round(i * (100 / steps)) } }))
 /*             await new Promise(resolve => setTimeout(resolve, 2000))
  */        }
     }

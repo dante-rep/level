@@ -7,6 +7,7 @@ const dependencies = {
         animations: {
             text: "/framework/dependencies/helpers/animations/text.js"
         },
+        animate: "/framework/dependencies/helpers/animate.js",
         css: "/framework/dependencies/helpers/css.js",
         dom: "/framework/dependencies/helpers/dom.js",
         events: "/framework/dependencies/helpers/events.js",
