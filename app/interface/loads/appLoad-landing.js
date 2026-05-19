@@ -7,8 +7,8 @@ const drawLanding = (help) => {
                     <div class="titleBottomBox transition1s"></div>
                 </div> 
                 <div class="cubeBox invisible transition1s"></div>
-                <div class="listBox relative invisible transition1s">
-                    <ul class="terminal"></ul>
+                <div class="listBox invisible transition1s">
+                    <ul class="terminal columnCenterSpace"></ul>
                     <div class="progressBox"></div>
                 </div>
             </div>
@@ -132,7 +132,7 @@ const addTitleTop = async (loader, box) => {
         id: "topTitle",
         tag: "animated_text_01",
         css: {
-            charBox_back: "rgb(46, 46, 46)",
+            charBox_back: level.helper.css.getVar("landingColor1"),
             charBox_radius: "4px",
             charBox_margin: "5px",
             charBox_padding: "10px 14px",
@@ -158,7 +158,7 @@ const addTitleBottom = async (loader, box) => {
             char_empty: "16px",
             char_fontSize: "16px",
             char_fontFamily: "ronduit",
-            char_fontColor: "rgba(0, 0, 0, 0.42)",
+            char_fontColor: level.helper.css.getVar("landingColor1"),
             char_fontWeight: "bolder"
         },
         data: { text: "Modular framework" },
@@ -242,27 +242,51 @@ const animateIn = async (boxes, components) => {
 
 const createCommandsBoxes = (boxes) => {
     const terminal_height = boxes.terminal.offsetHeight
+    const height_multiplier = 1.16
     const terminal_padding = parseFloat(getComputedStyle(boxes.terminal).padding)
     const li_height = parseFloat(getComputedStyle(boxes.listBox).getPropertyValue("--commandLine_height"))
-    const optimalList = Math.floor((terminal_height - 2 * terminal_padding) / li_height)
-    for (let i = 0; i < optimalList; i++) { const commandLine = level.helper.dom.add(boxes.terminal, "li", "commandLine column_Vcenter") }
+    const optimalList = Math.floor((terminal_height - 2 * terminal_padding) / (li_height * height_multiplier))
+    for (let i = 0; i < optimalList; i++) { 
+        const commandLine = level.helper.dom.add(boxes.terminal, "li", "commandLine row_between") 
+        const commandLine_text = level.helper.dom.add(commandLine, "span", "commandLine_text verticalCenter")
+    }
     return boxes.terminal.querySelectorAll(".commandLine")
 }
 
 const animateList = async (commandLines, boxes) => {
-    const delay = 50
-    const font = [{ 'name': 'Xolonium-Regular', 'src': `${level.route}/app/src/fonts/Xolonium-Regular.otf` }]
-    level.helper.fonts.addFonts(font)
+    const delay = 24
+    const font = [{ 'name': 'whiteRabit', 'src': `${level.route}/app/src/fonts/whitrabt-webfont.woff` }]
+    await level.helper.fonts.addFonts(font)
+    const terminalText = [
+        "Hacking the blockchain",
+        "Following the white rabbit",
+        "Download the internet here",
+        "Calculating <div>'s center",
+        "Mining with the coffee machine",
+        "Loading the illuminati's code",
+        "Calibrating the flux capacitor",
+        "Generating random errors on kernel",
+        "Loading malicious code",
+        "Updating Skynet's terms of service",
+    ]
 
     for (let i = 0; i < commandLines.length; i++) {
+        const commandLine_text = commandLines[i].querySelector(".commandLine_text")
+        commandLine_text.classList.add("commandLine_borderPre")
+        await level.helper.timer.sleep(50)
+        commandLine_text.classList.replace("commandLine_borderPre", "commandLine_borderOn")
+
         await level.helper.animate.simple({
-            text: `TEXTO DE PRUEVA ${i}`,
+            text: terminalText[i],
             type: "text",
             animation: "terminal",
             symbol: " ▄",
-            box: commandLines[i],
+            box: commandLines[i].querySelector(".commandLine_text"),
             delay: delay
         })
+        const command_done = level.helper.dom.add(commandLines[i], "span", "commandLine_done center")
+        command_done.textContent = "Done"
+        await level.helper.timer.sleep(220)
     }
 }
 

@@ -70,27 +70,57 @@ body {
             .listBox {
                 width: 420px;
                 height: 0px;
-                --progressBox_height: 30px;
-                --commandLine_height: 20px;
+                --terminal_padding: 12px;
+                --progressBox_height: 34px;
+                --commandLine_height: 24px;
+                --textShadow: rgb(152, 152, 152);
 
                 .terminal {
                     width: 100%;
                     height: calc(100% - var(--progressBox_height));
                     list-style: none;
-                    font-family: "Xolonium-Regular";
-                    color: rgb(134, 134, 134);
-                    font-size: 12px;
-                    border: 1px solid grey;
-                    padding: 8px;
-                    border-radius: 5px;
-                    box-shadow: inset 1px 1px 3px rgb(0, 0, 0);
-/*                     background-image: radial-gradient(rgba(0, 0, 0, 0.2) 1px, transparent 1px);
+                    font-family: "whiteRabit";
+                    padding: var(--terminal_padding);
+                    border-radius: 8px;
+                    background: var(--landingColor1);
+
+                    background-image: radial-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px);
                     background-size: 3px 3px;
- */
+
                     .commandLine {
+                        display: flex;
                         width: 100%;
                         height: var(--commandLine_height);
-                        border: 1px solid red;
+
+                        .commandLine_text {
+                            width: fix-content;
+                            height: var(--commandLine_height);
+                            padding: 0px 10px;
+                            color: rgb(150, 150, 150);
+                            font-size: 12px;
+                            border-radius: 4px;
+                        }
+
+                        .commandLine_borderPre {
+                            border: 1px solid rgb(201, 255, 202);
+                            box-shadow: 0 0 20px rgb(201, 255, 202);
+                            transition: 0s;
+                        }
+
+                        .commandLine_borderOn {
+                            border: 1px solid rgba(255, 255, 255, 0.1);
+                            box-shadow: 0 0 10px transparent;
+                            transition: 1s;
+                        }
+
+                        .commandLine_done {
+                            width: 60px;
+                            height: 100%;
+                            background: rgba(255, 255, 255, 0.08);
+                            border-radius: 4px;
+                            color: rgb(201, 255, 202);
+                            font-size: 12px;
+                        }
                     }
                 }
 

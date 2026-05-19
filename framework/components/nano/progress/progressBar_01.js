@@ -184,7 +184,6 @@ export default class progressBar extends HTMLElement {
         const stepValue = 1 / this.data.steps
         const initialStep = this.value * steps
         const finalStep = value * steps
-        console.log("initial", initialStep, "final", finalStep, "boxSteps", boxSteps)
 
         for (let i = initialStep; i <= finalStep; i++) {
             const progress = (i * stepValue)
