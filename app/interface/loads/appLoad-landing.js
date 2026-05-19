@@ -28,13 +28,14 @@ const drawLanding = (help) => {
 }
 
 const drawComponents = async (loader, boxes) => {
-    const [topTitle, bottomTitle, cube, axisX, axisY, progressBar] = await Promise.all([
+    const [topTitle, bottomTitle, cube, axisX, axisY, progressBar, orbitsDecoration] = await Promise.all([
         addTitleTop(loader, boxes.titleTopBox),
         addTitleBottom(loader, boxes.titleBottomBox),
         addCube(loader, boxes.cubeBox),
         addAxisX(loader, boxes.cubeBox),
         addAxisY(loader, boxes.cubeBox),
         addProgressBar(loader, boxes.progressBox),
+        addCirclesDecoration(loader, boxes.landingSection)
     ])
 
     return {
@@ -44,13 +45,14 @@ const drawComponents = async (loader, boxes) => {
         'axisX': axisX,
         'axisY': axisY,
         'progressBar': progressBar,
+        'orbitsDecoration': orbitsDecoration
     }
 }
 
 const addCube = async (loader, box) => {
     const config = {
         id: "landing-cube3d",
-        tag: "cube_3d",
+        className: "cube_3d",
         css: {
             box_perspective: "500px",
             box_size: "200px",
@@ -69,7 +71,7 @@ const addCube = async (loader, box) => {
 const addAxisY = async (loader, box) => {
     const config = {
         id: "landing-axisY",
-        tag: "axis_ticks_01",
+        className: "axis_ticks_01",
         css: {
             box_width: "50px",
             box_height: "100%",
@@ -101,7 +103,7 @@ const addAxisY = async (loader, box) => {
 const addAxisX = async (loader, box) => {
     const config = {
         id: "landing-axisX",
-        tag: "axis_ticks_01",
+        className: "axis_ticks_01",
         css: {
             box_width: "100%",
             box_height: "50px",
@@ -130,7 +132,7 @@ const addAxisX = async (loader, box) => {
 const addTitleTop = async (loader, box) => {
     const config = {
         id: "topTitle",
-        tag: "animated_text_01",
+        className: "animated_text_01",
         css: {
             charBox_back: level.helper.css.getVar("landingColor1"),
             charBox_radius: "4px",
@@ -153,7 +155,7 @@ const addTitleTop = async (loader, box) => {
 const addTitleBottom = async (loader, box) => {
     const config = {
         id: "bottomTitle",
-        tag: "animated_text_01",
+        className: "animated_text_01",
         css: {
             char_empty: "16px",
             char_fontSize: "16px",
@@ -173,7 +175,7 @@ const addTitleBottom = async (loader, box) => {
 const addProgressBar = async (loader, box) => {
     const config = {
         id: "landingProgressBar",
-        tag: "progress_bar_01",
+        className: "progress_bar_01",
         css: {
             box_radius: "4px",
             box_padding: "4px 0px",
@@ -209,7 +211,7 @@ const addProgressBar = async (loader, box) => {
 const addBackground = async (loader, box) => {
     const config = {
         id: "adaptativeGrid",
-        tag: "adaptative_grid",
+        className: "adaptative_grid",
         css: {
             box_width: "200%",
             box_height: "140%",
@@ -221,6 +223,19 @@ const addBackground = async (loader, box) => {
 
     const component = await loader.prepare(box, config, "backMatrix absolute")
     component.autoResize = true
+    component.init()
+    return component
+}
+
+const addCirclesDecoration = async (loader, box) => {
+    const config = {
+        id: "some",
+        className: "orbitsDecoration_01",
+        css: {
+        },
+    }
+
+    const component = await loader.prepare(box, config, "circleDecoration")
     component.init()
     return component
 }

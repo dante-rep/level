@@ -37,7 +37,8 @@ const init = async () => {
     const styles = {
         "conf": `${level.route}/app/styles/conf.css`,
         "mainClasses": `${level.route}/app/styles/mainClasses.css`,
-        "mainContainers": `${level.route}/app//styles/mainContainers.css`
+        "mainContainers": `${level.route}/app/styles/mainContainers.css`,
+        "landing": `${level.route}/app/styles/landing.css`
     }
     await loadStyles(styles)
 

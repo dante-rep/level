@@ -60,9 +60,9 @@ const addToReg = async (config, module, dependencies) => {
     const registerBy = (reg, item, value) => { reg.get(item)["usedBy"].push(value) }
 
     /* component */
-    const componentReg = registred(components, config.tag)
-    !componentReg && components.set(config.tag, { 'module': module, 'usedBy': [], 'deps': { 'class': dependencies.class, 'helper': dependencies.helper } })
-    components.get(config.tag)["usedBy"].push(config.id)
+    const componentReg = registred(components, config.className)
+    !componentReg && components.set(config.className, { 'module': module, 'usedBy': [], 'deps': { 'class': dependencies.class, 'helper': dependencies.helper } })
+    components.get(config.className)["usedBy"].push(config.id)
     /* dependencies class */
     Object.keys(dependencies.class).forEach(item => {
         const classReg = registred(classes, item)
@@ -92,10 +92,10 @@ const injectDependencies = (component, list) => {
 }
 
 const validateConfig = (config, loaderLists) => {
-    const error = (log, prop = null,) => { console.error(prop || config.tag, log) }
+    const error = (log, prop = null,) => { console.error(prop || config.className, log) }
     if (!config) { error("❌ not configured"); return }
-    if (!loaderLists.comp[config.tag]) { error("❌ no tag in component config"); return }
-    if (!config.id) { error("❌ no id in component config", config.tag); return }
+    if (!loaderLists.comp[config.className]) { error("❌ no tag in component config"); return }
+    if (!config.id) { error("❌ no id in component config", config.className); return }
     if (validateId(config.id)) { error(`❌ id already in use ${register.reg.ids.get(config.id)}`); return }
     return true
 }
@@ -130,7 +130,7 @@ export const prepare = async (box, config, classes = null) => {
         /* validations */
         if (!validateConfig(config, loaderLists)) return
         /* get component data */
-        const compInfo = getCompData(loaderLists, config.tag)
+        const compInfo = getCompData(loaderLists, config.className)
         /* import modules */
         const [module, dependencies] = await Promise.all([
             importModules(config, compInfo),
@@ -139,7 +139,7 @@ export const prepare = async (box, config, classes = null) => {
         /* register module & deps */
         addToReg(config, module, dependencies)
         /* create component */
-        let component = register.reg.comp.get(config.tag)
+        let component = register.reg.comp.get(config.className)
         component = box.appendChild(new component.module.default())
         /* register id */
         registerID(config.id)
