@@ -134,6 +134,7 @@ export default class cube3D extends HTMLElement {
 
     async init() {
         this.load()
+        console.log(this.deps)
         if (this.#STATE) {
             this.#configure()
             this.#addStyle()

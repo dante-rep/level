@@ -1,17 +1,17 @@
 const drawLanding = (help) => {
     document.body.innerHTML += `
-    <section class="landingSection max center invisible transition1s">
-            <div class="contentBox column center transition1s">
-                <div class="titlesBox column_Hcenter transition1s">
-                    <div class="titleTopBox"></div>
-                    <div class="titleBottomBox transition1s"></div>
-                </div> 
-                <div class="cubeBox invisible transition1s"></div>
-                <div class="listBox invisible transition1s">
-                    <ul class="terminal columnCenterSpace"></ul>
-                    <div class="progressBox"></div>
-                </div>
+    <section class="landingSection relative max center invisible transition1s">
+        <div class="contentBox column center transition1s">
+            <div class="titlesBox column_Hcenter transition1s">
+                <div class="titleTopBox">Level</div>
+                <div class="titleBottomBox transition1s">Modular framework</div>
+            </div> 
+            <div class="cubeBox invisible transition1s"></div>
+            <div class="listBox invisible transition1s">
+                <ul class="terminal"></ul>
+                <div class="progressBox"></div>
             </div>
+        </div>
     </section>
     `
     return {
@@ -23,39 +23,43 @@ const drawLanding = (help) => {
         'cubeBox': document.querySelector(".cubeBox"),
         'listBox': document.querySelector(".listBox"),
         'terminal': document.querySelector(".terminal"),
-        'progressBox': document.querySelector(".progressBox")
+        'progressBox': document.querySelector(".progressBox"),
     }
 }
 
+const addFonts = () => {
+    const fonts = [
+        { 'name': 'neuropol', 'src': `${level.route}/app/src/fonts/neuropol.otf` },
+        { 'name': 'ronduit', 'src': `${level.route}/app/src/fonts/ronduitCapitals-Light.woff` }
+    ]
+    fonts.forEach(font => {
+        level.helper.import.fonts(font)
+    })
+}
+
 const drawComponents = async (loader, boxes) => {
-    const [topTitle, bottomTitle, cube, axisX, axisY, progressBar, orbitsDecoration] = await Promise.all([
-        addTitleTop(loader, boxes.titleTopBox),
-        addTitleBottom(loader, boxes.titleBottomBox),
+    const [cube, axisX, axisY, progressBar] = await Promise.all([
         addCube(loader, boxes.cubeBox),
         addAxisX(loader, boxes.cubeBox),
         addAxisY(loader, boxes.cubeBox),
         addProgressBar(loader, boxes.progressBox),
-        addCirclesDecoration(loader, boxes.landingSection)
     ])
 
     return {
-        'topTitle': topTitle,
-        'bottomTitle': bottomTitle,
         'cube': cube,
         'axisX': axisX,
         'axisY': axisY,
         'progressBar': progressBar,
-        'orbitsDecoration': orbitsDecoration
     }
 }
 
 const addCube = async (loader, box) => {
     const config = {
         id: "landing-cube3d",
-        className: "cube_3d",
+        class: "cube_3d",
         css: {
             box_perspective: "500px",
-            box_size: "200px",
+            box_size: "10vh",
             box_back: "rgba(0, 0, 0, 0)",
             box_border: "1px solid rgb(32, 32, 32)",
             box_shadow: "inset 0 0 10px rgb(32, 32, 32)",
@@ -71,7 +75,7 @@ const addCube = async (loader, box) => {
 const addAxisY = async (loader, box) => {
     const config = {
         id: "landing-axisY",
-        className: "axis_ticks_01",
+        class: "axis_ticks_01",
         css: {
             box_width: "50px",
             box_height: "100%",
@@ -103,7 +107,7 @@ const addAxisY = async (loader, box) => {
 const addAxisX = async (loader, box) => {
     const config = {
         id: "landing-axisX",
-        className: "axis_ticks_01",
+        class: "axis_ticks_01",
         css: {
             box_width: "100%",
             box_height: "50px",
@@ -129,10 +133,11 @@ const addAxisX = async (loader, box) => {
     return component
 }
 
-const addTitleTop = async (loader, box) => {
+
+/* const addTitleTop = async (loader, box) => {
     const config = {
         id: "topTitle",
-        className: "animated_text_01",
+        class: "animated_text_01",
         css: {
             charBox_back: level.helper.css.getVar("landingColor1"),
             charBox_radius: "4px",
@@ -155,7 +160,7 @@ const addTitleTop = async (loader, box) => {
 const addTitleBottom = async (loader, box) => {
     const config = {
         id: "bottomTitle",
-        className: "animated_text_01",
+        class: "animated_text_01",
         css: {
             char_empty: "16px",
             char_fontSize: "16px",
@@ -171,11 +176,11 @@ const addTitleBottom = async (loader, box) => {
     component.init()
     return component
 }
-
+ */
 const addProgressBar = async (loader, box) => {
     const config = {
         id: "landingProgressBar",
-        className: "progress_bar_01",
+        class: "progress_bar_01",
         css: {
             box_radius: "4px",
             box_padding: "4px 0px",
@@ -211,7 +216,7 @@ const addProgressBar = async (loader, box) => {
 const addBackground = async (loader, box) => {
     const config = {
         id: "adaptativeGrid",
-        className: "adaptative_grid",
+        class: "adaptative_grid",
         css: {
             box_width: "200%",
             box_height: "140%",
@@ -223,19 +228,6 @@ const addBackground = async (loader, box) => {
 
     const component = await loader.prepare(box, config, "backMatrix absolute")
     component.autoResize = true
-    component.init()
-    return component
-}
-
-const addCirclesDecoration = async (loader, box) => {
-    const config = {
-        id: "some",
-        className: "orbitsDecoration_01",
-        css: {
-        },
-    }
-
-    const component = await loader.prepare(box, config, "circleDecoration")
     component.init()
     return component
 }
@@ -257,51 +249,55 @@ const animateIn = async (boxes, components) => {
 
 const createCommandsBoxes = (boxes) => {
     const terminal_height = boxes.terminal.offsetHeight
-    const height_multiplier = 1.16
     const terminal_padding = parseFloat(getComputedStyle(boxes.terminal).padding)
-    const li_height = parseFloat(getComputedStyle(boxes.listBox).getPropertyValue("--commandLine_height"))
-    const optimalList = Math.floor((terminal_height - 2 * terminal_padding) / (li_height * height_multiplier))
-    for (let i = 0; i < optimalList; i++) { 
-        const commandLine = level.helper.dom.add(boxes.terminal, "li", "commandLine row_between") 
+    const commandLine_height = parseFloat(getComputedStyle(boxes.listBox).getPropertyValue("--commandLine_height"))
+    const commandLine_margin = parseFloat(getComputedStyle(boxes.listBox).getPropertyValue("--commandLine_margin"))
+
+    const optimalList = Math.floor((terminal_height - 2 * terminal_padding) / (commandLine_height + commandLine_margin))
+    for (let i = 0; i < optimalList; i++) {
+        const commandLine = level.helper.dom.add(boxes.terminal, "li", "commandLine row_between")
         const commandLine_text = level.helper.dom.add(commandLine, "span", "commandLine_text verticalCenter")
     }
     return boxes.terminal.querySelectorAll(".commandLine")
 }
 
-const animateList = async (commandLines, boxes) => {
+const animateList = async (commandLines, boxes, animate) => {
     const delay = 24
     const font = [{ 'name': 'whiteRabit', 'src': `${level.route}/app/src/fonts/whitrabt-webfont.woff` }]
     await level.helper.fonts.addFonts(font)
     const terminalText = [
-        "Hacking the blockchain",
-        "Following the white rabbit",
-        "Download the internet here",
+        "Hacking the blockchain, wait...",
         "Calculating <div>'s center",
-        "Mining with the coffee machine",
+        "Initializing copy-paste protocol",
         "Loading the illuminati's code",
-        "Calibrating the flux capacitor",
-        "Generating random errors on kernel",
-        "Loading malicious code",
-        "Updating Skynet's terms of service",
+        "Pushing browser history to GitHub",
+        "Rerouting via North Korean´s servers",
+        "Decrypting alien frequencies via Seti",
+        "Updating from Skynet's server",
+        "Request from Russian Forum accepted",
+        "Detected public Wi-Fi, accessing... wait",
     ]
 
-    for (let i = 0; i < commandLines.length; i++) {
+    for (let i = 0; i < commandLines.length - 1; i++) {
         const commandLine_text = commandLines[i].querySelector(".commandLine_text")
-        commandLine_text.classList.add("commandLine_borderPre")
-        await level.helper.timer.sleep(50)
-        commandLine_text.classList.replace("commandLine_borderPre", "commandLine_borderOn")
 
-        await level.helper.animate.simple({
-            text: terminalText[i],
-            type: "text",
-            animation: "terminal",
-            symbol: " ▄",
-            box: commandLines[i].querySelector(".commandLine_text"),
-            delay: delay
-        })
-        const command_done = level.helper.dom.add(commandLines[i], "span", "commandLine_done center")
-        command_done.textContent = "Done"
-        await level.helper.timer.sleep(220)
+        if (terminalText[i]) {
+            commandLine_text.classList.add("commandLine_borderPre")
+            await level.helper.timer.sleep(50)
+            commandLine_text.classList.replace("commandLine_borderPre", "commandLine_borderOn")
+
+            await animate.simple({
+                text: terminalText[i],
+                type: "text",
+                animation: "terminal",
+                symbol: " ▄",
+                box: commandLines[i].querySelector(".commandLine_text"),
+                delay: delay
+            })
+            const command_done = level.helper.dom.add(commandLines[i], "span", "commandLine_done center")
+            command_done.textContent = "Done"
+            await level.helper.timer.sleep(220)
+        }
     }
 }
 
@@ -371,12 +367,15 @@ const addEvents = (boxes, components) => {
 export const init = async () => {
     console.log("appLoading - landing")
     const loader = await import(`${level.route}/framework/runtime/loader.js`)
+    const animate = await import (`${level.route}/framework/runtime/animate.js`)
 
     const boxes = drawLanding(loader)
+    addFonts()
+
     const components = await drawComponents(loader, boxes)
     await animateIn(boxes, components)
     const commandLines = createCommandsBoxes(boxes)
-    animateList(commandLines, boxes)
+    animateList(commandLines, boxes, animate)
     addEvents(boxes, components)
     return true
 }

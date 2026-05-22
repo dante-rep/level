@@ -4,10 +4,6 @@ const dependencies = {
         fonts: "/framework/dependencies/classes/class_fonts.js"
     },
     helper: {
-        animations: {
-            text: "/framework/dependencies/helpers/animations/text.js"
-        },
-        animate: "/framework/dependencies/helpers/animate.js",
         css: "/framework/dependencies/helpers/css.js",
         dom: "/framework/dependencies/helpers/dom.js",
         events: "/framework/dependencies/helpers/events.js",
@@ -15,6 +11,12 @@ const dependencies = {
         import: "/framework/dependencies/helpers/imports.js",
         timer: "/framework/dependencies/helpers/timer.js",
         util: "/framework/dependencies/helpers/util.js",
+    },
+    visual: {
+        animations: {
+            text: "/framework/visual/animations/text.js"
+        }
     }
+
 }
 export default dependencies

@@ -27,7 +27,7 @@ const components = {
     'orbitsDecoration_01': {
         path: "/framework/components/nano/background/orbitsDecoration_01.js",
         class: ["base"],
-        helper: ["dom"]
+        helper: ["dom", "util"]
     }
 }
 export default components

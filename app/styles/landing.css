@@ -7,14 +7,27 @@
         border: 1px solid rgba(128, 128, 128, 0.5);
         border-radius: 16px;
 
-        .titlesBox .titleBottomBox {
-            margin-top: 10px;
+        .titlesBox {
+            border: 1px solid red;
+
+            .titleTopBox {
+                border: 1px solid green;
+            }
+
+            .titleBottomBox {
+                border: 1px solid green;
+                margin-top: 10px;
+            }
         }
 
         .cubeBox {
             display: grid;
             grid-template-columns: 50px 30px 1fr;
             grid-template-rows: 280px 20px 50px;
+
+            grid-template-columns: repeat(1fr 10);
+            grid-template-rows: repeat(1fr 10);
+
             grid-template-areas:
                 "axisY . cube"
                 ". . ."
@@ -51,6 +64,7 @@
             --terminal_padding: 12px;
             --progressBox_height: 34px;
             --commandLine_height: 24px;
+            --commandLine_margin: 6px;
             --textShadow: rgb(152, 152, 152);
 
             .terminal {
@@ -66,9 +80,9 @@
                 background-size: 3px 3px;
 
                 .commandLine {
-                    display: flex;
                     width: 100%;
                     height: var(--commandLine_height);
+                    margin-bottom: var(--commandLine_margin);
 
                     .commandLine_text {
                         width: fix-content;
@@ -116,5 +130,29 @@
 
     .contentBox_expanded {
         height: 90%;
+    }
+}
+
+@media (orientation: portrait) {
+    .landingSection {
+
+        .contentBox {
+            width: 100%;
+            height: 100%;
+            border: 1px solid transparent;
+
+            .titlesBox {
+                display: flex;
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: end;
+                width: 90%;
+
+                .titleBottomBox {
+                    font-size: 4rem;
+                    margin-bottom: 5px;
+                }
+            }
+        }
     }
 }

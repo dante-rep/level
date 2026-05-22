@@ -50,3 +50,9 @@ body {
         border: 1px solid red;
     }
 }
+
+@media (orientation: portrait) {
+    body {
+
+    }
+}

@@ -17,5 +17,5 @@ export const secuencial = async (array, box) => {
 }
 
 export const simple = async (conf, box) => {
-    await level.helper.animations[conf.type][conf.animation](conf)
+    await level.visual.animations[conf.type][conf.animation](conf)
 }
