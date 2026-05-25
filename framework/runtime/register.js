@@ -1,28 +1,27 @@
-export let reg
+export let register = null
 
-export const createRegister = () => {
-    if (!reg) {
-        reg = {
-            deps: { helper: new Map(), class: new Map() },
-            comp: new Map(),
-            ids: new Map()
-        }
-    } else {
-        console.error("runtime: register already created")
-    }
+export const initRegister = () => {
+    !register && (register = {
+        helper: new Map(),
+        class: new Map(),
+        components: new Map(),
+        ids: new Map()
+    })
+    register && console.error("runtime: register already initialized")
 }
 
-export const set = (item, value) => {
-    if (!reg[item]) {
-        console.error(`Register: ${item} is not a valid item`)
-        return
-    }
-    if (!Array.isArray(value)) {
-        console.error(`Register: needed value as array. ${item} Not registred`)
-        return
-    }
-    reg[item].set(value[0], value[1])
+export const setInfo = (reg, item, value) => {
+    register[reg].set(item, value)
 }
 
-export const get = (type, item) => { return reg[type].get(item) || null }
+export const addInfo = (reg, item, key, value) => {
+    const previousReg = register[reg].get(item)
+    previousReg[key] = value
+}
 
+export const getInfo = (reg, item, key = null) => {
+    const info = register[reg].get(item)
+    return key
+        ? info?.[key] || null
+        : info || null
+}

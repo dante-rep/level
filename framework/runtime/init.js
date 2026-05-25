@@ -6,7 +6,7 @@ export const init = async () => {
 
     await Promise.all([
         global.addGlobalLevel(),
-        register.createRegister()
+        register.initRegister()
     ])
 
     console.log("level.route:", level.route || "local", level)

@@ -1,6 +1,6 @@
 import * as register from "./register.js"
 
-const importLists = async () => {
+const importInfoLists = async () => {
     const infoLists = {
         "comp": `${level.route}/framework/conf/components_paths.js`,
         "deps": `${level.route}/framework/conf/dependencies_paths.js`,
@@ -20,6 +20,24 @@ const checkLevel = () => {
 const getCompData = (loaderLists, tag) => {
     return loaderLists.comp[tag]
 }
+
+const registrerComponent = (componentModule, register) => {
+    console.log(componentModule, register)
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* ---------------------------------------------------------------- */
 
 const importModules = async (config, compInfo) => {
     const registred = register.reg.comp.get(compInfo.tag)
@@ -121,35 +139,45 @@ const applyConf = (component, config) => {
     config.state && component.state && (component.state = config.state)
     config.className && component.className && (component.className = config.className)
 }
+/* ---------------------------------------------------------------- */
+
 
 export const prepare = async (box, config, classes = null) => {
     /* check global */
     if (checkLevel()) {
         /* loads */
-        const loaderLists = await importLists()
-        /* validations */
-        if (!validateConfig(config, loaderLists)) return
+        const [infoLists, register] = await Promise.all([
+            importInfoLists(),
+            import(`${level.route}/framework/runtime/register.js`)
+        ])
         /* get component data */
-        const compInfo = getCompData(loaderLists, config.class)
+        const componentInfo = getCompData(infoLists, config.class)
+        /* validations */
+/*         if (!validateConfig(componentInfo, infoLists, register)) return
+ */        /* register component */
+        registrerComponent(componentInfo.path, register)
+
+
+
+
+
         /* import modules */
-        const [module, dependencies] = await Promise.all([
+/*         const [module, dependencies] = await Promise.all([
             importModules(config, compInfo),
             importDependencies(config, compInfo, loaderLists)
         ])
-        /* register module & deps */
-        addToReg(config, module, dependencies)
-        /* create component */
-        let component = register.reg.comp.get(config.class)
+ */        /* register module & deps */
+/*         addToReg(config, module, dependencies)
+ */        /* create component */
+/*         let component = register.reg.comp.get(config.class)
         component = box.appendChild(new component.module.default())
-        /* register id */
-        registerID(config.id)
-        /* apply conf */
-        applyConf(component, config)
-        /* inject dependencies */
-        injectDependencies(component, loaderLists.deps)
-        /* apply classNames */
-        component.className = classes
-        return component
+ */        /* register id */
+/*         registerID(config.id)
+ */        /* apply conf */
+/*         applyConf(component, config)
+ */        /* inject dependencies */
+/*         injectDependencies(component, loaderLists.deps)
+ */     return component
     }
 }
 
