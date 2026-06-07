@@ -1,27 +1,31 @@
 export let register = null
 
 export const initRegister = () => {
-    !register && (register = {
-        helper: new Map(),
-        class: new Map(),
-        components: new Map(),
-        ids: new Map()
-    })
-    register && console.error("runtime: register already initialized")
+    if (!register) {
+        register = {
+            classes: {},
+            helpers: {},
+            components: {}
+        }
+        return
+    }
+    console.error("runtime: register already initialized")
 }
 
-export const setInfo = (reg, item, value) => {
-    register[reg].set(item, value)
+export const setReg = (reg, item, value) => {
+    register[reg][item] = value
+    /* dont need validation */
 }
 
-export const addInfo = (reg, item, key, value) => {
-    const previousReg = register[reg].get(item)
-    previousReg[key] = value
+export const addReg = (reg, item, key, value) => {
+    const previousReg = register[reg]?.[item] || null
+    previousReg
+        ? previousReg[key] = value
+        : console.error("register", `${item} not found`)
 }
 
-export const getInfo = (reg, item, key = null) => {
-    const info = register[reg].get(item)
+export const getReg = (reg, item, key = null) => {
     return key
-        ? info?.[key] || null
-        : info || null
+        ? register[reg]?.[item]?.[key] || null
+        : register[reg]?.[item] || null
 }

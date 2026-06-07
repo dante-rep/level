@@ -1,30 +1,59 @@
-import * as register from "./register.js"
-
-const importInfoLists = async () => {
-    const infoLists = {
-        "comp": `${level.route}/framework/conf/components_paths.js`,
-        "deps": `${level.route}/framework/conf/dependencies_paths.js`,
-    }
-    await level.helper.import.object(infoLists)
-    return infoLists
-}
-
 const checkLevel = () => {
     if (!globalThis.level) {
         console.error("level as gloval not exists")
-        return false
+        return null
     }
     return true
 }
 
-const getCompData = (loaderLists, tag) => {
-    return loaderLists.comp[tag]
+/* const getCompData = (componentsList, tag) => {
+    const componentInfo = componentsList[tag]
+    return componentInfo
+}
+ */
+const validateConfig = async (config, componentsList) => {
+    const error = (log) => {
+        console.error(config.class, log)
+        return null
+    }
+
+    if (!(config.class in componentsList)) { return error("❌ not found in components conf-list") }
+    if (!config.id) { return error("❌ no id in component config") }
+    /*     if (validateId(config.id)) { return error(`❌ id already in use ${register.reg.ids.get(config.id)}`) }
+     */
+    return true
 }
 
-const registrerComponent = (componentModule, register) => {
-    console.log(componentModule, register)
+const importComponent = () => {
+
 }
 
+const register = (config, componentInfo, registerMod, infoLists) => {
+    /* register component */
+    const regComponent = registerMod.getReg("component", componentInfo)
+    if (!regComponent) {
+        console.log(infoLists)
+        registerMod.setReg("components", config.class, {
+            'componentID': config.id,
+            'classes': componentInfo.class,
+            'helpers': componentInfo.helper,
+            'module': componentInfo.module,
+        })
+    }
+
+    console.log(componentInfo, config)
+
+    /* register component class */
+    componentInfo.class.forEach(item => {
+        const regClass = registerMod.getReg("classes", item)
+        if (!regClass) {
+            registerMod.setReg("classes", item, {
+                'name': item,
+/*                 'module': 
+ */            })
+        }
+    })
+}
 
 
 
@@ -48,7 +77,7 @@ const importModules = async (config, compInfo) => {
     return registred.module
 }
 
-const importDependencies = async (config, compInfo, loaderLists) => {
+const importDependencies = async (config, compInfo, infoLists) => {
     const dependencies = {}
     const createObject = async (type) => {
         const reg = register.reg.deps
@@ -58,8 +87,8 @@ const importDependencies = async (config, compInfo, loaderLists) => {
             const registred = reg[type].get(item)
             if (!registred) {
                 dependencies[type][item] = type === "class"
-                    ? await import(`${level.route}${loaderLists.deps[type][item]}`)
-                    : loaderLists.deps[type][item]
+                    ? await import(`${level.route}${infoLists.deps[type][item]}`)
+                    : infoLists.deps[type][item]
             }
         }
     }
@@ -109,15 +138,6 @@ const injectDependencies = (component, list) => {
     component.deps = registeredDeps
 }
 
-const validateConfig = (config, loaderLists) => {
-    const error = (log, prop = null,) => { console.error(prop || config.class, log) }
-    if (!config) { error("❌ not configured"); return }
-    if (!loaderLists.comp[config.class]) { error("❌ no tag in component config"); return }
-    if (!config.id) { error("❌ no id in component config", config.class); return }
-    if (validateId(config.id)) { error(`❌ id already in use ${register.reg.ids.get(config.id)}`); return }
-    return true
-}
-
 const validateId = (id) => {
     const uniqueId = register.reg.ids.get(id) || null
     return uniqueId
@@ -145,26 +165,38 @@ const applyConf = (component, config) => {
 export const prepare = async (box, config, classes = null) => {
     /* check global */
     if (checkLevel()) {
-        /* loads */
-        const [infoLists, register] = await Promise.all([
-            importInfoLists(),
+
+        /* lists and registry module */
+        let [componentsList, dependenciesList, registerMod] = await Promise.all([
+            import(`${level.route}/framework/conf/components_paths.js`),
+            import(`${level.route}/framework/conf/dependencies_paths.js`),
             import(`${level.route}/framework/runtime/register.js`)
         ])
-        /* get component data */
-        const componentInfo = getCompData(infoLists, config.class)
-        /* validations */
-/*         if (!validateConfig(componentInfo, infoLists, register)) return
- */        /* register component */
-        registrerComponent(componentInfo.path, register)
+        componentsList = componentsList.default
+        dependenciesList = dependenciesList.default
+        const componentInfo = componentsList[config.class]
+
+        /* validate config */
+        const validConfig = await validateConfig(config, componentsList)
+        if (!validConfig) return null
+
+        /* imports */
 
 
+/*         register(config, componentInfo, registerMod, infoLists)
+ */
+
+        /*         if (!validateConfig(componentInfo, infoLists, register)) return
+         */        /* register component */
+/*         register(config, componentInfo, registerMod, infoLists)
+ */
 
 
 
         /* import modules */
 /*         const [module, dependencies] = await Promise.all([
             importModules(config, compInfo),
-            importDependencies(config, compInfo, loaderLists)
+            importDependencies(config, compInfo, infoLists)
         ])
  */        /* register module & deps */
 /*         addToReg(config, module, dependencies)
@@ -176,7 +208,7 @@ export const prepare = async (box, config, classes = null) => {
  */        /* apply conf */
 /*         applyConf(component, config)
  */        /* inject dependencies */
-/*         injectDependencies(component, loaderLists.deps)
+/*         injectDependencies(component, infoLists.deps)
  */     return component
     }
 }
